@@ -1,0 +1,143 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title></title> 
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<script src="${base}/assets/biz-logic/js/applymanager/apply.js"></script>
+<link rel="stylesheet" type="text/css" href="${base}/assets/biz-logic/css/apply.css"/>
+<link href="${base}/assets/common/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="${base}/assets/common/jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js"></script>
+
+
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>应用管理&gt;&gt; <small>应用报表</small></h5>
+		</div>
+		<div class="row">
+			<form action="${base}/apply_list.html" id="submitForm" method="post">
+			<input type="hidden" name="sortColum" <#if sortColum ??>value="${sortColum}"</#if> id="sortColum">
+			<input type="hidden" name="sortType" <#if sortColum ??>value="${sortType}"</#if>  id="sortType">
+				<div class="row" style="float: left;width:100%;">
+					<div class="col-md-1 text-right" style="line-height:30px;">
+						APPKEY
+					</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="appkey">
+					</div>
+					<div class="col-md-1 text-right" style="line-height:30px;">应用名称</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="appname">
+					</div>
+					<div class="col-md-1 text-right" style="line-height:30px;">用户</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="username" id="userName">
+					</div>
+					<div class="col-md-3">
+						<button type="button" class="btn btn-default btn-search" onclick="sumbitForm('search')">查询</button>
+					</div>
+				</div>
+				<input type="hidden" name="currPage" value="1" id="currPage">
+				
+				<!-- Modal -->
+				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				        <h4 class="modal-title" id="myModalLabel">修改状态</h4>
+				      </div>
+				      <div class="modal-body">
+				        	<div class="tip">提示：<span>勾选为正常状态，反之为暂停， 暂停状态不再给该应用推送广告,也不再产生收入。</span></div>
+				        	<div class="mb-input-checked">
+				        		<div>启动/暂停（勾中为正常）：</div>
+				        		<input type="checkbox" checked name="status" value="1,1,1" id="status" />
+				        		<input type="hidden"  value="" id="appidval">
+				        	</div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				        <button type="button" class="btn btn-primary" id="btn-updatestatus" >提交</button>
+				      </div>
+				    </div><!-- /.modal-content -->
+				  </div><!-- /.modal-dialog -->
+				</div>
+				<!-- /.modal -->
+
+			</form>
+		</div>
+		<div class="alert" style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;">
+			<table class="table table-bordered table-hover alert-warning">
+				<thead>
+					<tr>
+						<th style="cursor: pointer;" onclick="setSort('aid')">ID
+						<img class="asc" id="sort_aid_asc" src="${base}/assets/biz-logic/images/bullet_arrow_up.png" style="width: 8px; height: 8px; display: none;" title="升序" alt="升序">
+						<img class="desc" id="sort_aid_desc" src="${base}/assets/biz-logic/images/bullet_arrow_down.png" style="width: 8px; height: 8px;" title="降序" alt="降序">
+						</th>
+						<th>APPKEY</th>
+						<th>用户名称</th>
+						<th>渠道</th>
+						<th>应用名称</th>
+						<th style="cursor: pointer;" onclick="setSort('dicount')">今日SDK安装量
+						<img class="asc" id="sort_dicount_asc" src="${base}/assets/biz-logic/images/bullet_arrow_up.png" style="width: 8px; height: 8px; display: none;" title="升序" alt="升序">
+						<img class="desc" id="sort_dicount_desc" src="${base}/assets/biz-logic/images/bullet_arrow_down.png" style="width: 8px; height: 8px;display: none;" title="降序" alt="降序">
+						</th>
+						<th style="cursor: pointer;" onclick="setSort('dearn')">今日收入
+						<img class="asc" id="sort_dearn_asc" src="${base}/assets/biz-logic/images/bullet_arrow_up.png" style="width: 8px; height: 8px; display: none;" title="升序" alt="升序">
+						<img class="desc" id="sort_dearn_desc" src="${base}/assets/biz-logic/images/bullet_arrow_down.png" style="width: 8px; height: 8px;display: none;" title="降序" alt="降序">
+						
+						</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="d_body">
+				</tbody>
+			</table>
+			<div class="row">
+				<div class="col-md-4">
+					<span id="totalCount"></span>
+				</div>
+				<div class="col-md-8">
+					<ul id="pagination" style="margin: 0;float: right;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	               <script type="text/javascript">
+function findAllUserName(){
+	var input=$("#userName");
+	var spanLabel=$("<span>")
+	input.after(spanLabel);
+	if(input.length==0)return;
+	$.ajax({
+　　　　	url: 'query_all_user.html',
+		type:"GET",
+　　　　	error: function (xmlHttpRequest, error) {
+　　　　	},
+    	dataType:'json',
+    	success:function(data) {
+　　　　		var users=data.result;
+　　　　		var dataArray=new Array();
+　　　　		for ( var i = 0; i < data.totalRecord; i++) {
+				if(users[i] != null){
+					dataArray.push({label:users[i].username,value:users[i].username});
+				}
+　　　　			
+			}
+　　　　		input.autocomplete({source:dataArray, autoFocus: true});
+		}
+　　　});
+}
+findAllUserName();
+</script>
+</body>
+</html>
+
+</@compress>

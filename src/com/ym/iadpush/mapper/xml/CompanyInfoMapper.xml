@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.CompanyInfoMapper">
+  <resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.CompanyInfo">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="bycode" jdbcType="VARCHAR" property="bycode" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="departmentId" jdbcType="INTEGER" property="departmentId" />
+    <result column="productId" jdbcType="INTEGER" property="parentId" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="name" jdbcType="VARCHAR" property="name" />
+	<result column="phone" jdbcType="VARCHAR" property="phone" />
+	<result column="address" jdbcType="VARCHAR" property="address" />
+	<result column="contract_people" jdbcType="VARCHAR" property="contract_people" />
+	<result column="departmentCode" jdbcType="VARCHAR" property="departmentCode" />
+	<result column="username" jdbcType="VARCHAR" property="username" />
+	<result column="role_name" jdbcType="VARCHAR" property="role_name" />
+	<result column="departmentName" jdbcType="VARCHAR" property="departmentName" />
+	<result column="province" jdbcType="VARCHAR" property="province" />
+	<result column="city" jdbcType="VARCHAR" property="city" />
+	<result column="county" jdbcType="VARCHAR" property="county" />
+	<result column="towns" jdbcType="VARCHAR" property="towns" />
+	<result column="mobilePhone" jdbcType="VARCHAR" property="mobilePhone" />
+	<result column="salesman" jdbcType="VARCHAR" property="salesman" />
+	<result column="parentCompanyName" jdbcType="VARCHAR" property="parentCompanyName" />
+	<result column="parentCompanyId" jdbcType="INTEGER" property="parentCompanyId" />
+	<result column="susername" jdbcType="VARCHAR" property="susername" />
+
+  </resultMap>
+  
+  <delete id="deleteCompanyInfoByUsername" parameterType="java.lang.String">
+		delete from company_info where username=#{username}
+  </delete>
+  <select id="getCompanyInfoByName" resultMap="BaseResultMap" parameterType="map">
+		SELECT   c.*,sr.role_name,su.username,d.name departmentName     FROM    company_info  c  
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN department d ON d.id = c.departmentId
+		where 1=1  
+		 <if test="companyName!=null and companyName!='' ">
+			 and c.name =#{companyName,jdbcType=INTEGER}
+		</if>
+		order by c.id 
+		limit 0,1
+	</select>
+	
+  <select id="getCompanyInfoByUsername" resultMap="BaseResultMap" parameterType="map">
+		SELECT   c.*,sr.role_name,su.username,d.name departmentName     FROM    company_info  c  
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN department d ON d.id = c.departmentId
+		where 1=1  
+		 <if test="username!=null and username!='' ">
+			 and c.username =#{username,jdbcType=INTEGER}
+		</if>
+		order by c.id 
+		limit 0,1
+	</select>
+	
+   <select id="getCompanyInfoByDepartmentId" resultMap="BaseResultMap" parameterType="map">
+		SELECT   c.*,sr.role_name,su.username,d.name departmentName     FROM    company_info  c  
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN department d ON d.id = c.departmentId
+		where 1=1   
+		 <if test="departmentId!=null and departmentId!='' ">
+			 and c.departmentId =#{departmentId,jdbcType=INTEGER}
+		</if>
+		order by c.id 
+		limit 0,1
+	</select>
+	
+  <select id="getCompanyInfoById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		SELECT   c.*,sr.role_name,su.username,d.name departmentName     FROM    company_info  c  
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN department d ON d.id = c.departmentId
+		where 1=1   
+		 <if test="id!=null and id!=''  ">
+			 and c.id =#{id,jdbcType=INTEGER}
+		</if>
+	</select>
+	
+	<select id="getAllFactorys" resultMap="BaseResultMap" parameterType="map">
+		SELECT   c.*,sr.role_name,su.username,d.name departmentName ,ci.name parentCompanyName,ci.id parentCompanyId    
+		FROM    company_info  c  
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN department d ON d.id = c.departmentId
+		LEFT JOIN company_info ci ON c.parentId = ci.id
+		
+		where 1=1   and   c.type=4
+        <if test="departmentCode!=null and departmentCode!='' ">
+			 and c.departmentCode like ""#{departmentCode}"%" 
+		</if>
+		 <if test="id!=null and id!='' ">
+			 and c.id =#{id,jdbcType=INTEGER}
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name =#{name,jdbcType=VARCHAR} 
+		</if>
+		<if test="phone!=null and phone!='' ">
+			 and c.phone =#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="contract_people!=null and contract_people!='' ">
+			 and c.contract_people =#{contract_people,jdbcType=VARCHAR} 
+		</if>
+		<if test="city!=null and city!='' ">
+			 and c.city =#{city,jdbcType=VARCHAR} 
+		</if>
+		<if test="county!=null and county!='' ">
+			 and c.county =#{county,jdbcType=VARCHAR} 
+		</if>
+		<if test="username!=null and username!='' ">
+			 and su.username =#{username,jdbcType=VARCHAR} 
+		</if>
+		order by c.name
+		limit #{currPage},#{pageSize}
+	</select>
+	
+	<select id="getAllFactorysCount"  parameterType="map" resultType="java.lang.Integer" >
+		SELECT   count(1)    FROM    company_info  c  
+		
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		
+		where 1=1   and   c.type=4
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and c.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+        <if test="departmentCode!=null and departmentCode!='' ">
+			 and c.departmentCode like ""#{departmentCode}"%" 
+		</if>
+		 <if test="id!=null and id!='' ">
+			 and c.id =#{id,jdbcType=INTEGER}
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name =#{name,jdbcType=VARCHAR} 
+		</if>
+		<if test="phone!=null and phone!='' ">
+			 and c.phone =#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="contract_people!=null and contract_people!='' ">
+			 and c.contract_people =#{contract_people,jdbcType=VARCHAR} 
+		</if>
+		<if test="city!=null and city!='' ">
+			 and c.city =#{city,jdbcType=VARCHAR} 
+		</if>
+		<if test="county!=null and county!='' ">
+			 and c.county =#{county,jdbcType=VARCHAR} 
+		</if>
+		<if test="username!=null and username!='' ">
+			 and su.username =#{username,jdbcType=VARCHAR} 
+		</if>
+	</select>
+	
+	<select id="getAllProxyFactorys" resultMap="BaseResultMap" parameterType="map">
+		SELECT   c.*,sr.role_name,su.username,d.name departmentName ,ci.name parentCompanyName,ci.id parentCompanyId    
+		FROM    company_info  c  
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN department d ON d.id = c.departmentId
+		LEFT JOIN company_info ci ON c.parentId = ci.id
+		
+		where 1=1   and   c.type=3
+        <if test="departmentCode!=null and departmentCode!='' ">
+			 and c.departmentCode like ""#{departmentCode}"%" 
+		</if>
+		 <if test="id!=null and id!='' ">
+			 and c.id =#{id,jdbcType=INTEGER}
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name =#{name,jdbcType=VARCHAR} 
+		</if>
+		<if test="phone!=null and phone!='' ">
+			 and c.phone =#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="contract_people!=null and contract_people!='' ">
+			 and c.contract_people =#{contract_people,jdbcType=VARCHAR} 
+		</if>
+		<if test="city!=null and city!='' ">
+			 and c.city =#{city,jdbcType=VARCHAR} 
+		</if>
+		<if test="county!=null and county!='' ">
+			 and c.county =#{county,jdbcType=VARCHAR} 
+		</if>
+		<if test="username!=null and username!='' ">
+			 and su.username =#{username,jdbcType=VARCHAR} 
+		</if>
+		order by c.name
+		limit #{currPage},#{pageSize}
+	</select>
+	
+	<select id="getAllProxyFactorysCount"  parameterType="map" resultType="java.lang.Integer" >
+		SELECT   count(1)    FROM    company_info  c  
+		
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		
+		where 1=1   and   c.type=3 
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and c.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+        <if test="departmentCode!=null and departmentCode!='' ">
+			 and c.departmentCode like ""#{departmentCode}"%" 
+		</if>
+		 <if test="id!=null and id!='' ">
+			 and c.id =#{id,jdbcType=INTEGER}
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name =#{name,jdbcType=VARCHAR} 
+		</if>
+		<if test="phone!=null and phone!='' ">
+			 and c.phone =#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="contract_people!=null and contract_people!='' ">
+			 and c.contract_people =#{contract_people,jdbcType=VARCHAR} 
+		</if>
+		<if test="city!=null and city!='' ">
+			 and c.city =#{city,jdbcType=VARCHAR} 
+		</if>
+		<if test="county!=null and county!='' ">
+			 and c.county =#{county,jdbcType=VARCHAR} 
+		</if>
+		<if test="username!=null and username!='' ">
+			 and su.username =#{username,jdbcType=VARCHAR} 
+		</if>
+	</select>
+	
+	<select id="getAllSales" resultMap="BaseResultMap" parameterType="map">
+		SELECT   c.*,sr.role_name,su.username susername,d.name departmentName ,ci.name parentCompanyName,ci.id parentCompanyId    
+		FROM    company_info  c  
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN department d ON d.id = c.departmentId
+		LEFT JOIN company_info ci ON c.parentId = ci.id
+		
+		where 1=1   and   c.type=0
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and c.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		
+		<if test="province!=null and province!='' ">
+			 and c.province like "%"#{province}"%" 
+		</if>
+		
+		<if test="city!=null and city!='' ">
+			 and c.city like "%"#{city}"%" 
+		</if>
+		<if test="county!=null and county!='' ">
+			 and c.county like "%"#{county}"%"  
+		</if>
+		
+		<if test="address!=null and address!='' ">
+			  and c.address like "%"#{address}"%" 
+		</if>
+		 <if test="assortment!=null   and   assortment!='' ">
+			 and sr.assortment =#{assortment}
+		</if>
+		
+		 <if test="type!=null and type!='' ">
+			 and c.type =#{type,jdbcType=INTEGER}
+		</if>
+		 <if test="parentCompanyName!=null and parentCompanyName!='' ">
+			 and ci.name like ""#{parentCompanyName}"%" 
+		</if>
+		
+        <if test="departmentCode!=null and departmentCode!='' ">
+			 and c.departmentCode like ""#{departmentCode}"%" 
+		</if>
+		 <if test="id!=null and id!='' ">
+			 and c.id =#{id,jdbcType=INTEGER}
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name like ""#{name}"%" 
+		</if>
+		<if test="phone!=null and phone!='' ">
+			 and c.phone =#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="contract_people!=null and contract_people!='' ">
+			 and c.contract_people =#{contract_people,jdbcType=VARCHAR} 
+		</if>
+		
+		<if test="username!=null and username!='' ">
+			 and su.username =#{username,jdbcType=VARCHAR} 
+		</if>
+		order by c.province,c.city,c.county,c.name
+		limit #{currPage},#{pageSize}
+	</select>
+	
+	<select id="getAllSalesCount"  parameterType="map" resultType="java.lang.Integer" >
+		SELECT   count(1)    FROM    company_info  c  
+		
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN company_info ci ON c.parentId = ci.id
+		
+		where 1=1   and   c.type=0 
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and c.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="province!=null and province!='' ">
+			 and c.province like "%"#{province}"%" 
+		</if>
+		
+		<if test="city!=null and city!='' ">
+			 and c.city like "%"#{city}"%" 
+		</if>
+		<if test="county!=null and county!='' ">
+			 and c.county like "%"#{county}"%"  
+		</if>
+		
+		<if test="address!=null and address!='' ">
+			  and c.address like "%"#{address}"%" 
+		</if>
+		
+		<if test="assortment!=null  and assortment!='' ">
+			 and sr.assortment =#{assortment}
+		</if>
+		
+		<if test="type!=null and type!='' ">
+			 and c.type =#{type,jdbcType=INTEGER}
+		</if>
+		
+		<if test="parentCompanyName!=null and parentCompanyName!='' ">
+			 and ci.name like ""#{parentCompanyName}"%" 
+		</if>
+		
+        <if test="departmentCode!=null and departmentCode!='' ">
+			 and c.departmentCode like ""#{departmentCode}"%" 
+		</if>
+		 <if test="id!=null and id!='' ">
+			 and c.id =#{id,jdbcType=INTEGER}
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name like ""#{name}"%" 
+		</if>
+		<if test="phone!=null and phone!='' ">
+			 and c.phone =#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="contract_people!=null and contract_people!='' ">
+			 and c.contract_people =#{contract_people,jdbcType=VARCHAR} 
+		</if>
+
+		<if test="username!=null and username!='' ">
+			 and su.username =#{username,jdbcType=VARCHAR} 
+		</if>
+	</select>
+	
+	<select id="getAllCustomersCount"  parameterType="map" resultType="java.lang.Integer" >
+		SELECT   count(1)    FROM    company_info  c  
+		
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN company_info ci ON c.parentId = ci.id
+		
+		where 1=1   and   c.type=1
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and c.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="djsale!=null and djsale!='' ">
+			  and ci.name like "%"#{djsale}"%" 
+		</if>
+		
+        <if test="departmentCode!=null and departmentCode!='' ">
+			 and c.departmentCode like ""#{departmentCode}"%" 
+		</if>
+		<if test="parentCompany!=null and parentCompany!='' ">
+			 and c.parentId =#{parentCompany,jdbcType=INTEGER}
+		</if>
+		 <if test="id!=null and id!='' ">
+			 and c.id =#{id,jdbcType=INTEGER}
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name like ""#{name}"%" 
+		</if>
+		
+		<if test="phone!=null and phone!='' ">
+			 and c.phone =#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="contract_people!=null and contract_people!='' ">
+			 and c.contract_people =#{contract_people,jdbcType=VARCHAR} 
+		</if>
+		<if test="province!=null and province!='' ">
+			 and c.province like "%"#{province}"%" 
+		</if>
+		
+		<if test="city!=null and city!='' ">
+			 and c.city like "%"#{city}"%" 
+		</if>
+		
+		<if test="county!=null and county!='' ">
+			 and c.county like "%"#{county}"%"  
+		</if>
+		
+		<if test="address!=null and address!='' ">
+			  and c.address like "%"#{address}"%" 
+		</if>
+
+		<if test="username!=null and username!='' ">
+			 and su.username =#{username,jdbcType=VARCHAR} 
+		</if>
+		
+	</select>
+	
+	<select id="getAllCustomers" resultMap="BaseResultMap" parameterType="map">
+		SELECT   c.*,sr.role_name,su.username susername,d.name departmentName ,ci.name parentCompanyName,ci.id parentCompanyId    
+		FROM    company_info  c  
+		LEFT JOIN sys_users su ON su.companyId = c.id
+		LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+		LEFT JOIN sys_roles sr ON sr.role_id = sur.role_id
+		LEFT JOIN department d ON d.id = c.departmentId
+		LEFT JOIN company_info ci ON c.parentId = ci.id
+		
+		
+		where 1=1   and   c.type=1
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and c.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="djsale!=null and djsale!='' ">
+			  and ci.name like "%"#{djsale}"%" 
+		</if>
+		
+		<if test="address!=null and address!='' ">
+			  and c.address like "%"#{address}"%" 
+		</if>
+		
+		<if test="province!=null and province!='' ">
+			 and c.province like "%"#{province}"%" 
+		</if>
+		
+		<if test="city!=null and city!='' ">
+			 and c.city like "%"#{city}"%" 
+		</if>
+		
+		<if test="county!=null and county!='' ">
+			 and c.county like "%"#{county}"%"  
+		</if>
+		
+        <if test="departmentCode!=null and departmentCode!='' ">
+			 and c.departmentCode like ""#{departmentCode}"%" 
+		</if>
+		<if test="parentCompany!=null and parentCompany!='' ">
+			 and c.parentId =#{parentCompany,jdbcType=INTEGER}
+		</if>
+		
+		<if test="id!=null and id!='' ">
+			 and c.id =#{id,jdbcType=INTEGER}
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name like ""#{name}"%" 
+		</if>
+		<if test="phone!=null and phone!='' ">
+			 and c.phone =#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="contract_people!=null and contract_people!='' ">
+			 and c.contract_people =#{contract_people,jdbcType=VARCHAR} 
+		</if>
+
+		<if test="username!=null and username!='' ">
+			 and su.username =#{username,jdbcType=VARCHAR} 
+		</if>
+		
+		order by c.province,c.city,c.county,c.name
+		
+		limit #{currPage},#{pageSize}
+	</select>
+
+	<insert id="insertCompany"   parameterType="com.ym.iadpush.manage.entity.CompanyInfo"  keyProperty="id">
+		insert into company_info(shippingAddress,name,phone,address,contract_people,departmentCode,departmentId,type,bycode,province,city,county,towns,mobilePhone,parentId,salesman,username,createUid)
+		values(#{shippingAddress},#{name},#{phone},#{address},#{contract_people},#{departmentCode},#{departmentId},#{type},#{bycode},#{province},#{city},#{county},#{towns},#{mobilePhone},#{parentId},#{salesman},#{username},#{createUid})
+	</insert>
+	
+	<insert id="updateCompanyInfo">
+		update company_info set
+		username=#{company.username,jdbcType=VARCHAR},address=#{company.address,jdbcType=VARCHAR},phone=#{company.phone,jdbcType=VARCHAR},city=#{company.city,jdbcType=VARCHAR},
+		mobilePhone=#{company.mobilePhone,jdbcType=VARCHAR},province=#{company.province,jdbcType=VARCHAR},
+		county=#{company.county,jdbcType=VARCHAR},towns=#{company.towns,jdbcType=VARCHAR},contract_people=#{company.contract_people,jdbcType=VARCHAR},name=#{company.name,jdbcType=VARCHAR},bycode=#{company.bycode,jdbcType=VARCHAR},shippingAddress=#{company.shippingAddress,jdbcType=VARCHAR}
+		where id=#{id,jdbcType=INTEGER}
+	</insert>
+	
+</mapper>

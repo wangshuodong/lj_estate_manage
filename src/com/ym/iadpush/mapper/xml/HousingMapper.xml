@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.HousingMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Housing">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="warehouseId" jdbcType="INTEGER" property="warehouseId" />
+		<result column="productId" jdbcType="INTEGER" property="productId" />
+	</resultMap>
+	
+	<insert id="deleteHousingByParams" parameterType="map">
+		update housing set deleteStatus = 1 where 1!=1
+		<if test="departmentId!=null and departmentId!='' ">
+			or departmentId = #{departmentId}
+		</if>
+	</insert>
+	
+	<insert id="deleteHousing" parameterType="java.lang.Integer">
+		update housing set deleteStatus = 1 where id=#{id}
+	</insert>
+	
+	<insert id="changeDepartment" parameterType="map">
+		UPDATE housing SET departmentCode = #{departmentCode},departmentId = #{departmentId} WHERE id = #{housingId}
+	</insert>
+	
+	<resultMap id="enterBillStatement" type="com.ym.iadpush.manage.entity.EnterBillStatement">
+		<result column="number" property="number" jdbcType="DECIMAL" />
+		<result column="money" property="money" jdbcType="DECIMAL" />
+	</resultMap>
+	<insert id="addSmsCount" parameterType="map">
+		update housing set smsCount = smsCount + #{smsCount} where id = #{housingId,jdbcType=INTEGER}
+	</insert>
+	<insert id="subtractSmsCount" parameterType="java.lang.Integer">
+		update housing set smsCount = smsCount -1 where id = #{housingId,jdbcType=INTEGER}
+	</insert>
+	<insert id="updateHousing">
+		update housing set 
+		community_id=#{housing.community_id,jdbcType=VARCHAR},init=#{housing.init,jdbcType=INTEGER},address=#{housing.address,jdbcType=VARCHAR},
+		address=#{housing.address,jdbcType=VARCHAR},community_address=#{housing.community_address,jdbcType=VARCHAR},token=#{housing.token,jdbcType=VARCHAR},
+		phone=#{housing.phone,jdbcType=VARCHAR},pid=#{housing.pid,jdbcType=VARCHAR},payAccount=#{housing.payAccount,jdbcType=VARCHAR},community_locations=#{housing.community_locations,jdbcType=VARCHAR},
+		name=#{housing.name,jdbcType=VARCHAR},province_code=#{housing.province_code,jdbcType=VARCHAR},city_code=#{housing.city_code,jdbcType=VARCHAR},district_code=#{housing.district_code,jdbcType=VARCHAR},
+		saleId=#{housing.saleId,jdbcType=INTEGER}
+		where id=#{housingId,jdbcType=INTEGER}
+	</insert>
+	
+	<select id="getHousingByName" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT h.*, d.name departmentName  FROM housing h
+		LEFT JOIN department d on d.id=h.departmentId
+		where 1=1  
+		and h.name=#{houseingName,jdbcType=VARCHAR} and deleteStatus = 0  limit 0,1 
+	</select>
+	
+	<select id="getHousingById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		SELECT h.*, d.name departmentName  FROM housing h
+		LEFT JOIN department d on d.id=h.departmentId
+		where 1=1  
+		and h.id=#{id,jdbcType=INTEGER}
+		and deleteStatus = 0
+	</select>
+	
+	<insert id="insertHousing" parameterType="com.ym.iadpush.manage.entity.Housing"
+		keyProperty="id">
+		insert  into  housing  (saleId,token,app_id,private_key,alipay_public_key,community_locations,district_code,city_code,province_code,community_address,createUid,phone,contractPeople,pid,payAccount,departmentCode,departmentId,name,remark,address)
+		values(#{saleId},#{token},#{app_id},#{private_key},#{alipay_public_key},#{community_locations},#{district_code},#{city_code},#{province_code},#{community_address},#{createUid},#{phone},#{contractPeople},#{pid},#{payAccount},#{departmentCode},#{departmentId},#{name},#{remark},#{address})
+	</insert>
+	
+	<select id="getAllHousings" resultMap="BaseResultMap">
+	
+		SELECT h.*, d.name departmentName  FROM housing h
+		LEFT JOIN department d on d.id=h.departmentId
+		where 1=1  
+		and deleteStatus = 0
+	</select>
+	
+	
+	<select id="getHousingsCount" resultType="java.lang.Integer"
+		parameterType="map">
+		SELECT count(*)  FROM housing h
+		LEFT JOIN department d on d.id=h.departmentId
+		where 1=1  
+		and h.deleteStatus = 0
+		<if test="housingId!=null and housingId!='' ">
+			 and h.id = #{housingId}
+		</if>
+		<if test="remark!=null and remark!='' ">
+			 and h.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and h.departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			 and h.saleId = #{saleUserId}
+		</if>
+		<if test="name!=null and name!='' ">
+			 and h.name like "%"#{name}"%" 
+		</if>
+	</select>
+	
+	
+	<select id="getHousings" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT h.*, d.name departmentName  FROM housing h
+		LEFT JOIN department d on d.id=h.departmentId
+		where 1=1
+		and h.deleteStatus = 0  
+		<if test="housingId!=null and housingId!='' ">
+			 and h.id = #{housingId}
+		</if>
+		<if test="remark!=null and remark!='' ">
+			 and h.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and h.departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="departmentId!=null and departmentId!='' ">
+			and h.departmentId = #{departmentId}
+		</if>
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			 and h.saleId = #{saleUserId}
+		</if>
+		
+		<if test="name!=null and name!='' ">
+			 and h.name like "%"#{name}"%" 
+		</if>
+		order by id desc 
+		<if test="currPage!=null and currPage!='' or currPage>=0">
+				limit #{currPage},#{pageSize}
+		</if>
+		<if test="currPage==null and currPage==''">
+			 limit #{pageSize} 
+		</if>
+	</select>
+	
+</mapper>

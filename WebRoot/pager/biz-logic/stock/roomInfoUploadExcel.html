@@ -1,0 +1,63 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|账单EXCEL导入</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+a {cursor: pointer}
+td {font-size:10px;}
+</style>
+<script type="text/javascript" src="${base}/assets/common/jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js"></script>
+<link rel="stylesheet" href="${base}/assets/common/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" type="text/css"></link>
+</head>
+<body>  
+     <form   role="form" action="readRoomInfoExcel.html" method="post" enctype="multipart/form-data">     
+            <div class="form-group">  
+                <label for="file">请选择需要导入的房屋信息</label>  
+                <input type="file" class="form-control" id="excelRoomInfoFile" name="excelRoomInfoFile">  
+            </div></br>
+            <div>  
+                <input type="submit" value="开始导入房屋">  &nbsp; &nbsp; &nbsp; &nbsp;
+                <input type="reset" value="重置">  
+            </div></br>
+             <div>   
+                <font color='red'>上传后请耐心等待，请勿再次操作，系统会反馈房屋导入结果，谢谢支持。</font>
+            </div>  
+        </form> 
+ <#include "../footer.html">
+</body>  
+</html> 
+</@compress>
+<script type="text/javascript">  
+        var dg;  
+        $(document).ready(function(){             
+            dg = frameElement.lhgDG;  
+            dg.addBtn('ok','保存',function(){  
+            $("#batchAdd").submit();  
+            this.disabled=true;                       
+            });  
+        });  
+          
+        function success(){  
+            if(dg.curWin.document.forms[0]){  
+                dg.curWin.document.forms[0].action = dg.curWin.location+"";  
+                dg.curWin.document.forms[0].submit();  
+            }else{  
+                dg.curWin.location.reload();  
+            }  
+            dg.cancel();  
+        }  
+          
+        function failed(){  
+            alert("上传失败！");  
+        }  
+
+</script>  

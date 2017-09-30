@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.DepartmentMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Department">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="contact_people" jdbcType="VARCHAR" property="contact_people" />
+		<result column="bycode" jdbcType="VARCHAR" property="bycode" />
+		<result column="parentId" jdbcType="INTEGER" property="parentId" />
+		<result column="parentName" property="parentName" jdbcType="VARCHAR" />
+		<result column="companyName" property="companyName" jdbcType="VARCHAR" />
+		
+	</resultMap>
+	<select id="getDepartmentByCode" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT d.*,su.username  FROM department d 
+		LEFT JOIN  sys_users su on su.user_id=d.saleId
+		WHERE 1=1
+		<if test="code!=null and code!='' ">
+			and d.code like ""#{code}"%" 
+		</if>
+		<if test="id != null and id != ''">
+			and d.id = #{id}
+		</if>
+		order by d.code,d.name 
+	</select>
+
+	<select id="getDepartmentById" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT * FROM department d WHERE 1=1 and
+		id=#{departmentId};
+	</select>
+
+	<select id="countByParam" resultType="java.lang.Integer"
+		parameterType="map">
+		select count(1) from department d  left join  company_info c on d.id=c.departmentId
+		<include refid="queryByParam_Where_Sql" />
+	</select>
+
+	<select id="queryByParam" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT d.*,IFNULL(p.name,'') parentName,IFNULL(c.name,'') companyName  FROM department d  
+		left join  company_info c on d.id=c.departmentId
+		left join department p on p.id = d.parentId
+		
+		<include refid="queryByParam_Where_Sql" />
+
+		order by d.code
+		
+		limit ${pageSize*currPage},${pageSize}
+	</select>
+
+	<sql id="queryByParam_Where_Sql">
+		<where>
+			<if test="code!=null and code!='' ">
+				and d.code like ""#{code}"%"
+			</if>
+			<if test="orgName != null and orgName != ''">
+				and d.name like ""#{orgName}"%"
+			</if>
+			<if test="companyName != null and companyName != ''">
+				and c.name like ""#{companyName}"%"
+			</if>
+		</where>
+	</sql>
+
+	<insert id="insert" parameterType="com.ym.iadpush.manage.entity.Department">
+		insert into
+		department(saleId,code,name,address,phone,contact_people,parentId,bycode)
+		values(#{saleId},#{code},#{name},#{address},#{phone},#{contact_people},#{parentId},#{bycode})
+	</insert>
+	<update id="update" parameterType="com.ym.iadpush.manage.entity.Department">
+		update department
+		<set>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="code != null">
+				code = #{code},
+			</if>
+			<if test="address != null">
+				address = #{address},
+			</if>
+			<if test="phone != null">
+				phone = #{phone},
+			</if>
+			<if test="bycode != null">
+				bycode = #{bycode},
+			</if>
+			<if test="contact_people != null">
+				contact_people = #{contact_people},
+			</if>
+			<if test="parentId != null">
+				parentId = #{parentId},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="delById">
+		delete from department where id = #{id}
+	</delete>
+
+	<select id="selectMaxByParentCode" resultType="com.ym.iadpush.manage.entity.Department">
+		select * from
+		department where code like ""#{code}"%" and code!=#{code} order by
+		code desc limit 0,1
+	</select>
+</mapper>

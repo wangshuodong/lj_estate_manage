@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.MemberLevelMapper" >
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.MemberLevel" >
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="level" property="level" jdbcType="INTEGER" />
+		<result column="desc" property="desc" jdbcType="VARCHAR" />
+		<result column="rate" property="rate" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<sql id="query_where_Sql">
+		<where>
+			<if test="name != null">
+				and `desc` like concat('%', #{desc,jdbcType=VARCHAR}, '%')
+			</if>
+		</where>
+	</sql>
+	
+	<select id="query" resultMap="BaseResultMap" parameterType="map">
+		select * from member_level <include refid="query_where_Sql"/> limit ${pageSize*currPage},${pageSize}
+	</select>
+	
+		
+	<select id="countByQuery" resultType="java.lang.Integer" parameterType="map">
+		select count(1) from member_level
+	</select>
+	
+	<select id="queryAll" resultMap="BaseResultMap">
+		select * from member_level <include refid="query_where_Sql"/>
+	</select>
+	
+	<insert id="insert" parameterType="com.ym.iadpush.manage.entity.MemberLevel">
+		insert into member_level(level,`desc`,rate) values(#{level},#{desc},#{rate})
+	</insert>
+	
+	<update id="updte" parameterType="com.ym.iadpush.manage.entity.MemberLevel">
+		update member_level set level=#{level},`desc`=#{desc},rate=#{rate} where id=#{id}
+	</update>
+	
+	<select id="findById" resultType="com.ym.iadpush.manage.entity.MemberLevel">
+		select * from member_level where id=#{id}
+	</select>
+	<delete id="deleteById">
+		delete from member_level where id = #{id}
+	</delete>
+
+	
+</mapper>

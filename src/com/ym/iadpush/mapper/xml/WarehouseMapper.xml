@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.WarehouseMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Warehouse">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="contract_people" jdbcType="VARCHAR" property="contract_people" />
+		<result column="mobilePhone" jdbcType="VARCHAR" property="mobilePhone" />
+		<result column="companyId" jdbcType="INTEGER" property="companyId" />
+	</resultMap>
+	
+	 <delete id="deleteWarehouse" parameterType="java.lang.Integer">
+		delete from warehouse where id=#{id}
+  	</delete>
+  	
+  	<insert id="updateWarehouse">
+		update warehouse set
+		name=#{warehouse.name,jdbcType=VARCHAR},address=#{warehouse.address,jdbcType=VARCHAR},
+		phone=#{warehouse.phone,jdbcType=VARCHAR},mobilePhone=#{warehouse.mobilePhone,jdbcType=VARCHAR},contract_people=#{warehouse.contract_people,jdbcType=VARCHAR}
+		where  id=#{id,jdbcType=INTEGER}
+	</insert>
+  
+	<select id="getAllWarehouses" resultMap="BaseResultMap"
+		parameterType="map">
+		select  w.*,c.name companyName  from warehouse  w 
+		left join company_info  c  on w.companyId=c.id
+		where 1=1
+	</select>
+	
+	<select id="getAllWarehousesByCompanyId" resultMap="BaseResultMap" 	parameterType="java.lang.Integer">
+		select  w.*,c.name companyName  from warehouse  w 
+		left join company_info  c  on w.companyId=c.id
+		where 1=1
+		
+		and w.companyId=#{companyId,jdbcType=INTEGER}
+		
+	</select>
+	
+	<select id="getWarehouseById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select  w.*,c.name companyName  from warehouse  w 
+		left join company_info  c  on w.companyId=c.id
+		where 1=1
+		and w.id=#{id,jdbcType=INTEGER}
+	</select>
+	
+	<insert id="insertWarehouse" parameterType="com.ym.iadpush.manage.entity.Warehouse"
+		keyProperty="id">
+		insert  into  warehouse (companyId,name,address,phone,mobilePhone,contract_people,city)
+		values(#{companyId},#{name},#{address},#{phone},#{mobilePhone},#{contract_people},#{city} )
+	</insert>
+</mapper>

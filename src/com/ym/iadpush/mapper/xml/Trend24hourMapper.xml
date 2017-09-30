@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.Trend24hourMapper" >
+	<resultMap type="com.ym.iadpush.manage.entity.Trend24hour" id="trend24hour_resultMap">
+		<result column="count" property="count"/>
+		<result column="hour" property="hour"/>
+	</resultMap>
+	<sql id="queryTrend24hour_Where">
+		<where>
+			<if test="date != null"> AND adate = #{date,jdbcType=DATE}</if>
+			<if test="appkey != null"> AND appkey = #{appkey,jdbcType=VARCHAR}</if>
+			<if test="kv != null">AND kv = #{kv,jdbcType=VARCHAR}</if>
+			<if test="serviceId != null">And uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+		</where>
+	</sql>
+	<select id="queryTrend24hour" resultMap="trend24hour_resultMap" parameterType="map">
+		SELECT SUM(${column}) count,hour FROM iadpush_vcount <include refid="queryTrend24hour_Where"/>  GROUP BY `hour`
+	</select>
+    
+    <select id="queryPayTrend24hour" resultType="map" parameterType="map">
+      select sum(a.earn_money) count,a.hour from earn a
+        LEFT JOIN sys_users b ON a.uid = b.user_id
+        LEFT JOIN app c ON a.appid = c.id
+      	<where>
+      	  <if test="username != null and username != ''">and b.username=#{username,jdbcType=VARCHAR}</if>
+      	  <if test="appname != null and appname != ''">and c.name=#{appname,jdbcType=VARCHAR}</if>
+      	  <if test="date != null">and a.edate = #{date,jdbcType=DATE}</if>
+      	  <if test="serviceId != null">And a.uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+      	</where>
+      group by a.hour
+    </select>
+    
+</mapper>

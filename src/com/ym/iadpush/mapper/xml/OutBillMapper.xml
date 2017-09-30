@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.OutBillMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.OutBill">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="warehouseId" jdbcType="INTEGER" property="warehouseId" />
+		<result column="productId" jdbcType="INTEGER" property="productId" />
+		<result column="stockMonth" jdbcType="INTEGER" property="stockMonth" />
+		<result column="stockDetail" jdbcType="INTEGER" property="stockDetail" />
+		<result column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="number" jdbcType="INTEGER" property="number" />
+		<result column="price" jdbcType="DECIMAL" property="price" />
+		<result column="money" jdbcType="DECIMAL" property="money" />
+		<result column="outsideCode" jdbcType="VARCHAR" property="outsideCode" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="departmentCode" jdbcType="VARCHAR" property="departmentCode" />
+		<result column="companyId" jdbcType="INTEGER" property="companyId" />
+		<result column="departmentId" jdbcType="INTEGER" property="departmentId" />
+		<result column="orderCode" jdbcType="VARCHAR" property="orderCode" />
+		<result column="orderId" jdbcType="INTEGER" property="orderId" />
+		
+	</resultMap>
+	
+	<resultMap id="outBillStatement" type="com.ym.iadpush.manage.entity.OutBillStatement">
+		<result column="number" property="number" jdbcType="DECIMAL" />
+		<result column="money" property="money" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<select id="getAllOutBillsCollect" resultMap="outBillStatement"  parameterType="map">
+		select  sum(o.number)  number,sum(o.money) money   from outbill  o
+		left join warehouse w on w.id=o.warehouseId
+		left join company_info c on c.id=o.companyId
+		left join product p on p.id=o.productId
+		left join orders  od  on od.id=o.orderId
+		
+		where 1=1
+		
+		<if test="orderCode!=null and orderCode!='' ">
+			 and od.code like "%"#{orderCode}"%" 
+		</if>
+		
+		<if test="companyName!=null and companyName!='' ">
+			 and c.name like "%"#{companyName}"%" 
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and o.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and o.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="orderCode!=null and orderCode!='' ">
+			 and od.code like "%"#{orderCode}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and o.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and o.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and o.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and o.productId =#{product}
+		</if>
+		
+	</select>
+	
+	<select id="getAllOutBillsCount"   parameterType="map" 	resultType="java.lang.Integer">
+		select  count(1)  from outbill  o
+		left join warehouse w on w.id=o.warehouseId
+		left join company_info c on c.id=o.companyId
+		left join product p on p.id=o.productId
+		left join orders  od  on od.id=o.orderId
+		
+		where 1=1
+		
+		<if test="orderCode!=null and orderCode!='' ">
+			 and od.code like "%"#{orderCode}"%" 
+		</if>
+		
+		<if test="companyName!=null and companyName!='' ">
+			 and c.name like "%"#{companyName}"%" 
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and o.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and o.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="orderCode!=null and orderCode!='' ">
+			 and od.code like "%"#{orderCode}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and o.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and o.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and o.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and o.productId =#{product}
+		</if>
+	</select>
+	
+	<select id="getAllOutBills" resultMap="BaseResultMap"
+		parameterType="map">
+		select  o.*,w.name warehouseName,c.name companyName,p.name productName,p.unit unit,od.code orderCode  from outbill  o
+		left join warehouse w on w.id=o.warehouseId
+		left join company_info c on c.id=o.companyId
+		left join product p on p.id=o.productId
+		left join orders  od  on od.id=o.orderId
+		
+		where 1=1
+		
+		<if test="orderCode!=null and orderCode!='' ">
+			 and od.code like "%"#{orderCode}"%" 
+		</if>
+		
+		<if test="companyName!=null and companyName!='' ">
+			 and c.name like "%"#{companyName}"%" 
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and o.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and o.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="orderCode!=null and orderCode!='' ">
+			 and od.code like "%"#{orderCode}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and o.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and o.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and o.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and o.productId =#{product}
+		</if>
+		
+		order by o.id desc 
+		limit #{currPage},#{pageSize}
+	</select>
+	
+	<select id="getOutBillById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select  *  from outbill  o
+		where 1=1
+		and o.id=#{id,jdbcType=INTEGER}
+	</select>
+	
+	<insert id="insertOutBill" parameterType="com.ym.iadpush.manage.entity.OutBill"
+		keyProperty="id">
+		insert  into  outbill (orderId,departmentCode,companyId,departmentId,uid,addate,createTime,code,outsideCode,warehouseId,productId,number,price,money,remark,stockMonth,stockDetail )
+		values(#{orderId},#{departmentCode},#{companyId},#{departmentId},#{uid},#{addate},#{createTime},#{code},#{outsideCode},#{warehouseId},#{productId},#{number},#{price},#{money},#{remark},#{stockMonth},#{stockDetail} )
+	</insert>
+	
+	<select id="getMaxOutBillCode" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT  *  from outbill   where 1=1
+		and  code like ""#{date}"%"     order by code desc  limit 0,1
+	</select>
+</mapper>

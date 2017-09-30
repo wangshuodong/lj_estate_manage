@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.FileUploadMapper" >
+	
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Upload" >
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="realname" property="realname" jdbcType="INTEGER" />
+		<result column="filename" property="filename" jdbcType="VARCHAR" />
+		<result column="filemodule" property="filemodule" jdbcType="VARCHAR" />
+		<result column="moduleid" property="moduleid" jdbcType="INTEGER" />
+		<result column="path" property="path" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<insert id="insertFileUpload" parameterType="map" >  
+		
+	    insert into fileupload (realname,filename,filemodule,moduleid,path,uploadtime,filetype,filesize,update_time) values 
+	    					   (#{realname},#{filename},#{filemodule},#{moduleid},#{path},#{uploadtime},#{filetype},#{filesize},now())
+	    					   
+	</insert>  
+	
+	<sql id="Where_Clause">
+		<choose>
+			<when test="moduleid!=null and filemodule!=null">
+				and  moduleid=#{moduleid} and filemodule=#{filemodule}
+			</when>
+			<when test="id!=null">
+				and  id=#{id}
+			</when>
+		</choose>
+  	</sql>
+	
+	<select id="selectFileUpload" parameterType="map" resultMap="BaseResultMap">
+		select id,realname,filename,filemodule,moduleid,path from fileupload where 1=1
+		<include refid="Where_Clause" /> 
+	</select>
+	
+	<delete id="deleteFileUpload" parameterType="map">
+		delete from fileupload where 1=1 
+		<include refid="Where_Clause" /> 
+	</delete>
+	
+	
+</mapper>

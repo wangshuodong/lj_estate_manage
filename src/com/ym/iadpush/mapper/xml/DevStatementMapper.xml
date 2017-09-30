@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.DevStatementMapper">
+	
+	<resultMap type="com.ym.iadpush.manage.entity.DevStatement" id="devStatement">
+		<result column="uid" property="uid" jdbcType="INTEGER"/>
+		<result column="username" property="userName" jdbcType="VARCHAR"/> 
+		<result column="rate" property="rate" jdbcType="DOUBLE"/>
+		<result column="icount" property="icount" jdbcType="INTEGER"/>
+		<result column="acount" property="acount" jdbcType="INTEGER"/>
+		<result column="earn" property="earn" jdbcType="DOUBLE"/>
+	</resultMap>
+	<resultMap type="com.ym.iadpush.manage.entity.DevStatement" id="sumDevStatement">
+		<result column="rate" property="rate" jdbcType="DOUBLE"/>
+		<result column="icount" property="icount" jdbcType="INTEGER"/>
+		<result column="acount" property="acount" jdbcType="INTEGER"/>
+		<result column="earn" property="earn" jdbcType="DOUBLE"/>
+	</resultMap>
+	<resultMap type="com.ym.iadpush.manage.entity.DevStatementDetail" id="devStatementDetail">
+		<result column="uid" property="uid" jdbcType="INTEGER"/>
+		<result column="username" property="userName" jdbcType="VARCHAR"/> 
+		<result column="appname" property="appName" jdbcType="VARCHAR"/>
+		<result column="appid" property="appid" jdbcType="INTEGER"/>
+		<result column="rate" property="rate" jdbcType="DOUBLE"/>
+		<result column="icount" property="icount" jdbcType="INTEGER"/>
+		<result column="acount" property="acount" jdbcType="INTEGER"/>
+		<result column="earn" property="earn" jdbcType="DOUBLE"/>
+	</resultMap>
+	<resultMap type="com.ym.iadpush.manage.entity.DevStatementDetail" id="sumDevStatementDetail">
+		<result column="rate" property="rate" jdbcType="DOUBLE"/>
+		<result column="icount" property="icount" jdbcType="INTEGER"/>
+		<result column="acount" property="acount" jdbcType="INTEGER"/>
+		<result column="earn" property="earn" jdbcType="DOUBLE"/>
+	</resultMap>
+	
+	<sql id="Report_Where_Clause">
+		<where>
+			<if test="startDate != null">AND   <![CDATA[addate >= #{startDate,jdbcType=DATE}]]>
+			</if>
+			<if test="endDate != null">AND <![CDATA[addate <= #{endDate,jdbcType=DATE}]]></if>
+			<if test="serviceId != null">And uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+		</where>
+	</sql>
+	<sql id="User_Where_Clause">
+		<where>
+			<if test="username != null">AND  <![CDATA[ username like  concat('%', #{username,jdbcType=VARCHAR}, '%')]]></if>
+			<if test="serviceName != null">AND <![CDATA[serviceName like concat('%', #{serviceName,jdbcType=VARCHAR}, '%')]]></if>
+			<if test="uid != null">AND user_id = #{uid,jdbcType=INTEGER}</if>
+			<if test="serviceId != null">And user_id in (select user_id from sys_users where serviceId = #{serviceId})</if>
+		</where>
+	</sql>
+	<sql id="commonDevStatementSql">
+		SELECT
+			su.user_id uid,
+			su.username username,
+			su.rate rate,
+			dr.uid duid,
+			SUM(dr.acount) acount,
+			SUM(dr.icount) icount,
+			SUM(dr.earn) earn
+		FROM
+			(select uid,icount,acount,earn,appid,addate from developer_report <include refid="Report_Where_Clause" /> ) dr
+		LEFT JOIN (select rate,user_id,serviceId,username  from sys_users  <include refid="User_Where_Clause" /> ) su  ON su.user_id = dr.uid
+		<where>
+			<if test="username != null">AND  <![CDATA[ su.username like  concat('%', #{username,jdbcType=VARCHAR}, '%')]]></if>
+			<if test="serviceName != null">AND <![CDATA[su.serviceName like concat('%', #{serviceName,jdbcType=VARCHAR}, '%')]]></if>
+			<if test="serviceId != null">And uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+		</where>
+		GROUP BY dr.uid
+	</sql>
+	<select id="queryDevStatement" resultMap="devStatement" parameterType="map">
+		select IFNULL( dev.username, CONCAT("未知用户ID:", dev.duid)) username, dev.rate, dev.acount, dev.icount, dev.earn,dev.uid from (<include refid="commonDevStatementSql" />) dev order by dev.earn desc
+		limit ${pageNo*pageSize},#{pageSize}
+	</select>
+	<select id="countDevStatement" resultType="java.lang.Integer" parameterType="map">
+		select count(1) count from (
+			<include refid="commonDevStatementSql" />
+		) a
+	</select>
+	<select id="sumDevStatement" resultMap="sumDevStatement">
+		select sum(a.earn) earn,sum(a.acount) acount,sum(a.icount) icount,avg(a.rate) rate from (
+			<include refid="commonDevStatementSql" />
+		) a
+	</select>
+	
+	<sql id="queryDevStatementDetailSql">
+		SELECT
+			SUM(dr.acount) acount,
+			SUM(dr.icount) icount,
+			SUM(dr.earn) earn,
+			a.name appname,
+			a.id appid,
+			su.rate,
+			IFNULL( su.username, CONCAT("未知用户ID:", dr.uid)) username
+		FROM
+			(select * from developer_report <include refid="Report_Where_Clause"/> ) dr
+		LEFT JOIN app a ON a.id = dr.appid
+		LEFT JOIN sys_users su ON su.user_id = dr.uid
+		<where>
+			<if test="username != null">AND  <![CDATA[ su.username like  concat('%', #{username,jdbcType=VARCHAR}, '%')]]></if>
+			<if test="serviceName != null">AND <![CDATA[su.serviceName like concat('%', #{serviceName,jdbcType=VARCHAR}, '%')]]></if>
+			<if test="uid != null">AND su.user_id = #{uid,jdbcType=INTEGER}</if>
+			<if test="serviceId != null">And dr.uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+		</where>
+		GROUP BY
+			dr.uid,
+			a.id
+	</sql>
+	<select id="queryDevStatementDetail" resultMap="devStatementDetail" parameterType="map">
+		select * from (
+		<include refid="queryDevStatementDetailSql"/>) a order by a.earn desc limit ${pageNo*pageSize},#{pageSize}
+	</select>
+	<select id="countDevStatementDetail" resultType="java.lang.Integer" parameterType="map">
+		select count(1) from (
+			<include refid="queryDevStatementDetailSql"/>
+		) a
+	</select>
+ 	<select id="sumDevStatementDetail" resultMap="sumDevStatementDetail" parameterType="map">
+		select sum(a.acount) acount,sum(a.icount) icount,sum(earn) earn,avg(a.rate) rate from (<include refid="queryDevStatementDetailSql"/>) a
+	</select> 
+	<sql id="AppStatement_sql">
+		(select * FROM developer_report 
+		<where>
+			<if test="startDate != null">AND <![CDATA[addate >= #{startDate}]]> </if>
+			<if test="endDate != null">AND <![CDATA[addate <= #{endDate}]]> </if>
+			<if test="appid != null">AND appid = #{appid}</if>
+			<if test="uid != null">AND uid = #{uid}</if>
+			<if test="serviceId != null">AND uid in(select user_id from sys_users where serviceId=#{serviceId})</if>
+			<if test="noservice != null">AND uid in(select user_id  from sys_users where serviceId is null or serviceId=0)</if>
+		</where>
+		) dr left join app a on a.id = dr.appid 
+		left join sys_users u on u.user_id = dr.uid
+		left join sys_users kefu on kefu.user_id = u.serviceId
+		<where>
+			<if test="qid != null">
+				AND a.qid = #{qid}
+			</if>
+			<if test="appname != null">
+				AND a.name like  concat('%', #{appname,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="username != null">
+				AND u.username like  concat('%', #{username,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="status != null">
+				AND a.`status` = #{status}
+			</if>
+		</where>
+	</sql>
+	<select id="queryAppStatement" parameterType="map" resultType="com.ym.iadpush.manage.entity.AppStatement">
+		SELECT kefu.user_id serviceId,kefu.username serviceName,dr.addate date,SUM(dr.earn) earn,SUM(dr.acount) acount,sum(dr.icount) icount,IFNULL(a.id,dr.appid) appid,IFNULL(a.uid,dr.uid) uid,a.qid qid,a.name appname,u.username username,a.status status from <include refid="AppStatement_sql"/> 
+		GROUP BY
+			addate,
+			appid
+		ORDER BY
+			dr.addate DESC
+		limit ${currPage*pageSize},${pageSize}
+	</select>
+	<select id="sumAppStatement" parameterType="map" resultType="com.ym.iadpush.manage.entity.AppStatement">
+		select SUM(dr.earn) earn,SUM(dr.acount) acount,sum(dr.icount) icount FROM <include refid="AppStatement_sql"/>
+	</select>
+	<select id="countQueryAppStatement" parameterType="map" resultType="java.lang.Integer">
+		select count(1) count from (select addate from  <include refid="AppStatement_sql"/>  GROUP BY addate,appid) a
+	</select>
+</mapper>

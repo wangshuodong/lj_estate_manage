@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.BuildingMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Building">
+		<result column="id" jdbcType="INTEGER" property="id" />
+	</resultMap>
+	
+	<insert id="deleteBuildingByParams" parameterType="map">
+		update building set deleteStatus = 1 where 1!=1
+		<if test="housingId!=null and housingId!='' ">
+			or housingId = #{housingId}
+		</if>
+		<if test="departmentId!=null and departmentId!='' ">
+			or departmentId = #{departmentId}
+		</if>
+	</insert>
+	
+	<insert id="deleteBuilding" parameterType="java.lang.Integer">
+		update building set deleteStatus = 1 where id=#{id}
+	</insert>
+	
+	
+	<insert id="changeDepartment" parameterType="map">
+		UPDATE building SET departmentCode = #{departmentCode},departmentId = #{departmentId} WHERE houseId= #{housingId}
+	</insert>
+	
+	<select id="getBuildingByName" resultMap="BaseResultMap">
+		SELECT b.*, d.name
+		departmentName FROM building b
+		LEFT JOIN department d on
+		d.id=b.departmentId
+		where 1=1
+		and b.deleteStatus = 0
+		and b.name=#{buildingName,jdbcType=VARCHAR} and
+		b.houseId=#{houseId,jdbcType=INTEGER} limit 0,1
+	</select>
+
+	<select id="getBuildingById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		SELECT b.*, d.name departmentName FROM building b
+		LEFT
+		JOIN department d on d.id=b.departmentId
+		where 1=1
+		and b.deleteStatus = 0
+		and b.id=#{id,jdbcType=INTEGER}
+	</select>
+
+	<insert id="insertBuilding" parameterType="com.ym.iadpush.manage.entity.Building"
+		keyProperty="id">
+		insert into building
+		(departmentId,createUid,name,departmentCode,houseId)
+		values(#{departmentId},#{createUid},#{name},#{departmentCode},#{houseId})
+	</insert>
+
+	<select id="getBuildingsByHouseId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		SELECT b.*, d.name departmentName,h.name houseName FROM
+		building b
+		LEFT JOIN department d on d.id=b.departmentId
+		LEFT JOIN
+		housing h on h.id=b.houseId
+		where 1=1
+		and b.deleteStatus = 0
+		and b.houseId
+		=#{houseId,jdbcType=INTEGER}
+	</select>
+
+	<select id="getBuildings" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT b.*, d.name departmentName,h.name houseName FROM building b
+		LEFT JOIN department d on d.id=b.departmentId
+		LEFT JOIN housing h on
+		h.id=b.houseId
+
+		where 1=1
+		and b.deleteStatus = 0
+		<if test="remark!=null and remark!='' ">
+			and b.remark like "%"#{remark}"%"
+		</if>
+		<if test="housingId!=null and housingId!='' ">
+			and b.houseId =#{housingId}
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and b.departmentCode like ""#{departmentCode}"%"
+		</if>
+
+		<if test="name!=null and name!='' ">
+			and b.name like "%"#{name}"%"
+		</if>
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			 and b.houseId in (select id from housing where saleId = #{saleUserId})
+		</if>
+		<if test="currPage!=null and currPage!='' or currPage>=0">
+				limit #{currPage},#{pageSize}
+		</if>
+		<if test="currPage==null and currPage=='' ">
+			 limit #{pageSize} 
+		</if>
+	</select>
+	
+	<select id="getBuildingsCount" resultType="java.lang.Integer"
+		parameterType="map">
+		SELECT count(*) FROM building b
+		LEFT JOIN department d on d.id=b.departmentId
+		LEFT JOIN housing h on
+		h.id=b.houseId
+
+		where 1=1
+		and b.deleteStatus = 0
+		<if test="remark!=null and remark!='' ">
+			and b.remark like "%"#{remark}"%"
+		</if>
+		<if test="housingId!=null and housingId!='' ">
+			and b.houseId =#{housingId}
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and b.departmentCode like ""#{departmentCode}"%"
+		</if>
+
+		<if test="name!=null and name!='' ">
+			and b.name like "%"#{name}"%"
+		</if>
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			 and b.houseId in (select id from housing where saleId = #{saleUserId})
+		</if>
+		order by b.id desc
+	</select>
+
+</mapper>

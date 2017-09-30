@@ -1,0 +1,110 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>重庆京莱米商贸公司|关于我们</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+a {cursor: pointer}
+td {font-size:10px;}
+h2 {
+display: block;
+font-size: 1.5em;
+-webkit-margin-before: 0.83em;
+-webkit-margin-after: 0.83em;
+-webkit-margin-start: 0px;
+-webkit-margin-end: 0px;
+font-weight: bold;
+font-size: 12px;
+color: #047ec7;
+font-weight: bold;
+}
+.p {
+display: block;
+-webkit-margin-before: 1em;
+-webkit-margin-after: 1em;
+-webkit-margin-start: 0px;
+-webkit-margin-end: 0px;
+padding: 0;
+margin: 0;
+line-height: 20px;
+font-size: 12px;
+color: #333;
+font-family: simsun;
+}
+</style>
+<script type="text/javascript" src="${base}/assets/common/jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js"></script>
+<link rel="stylesheet" href="${base}/assets/common/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" type="text/css"></link>
+</head>
+<body style="background: white;">
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="page-header alert alert-info">
+			<h5>关于我们</small></h5>
+		</div>
+		<div class="bs-callout bs-callout-danger">
+		    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重庆京莱米商贸有限公司是一家自主研发生产销售全智能毛巾机的公司，现产品有莱雅洁全自动智能毛巾机、莱雅洁一次性吸水巾。
+　　				莱雅洁全自动智能毛巾机以“时尚，节能，简便，健康、环保，安全”的设计为理念，产品集时尚性，科技性和实用性于一体。
+　　莱雅洁全自动智能毛巾机安装简单，操作方便，易学易用，其配套使用的一次性吸水巾，纯植物原浆材料质地柔韧，吸水性强，手感舒适，干净卫生。可避免因消毒、洗涤不当，引发的交叉感染。采用可再生环保材质，能再回收利用，不会造成环境污染。
+　　莱雅洁全自动智能毛巾机可大量使用于美发店、美容美体店等场所。
+　　莱雅洁全自动智能毛巾机在全国首创“服务商销售模式”的招商加盟方式， 以服务为主导，将经销商变为服务商。
+　　莱雅洁全自动智能毛巾致力于打造独特的商业盈利模式，以诚信为合作基石，打造市场营销共同体，实现双方共赢，将提供规范的区域保护管理、强大的技术团队支持、权威的信息资源共享平台。
+　　求变创新，故能卓越非凡，我们真诚欢迎社会各界宾朋和我们共谋发展、共创辉煌。</p>
+		  </div>
+		<form action="account_list.do" id="submitForm" method="post">
+		<input type="hidden" name="currPage" id="currPage" value="1">
+           <div class="row" style="display: none;">
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>账户名称</span></div>
+            	<div class="col-md-2">
+            		<input type="text" class="form-control input-sm" name="productName"/>
+            	</div>
+            	<div class="col-md-3" style="float: left;display: none;">
+					<div style="float: right;" class="btn-group">
+						 <button type="button" class="btn btn-default" onclick="sumbitForm('none')">查询&nbsp;&nbsp;</button>
+            			<button type="button" class="btn btn-default" onclick="jumpToAdd()">添加&nbsp;&nbsp;</button>
+				  </div>
+				</div>
+           </div>
+		</form>
+		
+		<#if list ??>
+			<#list list as l>
+			  <div class="bs-callout bs-callout-danger" style="background: white;width:290px;border-bottom: 1px solid #EEE;border-right: 1px solid #EEE;border-top:1px solid #EEE; float: left;margin: 20px;">
+			    <h2 style="color: black;">账户名称:${l.name!''}</h2>
+			    <p style="color: black;" class="p">银行:${l.bank!''}</p>
+			    <p style="color: black;" class="p">开户行名称:${l.bankName!''}</p>
+			    <p style="color: black;" class="p">银行账号:${l.bankNo!''}</p>
+			    <p style="color: black;" class="p">银行地址:${l.bankAddress!''}</p>
+			    <p style="color: black;" class="p">联系人:${l.contract_people!''}</p>
+			    <p style="color: black;" class="p">联系电话:${l.contract_phone!''}</p>
+			  </div>
+		  </#list>
+		 </#if>
+	</div>
+	
+	<!-- 缓冲 -->
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <!--   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+        <h4 class="modal-title" id="myModalLabel">数据提交中，请等待</h4>
+      </div>
+      <div class="modal-body" style="width: 600px;height: 520px;">
+      		<img alt="" src="${base}/assets/biz-logic/images/loading_circle.gif" style="margin-top: 220px;margin-left: 250px;">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+</div>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

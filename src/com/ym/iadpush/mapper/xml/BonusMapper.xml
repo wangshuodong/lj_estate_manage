@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.BonusMapper" >
+
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Bonus" >
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="taxBonus" property="taxBonus" jdbcType="DECIMAL" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="DATE" />
+		<result column="addDate" property="addDate" jdbcType="DATE" />
+	</resultMap>
+  	
+	<select id="getAllBonus" resultMap="BaseResultMap" parameterType="map">
+		select id,username,taxBonus,type,status,description,create_time,addDate,uid from award 
+		 where 1=1
+		<include refid="bonus_where"/>
+		 order by id desc
+		  limit #{currPage},#{pageSize}
+	</select>
+	<select id="getAllCountBonus" resultType="java.lang.Integer" parameterType="map">
+		select count(*) from award where 1=1
+		<include refid="bonus_where"/>
+	</select> 
+	 <sql id="bonus_where">
+	 	<if test="serviceId!=null">
+			 and uid in (select user_id  from sys_users where serviceId=#{serviceId})
+		</if>
+		<if test="username!=null">
+			 and username like #{username} 
+		</if>
+		<if test="startdate != null">AND   <![CDATA[ DATE_FORMAT(create_time,'%Y-%m-%d') >= #{startdate,jdbcType=DATE}]]></if>
+		<if test="enddate != null">AND <![CDATA[ DATE_FORMAT(create_time,'%Y-%m-%d')  <= #{enddate,jdbcType=DATE}]]></if>
+		<if test="status!=null"> and status=#{status}</if>
+		<if test="type!=null"> and type=#{type}</if>
+	</sql>
+	<update id="updateBonus" parameterType="map">
+		update award set username=#{username},uid=#{uid},bonus=#{taxBonus},taxBonus=#{taxBonus},type=#{type},status=#{status},
+		 addDate=#{addDate},description=#{description} where id=#{id}
+	</update>
+	<insert id="insertBonus" parameterType="map">
+		insert into award(uid,username,create_uid,create_time,bonus,taxBonus,type,description,status
+		<if test="addDate!=null"> ,addDate </if> )
+		 values(#{uid},#{username},#{createId},#{createTime},#{taxBonus},#{taxBonus},#{type},#{description},#{status}
+		 <if test="addDate!=null"> ,#{addDate} </if> )
+	</insert>
+	<select id="selectBonusById" parameterType="map" resultMap="BaseResultMap">
+		select id,username,taxBonus,type,status,description,create_time,addDate,uid from award  where id=#{id}
+	</select>
+	<delete id="deleteBonus" parameterType="map">
+		delete from award where id=#{id}
+	</delete>
+
+	
+</mapper>

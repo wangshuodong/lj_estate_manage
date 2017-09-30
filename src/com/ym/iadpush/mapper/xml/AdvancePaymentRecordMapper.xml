@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.AdvancePaymentRecordMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.AdvancePaymentRecord">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="companyId" jdbcType="INTEGER" property="companyId" />
+		<result column="companyName" jdbcType="VARCHAR" property="companyName" />
+		<result column="outsideCode" jdbcType="VARCHAR" property="outsideCode" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
+		<result column="stockMonth" jdbcType="INTEGER" property="stockMonth" />
+		<result column="stockDetail" jdbcType="INTEGER" property="stockDetail" />
+		<result column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="money" jdbcType="DECIMAL" property="money" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="checked" jdbcType="INTEGER" property="checked" />
+		<result column="auditingPeople" jdbcType="INTEGER" property="auditingPeople" />
+		<result column="auditingDate" jdbcType="DATE" property="auditingDate" />
+		<result column="auditingTime" jdbcType="TIMESTAMP" property="auditingTime"  />
+	</resultMap>
+	
+	<resultMap id="advancePaymentRecordStatement" type="com.ym.iadpush.manage.entity.AdvancePaymentRecordStatement">
+		<result column="money" property="money" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<insert id="insertAdvancePaymentRecord"  parameterType="com.ym.iadpush.manage.entity.AdvancePaymentRecord"
+		keyProperty="id">
+		insert  into  advancePaymentRecord (companyId,uid,addate,createTime,code,outsideCode,money,remark,stockMonth,stockDetail )
+		values(#{companyId},#{uid},#{addate},#{createTime},#{code},#{outsideCode},#{money},#{remark},#{stockMonth},#{stockDetail} )
+	</insert>
+	
+	<select id="getMaxAdvancePaymentRecordCode" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT  *  from advancePaymentRecord   where 1=1
+		and  code like ""#{date}"%"     order by code desc  limit 0,1
+	</select>
+	
+	<select id="getAllAdvancePaymentRecordsCollect" resultMap="advancePaymentRecordStatement"  parameterType="map">
+		select  sum(money) money   from AdvancePaymentRecord  e
+		left join company_info c on c.id=e.companyId
+
+		where 1=1  
+		
+		<if test="money != null and money!='' ">
+			and e.money = #{money }
+		</if>
+		
+		<if test="remark!=null and remark!='' ">
+			 and e.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="companyId!=null and companyId!='' ">
+			and e.companyId =#{companyId}
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and e.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and e.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and e.addate >= #{startDate}
+		</if>
+		
+		<if test="endDate != null and endDate!=''">
+			and e.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+	</select>
+	
+	<select id="getAllAdvancePaymentRecordsCount" parameterType="map" 	resultType="java.lang.Integer">
+		select  count(1)  from AdvancePaymentRecord  e
+		left join company_info c on c.id=e.companyId
+
+		where 1=1  
+		
+		<if test="money != null and money!='' ">
+			and e.money = #{money }
+		</if>
+		
+		<if test="remark!=null and remark!='' ">
+			 and e.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="companyId!=null and companyId!='' ">
+			and e.companyId =#{companyId}
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and e.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and e.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and e.addate >= #{startDate}
+		</if>
+		
+		<if test="endDate != null and endDate!=''">
+			and e.addate <![CDATA[<= #{endDate}]]>
+		</if>
+
+	</select>
+	
+	<select id="getAllAdvancePaymentRecords" resultMap="BaseResultMap"
+		parameterType="map">
+		select  e.*,c.name companyName     from AdvancePaymentRecord  e
+		left join company_info c on c.id=e.companyId
+		left join sys_users su on su.user_id=e.auditingPeople
+		
+		where 1=1  
+		
+		<if test="money != null and money!='' ">
+			and e.money = #{money }
+		</if>
+		
+		<if test="remark!=null and remark!='' ">
+			 and e.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="companyId!=null and companyId!='' ">
+			and e.companyId =#{companyId}
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and e.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and e.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and e.addate >= #{startDate}
+		</if>
+		
+		<if test="endDate != null and endDate!=''">
+			and e.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		order by id desc 
+		limit #{currPage},#{pageSize}
+	</select>
+</mapper>

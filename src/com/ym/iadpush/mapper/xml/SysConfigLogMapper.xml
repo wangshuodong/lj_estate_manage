@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.SysConfigLogMapper" >
+  <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+  <insert id="insert" parameterType="com.ym.iadpush.manage.entity.SysConfigLog">
+    insert into sys_config_log(change_content,operation_username,operation_uid,update_time)
+    values(#{changeContent},#{oprationUsername},#{oprationUid,jdbcType=INTEGER},#{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <select id="getAllConfigLog" resultType="com.ym.iadpush.manage.entity.SysConfigLog" parameterType="map">
+    select a.operation_username oprationUsername,a.update_time updateTime,a.change_content changeContent
+      from sys_config_log a
+     <where>
+     	<if test="startDate != null and startDate != ''">
+    		and date_format(a.update_time,'%Y-%m-%d') &gt;= #{startDate,jdbcType=VARCHAR}
+    	</if>
+    	<if test="endDate != null and endDate != ''">
+    		and date_format(a.update_time,'%Y-%m-%d') &lt;= #{endDate,jdbcType=VARCHAR}
+    	</if>
+    </where>
+    order by a.update_time desc
+    LIMIT #{begRow},#{pageSize}
+  </select>
+  
+  <select id="totalCount" resultType="java.lang.Integer" parameterType="map">
+    select count(1)
+      from sys_config_log a
+     <where>
+     	<if test="startDate != null and startDate != ''">
+    		and date_format(a.update_time,'%Y-%m-%d') &gt;= #{startDate,jdbcType=VARCHAR}
+    	</if>
+    	<if test="endDate != null and endDate != ''">
+    		and date_format(a.update_time,'%Y-%m-%d') &lt;= #{endDate,jdbcType=VARCHAR}
+    	</if>
+    </where>
+  </select>
+  
+</mapper>

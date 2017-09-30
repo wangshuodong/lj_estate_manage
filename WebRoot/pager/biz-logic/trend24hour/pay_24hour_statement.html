@@ -1,0 +1,138 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title></title> <#include "/pager/common/quote.html" /> <#include
+"/common/bootstrapBase.html" />
+
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+
+<style type="text/css">
+ul.nav.nav-tabs a {
+	cursor: pointer
+}
+
+div.tab-content a {
+	cursor: pointer
+}
+</style>
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>
+				24小时走量图<small>>>支出24小时走量图</small>
+			</h5>
+		</div>
+		<form action="" id="sumbitForm">
+		<table>
+			<tr>
+				<td colspan="10"><span style="color: red">提示：查询日期默认查询的是昨日与今日的数据</span></td>
+			</tr>
+			<tr>
+				<td>日期</td>
+				<td><input type="text" class="form-control input-sm"
+					name="startdate" data-format="yyyy-MM-dd">
+				</td>
+				<td><input type="text" class="form-control input-sm"
+					name="enddate" data-format="yyyy-MM-dd">
+				</td>
+				<td>用户名</td>
+				<td><input type="text" class="form-control input-sm"
+					name="username"></td>
+				<td>应用名称</td>
+				<td><input type="text" class="form-control input-sm" name="appname">
+				</td>
+				<td><input type="button" value="查询" onclick="query()" class="btn btn-default">
+				</td>
+			</tr>
+		</table>
+		</form>
+		<div class="row">
+			<div class="col-md-12">当日总量：<span id="total"></span></div>
+			<div class="col-md-12">
+				<div id="container"
+					style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+	var today = formatDate(new Date(), "YYYY-MM-DD");
+	var yesterday_milliseconds=(new Date()).getTime()-1000*60*60*24;        
+    var yesterday = new Date();        
+    yesterday.setTime(yesterday_milliseconds);
+    $("input[name='enddate']").val(today);
+    $("input[name='startdate']").val(formatDate(yesterday, "YYYY-MM-DD"));      
+		function query() {
+			var d = $("#sumbitForm").serialize();
+			$.ajax({
+				url : "${base}/search_pay_24hour_statement.html",
+				type : "post",
+				data : d,
+				dataType : "json",
+				success : function(data) {
+					var testArray = new Array();
+					testArray[0] = {name: data.date1,data: data.r1};
+					testArray[1] = {name: data.date2,data: data.r2};
+					var html = data.date1+":";
+					html += "<font color='red'>"+data.t1+"</font>";
+					html += "&nbsp;&nbsp;&nbsp;&nbsp;";
+					html += data.date2+":";
+					html += "<font color='red'>"+data.t2+"</font>";
+					$("#total").html(html);
+					
+					$('#container').highcharts(
+							{
+								title : {
+									text : '24小时走量图-支出',
+									x : -20
+								//center
+								},
+								subtitle : {
+									text : 'Source: iadpush.com',
+									x : -20
+								},
+								xAxis : {
+									categories : [ '0', '1', '2', '3', '4',
+											'5', '6', '7', '8', '9', '10',
+											'11', '12', '13', '14', '15', '16',
+											'17', '18', '19', '20', '21', '22',
+											'23' ]
+								},
+								yAxis : {
+									title : {
+										text : ''
+									},
+									plotLines : [ {
+										value : 0,
+										width : 1,
+										color : '#808080'
+									} ]
+								},
+								tooltip : {
+									valueSuffix : '',
+									valueDecimals : 2
+								},
+								legend : {
+									layout : 'vertical',
+									align : 'right',
+									verticalAlign : 'middle',
+									borderWidth : 0
+								},
+								series :testArray
+							});
+				},
+				error : function(data) {
+				}
+			})
+		}
+		query();
+		
+</script>
+</html>
+
+</@compress>

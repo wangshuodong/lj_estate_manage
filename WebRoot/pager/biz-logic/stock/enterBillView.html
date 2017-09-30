@@ -1,0 +1,156 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>重庆京莱米商贸公司|库存中心</title> 
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<!-- <script src="${base}/assets/ckeditor/ckeditor.js" type="text/javascript"></script> -->
+<link rel="stylesheet" type="text/css" href="${base}/assets/biz-logic/css/sysconfig.css"/>
+<script type="text/javascript" src="${base}/assets/ckeditor/ckeditor.js"></script>
+
+
+
+<script type="text/javascript">
+var news_id="${(news.id)!}";
+var show_val="${(news.isShow)!}";
+$(function(){
+	$("#type").val("${(news.type)!}");
+	isShow($("#type").val());
+});
+</script>
+
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>库存中心&gt;&gt; <small></small>入库单详情</small></h5>
+		</div>
+		<div class="alert" style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;">
+			<form action="${base}/news_au.html" id="submitForm" method="post">
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">仓库:</div>
+					<div class="col-md-2">
+						${(order.warehouseName)!}
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;">单据号:</div>
+					<div class="col-md-2">
+						${(order.code)!}
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;">外部单号:</div>
+					<div class="col-md-2">
+						${(order.outsideCode)!}
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;">数量:</div>
+					<div class="col-md-2">	
+						${(order.number)!}
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">生产工厂:</div>
+					<div class="col-md-2 text-left">
+						${order.companyName}
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;">日期:</div>
+					<div class="col-md-2">
+						${order.addate?string('yyyy-MM-dd')}
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;">产品:</div>
+					<div class="col-md-2">
+						${(order.productName)!}
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;">计量单位:</div>
+					<div class="col-md-2">
+						${(order.unit)!}
+					</div>
+				</div>
+		
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">状态:</div>
+					<div class="col-md-2">
+						<font color="red">
+						<#if order.checked=1>
+							已审核
+						<#else>
+							未审核
+						</#if>
+						</font>
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;">审核人:</div>
+					<div class="col-md-2">
+						${(order.auditingUsername)!}
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;">审核日期:</div>
+					<div class="col-md-2">
+						<#if order.auditingDate??>
+						    ${order.auditingDate?string('yyyy-MM-dd')}
+						<#else>
+							
+						</#if>
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">备注:</div>
+					<div class="col-md-2 text-left">
+						${order.remark}
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;">创建时间:</div>
+					<div class="col-md-2">
+						${order.createTime}
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;"></div>
+					<div class="col-md-2">
+						
+					</div>
+					<div class="col-md-1 text-right" style="padding:0px;width:60px;"></div>
+					<div class="col-md-2">
+					</div>
+				</div>
+				<#if list ??>
+				<#list list as l>
+				  <div class="bs-callout bs-callout-danger" style="background: white;width:250px;border-bottom: 1px solid #EEE;border-right: 1px solid #EEE;border-top:1px solid #EEE; float: left;margin: 20px;">
+				    <h4 style="color: black;">${l.createTime!''}</h4>
+				    <p style="color: black;" class="p"><font color="red">${l.desc!''}<font color="red"></p>
+				  </div>
+			  </#list>
+			 </#if>
+			</form>
+		</div>
+	</div>
+<!-- 缓冲 -->
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <!--   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+        <h4 class="modal-title" id="myModalLabel">数据提交中，请等待。。.</h4>
+      </div>
+      <div class="modal-body" style="width: 600px;height: 520px;">
+      		<img alt="" src="${base}/assets/biz-logic/images/loading_circle.gif" style="margin-top: 220px;margin-left: 250px;">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<!-- 提示-->
+<div class="modal fade" id="infowindow" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <button type="button" class="close closeTipModal" data-dismiss="modal"  aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">温馨提醒</h4>
+      </div>
+      <div class="modal-body" style="width: 200px;height: 100px;" id="modal-body">
+      		
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default closeTipModal" data-dismiss="modal" >关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+</body>
+</html>
+
+</@compress>

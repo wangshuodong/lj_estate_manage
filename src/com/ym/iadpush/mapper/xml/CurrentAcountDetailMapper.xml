@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.CurrentAcountDetailMapper">
+	<resultMap id="BaseResultMap"
+		type="com.ym.iadpush.manage.entity.CurrentAccountDetail">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="month" jdbcType="VARCHAR" property="month" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="departmentId" jdbcType="INTEGER" property="departmentId" />
+		<result column="departmentCode" jdbcType="VARCHAR" property="departmentCode" />
+		<result column="companyId" jdbcType="INTEGER" property="companyId" />
+		<result column="startMoney" jdbcType="DECIMAL" property="startMoney" />
+		<result column="receMoney" jdbcType="DECIMAL" property="receMoney" />
+		<result column="payMoney" jdbcType="DECIMAL" property="payMoney" />
+		<result column="endMoney" jdbcType="DECIMAL" property="endMoney" />
+		<result column="lastUpdateTime" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+		<result column="name" jdbcType="VARCHAR" property="companyName" />
+		<result column="advancePayment" jdbcType="DECIMAL" property="advancePayment" />
+		
+	</resultMap>
+
+	<resultMap id="accountDetailDataStatement" type="com.ym.iadpush.manage.entity.AccountDetailDataStatement">
+		<result column="receMoney" property="receMoney" jdbcType="DECIMAL" />
+		<result column="payMoney" property="payMoney" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<select id="getDetailCollectDataStatement" resultMap="accountDetailDataStatement"  parameterType="map">
+		SELECT  sum(o.receMoney) receMoney ,sum(o.payMoney) payMoney ,sum(o.advancePayment) advancePayment  FROM    currentaccountdetail    o
+		LEFT JOIN company_info c  on  c.id=o.companyId
+		LEFT JOIN company_info cp on c.parentId=cp.id
+		
+		where 1=1
+		
+		<if test="djcompanyName   and  djcompanyName!='' ">
+			and ( cp.name like "%"#{djcompanyName}"%"   or    c.name  like "%"#{djcompanyName}"%"   )
+		</if>
+		
+		<if test="month!=null and month!='' ">
+			and o.month =#{month}
+		</if>
+		
+		<if test="factory   and  factory!='' ">
+			and  ( c.type=3   and   c.name  like "%"#{factory}"%"  )
+		</if>
+		
+		<if test="djsaleId   and  djsaleId!='' ">
+			and  (  c.parentId =#{djsaleId,jdbcType=VARCHAR}  or o.companyId=#{djsaleId,jdbcType=VARCHAR}  ) 
+		</if>
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and o.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and o.departmentCode like ""#{departmentCode}"%"
+		</if>
+
+		<if test="startDate != null and startDate!=''">
+			and o.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and o.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		<if test="parentCompany!=null and parentCompany!='' ">
+			 and ( c.parentId =#{parentCompany,jdbcType=VARCHAR}  or o.companyId=#{parentCompany,jdbcType=VARCHAR} )
+		</if>
+		<if test="companyId!=null and companyId!='' ">
+			and o.companyId =#{companyId}
+		</if>
+		<if test="companyName!=null and companyName!='' ">
+			and c.name like ""#{companyName}"%"
+		</if>
+	</select>
+	
+	<update id="updateCurrentAccountDetail">
+		update currentaccountdetail set
+		startMoney=#{detail.startMoney,jdbcType=DECIMAL},
+		receMoney=#{detail.receMoney,jdbcType=DECIMAL},
+		payMoney=#{detail.payMoney,jdbcType=DECIMAL},
+		endMoney=#{detail.endMoney,jdbcType=DECIMAL},
+		advancePayment=#{detail.advancePayment,jdbcType=DECIMAL}
+		
+		where
+		companyId=#{detail.companyId,jdbcType=INTEGER} and
+		addate=#{detail.addate,jdbcType=DATE}
+	</update>
+
+	<select id="getCurrentAccountDetail" resultMap="BaseResultMap">
+		SELECT * from
+		currentaccountdetail where companyId=#{companyId,jdbcType=INTEGER}
+		and addate=#{addate,jdbcType=DATE}    limit 0,1
+	</select>
+
+	<select id="getLatelyCurrentAccountDetail" resultMap="BaseResultMap">
+		SELECT *
+		from
+		currentaccountdetail where companyId=#{companyId,jdbcType=INTEGER}
+		and addate!=#{addate,jdbcType=DATE}
+		order by addate desc limit 0,1
+	</select>
+
+	<insert id="saveCurrentAccountDetail"  parameterType="com.ym.iadpush.manage.entity.CurrentAccountDetail"  keyProperty="id">
+		insert into
+		currentaccountdetail(advancePayment,startMoney,receMoney,payMoney,endMoney,companyId,month,addate,departmentId,departmentCode)
+		values(#{advancePayment},#{startMoney},#{receMoney},#{payMoney},#{endMoney},#{companyId},#{month},#{addate},#{departmentId},#{departmentCode})
+	</insert>
+
+	<select id="queryCurrentAccountDetail" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT o.*,c.name FROM currentaccountdetail o
+		LEFT JOIN company_info c on c.id=o.companyId
+		LEFT JOIN company_info cp on c.parentId=cp.id
+		
+		where 1=1
+		
+		<if test="djcompanyName   and  djcompanyName!='' ">
+			and ( cp.name like "%"#{djcompanyName}"%"   or    c.name  like "%"#{djcompanyName}"%"   )
+		</if>
+		
+		<if test="factory   and  factory!='' ">
+			and  ( c.type=3   and   c.name  like "%"#{factory}"%"  )
+		</if>
+		
+		<if test="month!=null and month!='' ">
+			and o.month =#{month}
+		</if>
+		
+		<if test="djsaleId   and  djsaleId!='' ">
+			and  (  c.parentId =#{djsaleId,jdbcType=VARCHAR}  or o.companyId=#{djsaleId,jdbcType=VARCHAR}  ) 
+		</if>
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and o.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and o.departmentCode like ""#{departmentCode}"%"
+		</if>
+
+		<if test="companyName!=null and companyName!='' ">
+			and c.name like ""#{companyName}"%"
+		</if>
+		<if test="parentCompany!=null and parentCompany!='' ">
+			 and ( c.parentId =#{parentCompany,jdbcType=VARCHAR}  or o.companyId=#{parentCompany,jdbcType=VARCHAR} )
+		</if>
+		<if test="companyId!=null and companyId!='' ">
+			and o.companyId =#{companyId}
+		</if>
+		<if test="startDate != null and startDate!=''">
+			and o.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and o.addate <![CDATA[<= #{endDate}]]>
+		</if>
+
+		order by o.id
+		limit #{currPage},#{pageSize}
+	</select>
+
+	<select id="queryCurrentAccountDetailCount" parameterType="map"
+		resultType="java.lang.Integer">
+		
+		SELECT count(1) FROM currentaccountdetail o
+		LEFT JOIN company_info c  on  c.id=o.companyId
+		LEFT JOIN company_info cp on c.parentId=cp.id
+		
+		where 1=1
+		
+		<if test="djcompanyName   and  djcompanyName!='' ">
+			and ( cp.name like "%"#{djcompanyName}"%"   or    c.name  like "%"#{djcompanyName}"%"   )
+		</if>
+		
+		<if test="factory   and  factory!='' ">
+			and  ( c.type=3   and   c.name  like "%"#{factory}"%"  )
+		</if>
+		
+		<if test="month!=null and month!='' ">
+			and o.month =#{month}
+		</if>
+		
+		<if test="djsaleId   and  djsaleId!='' ">
+			and  (  c.parentId =#{djsaleId,jdbcType=VARCHAR}  or o.companyId=#{djsaleId,jdbcType=VARCHAR}  ) 
+		</if>
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and o.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and o.departmentCode like ""#{departmentCode}"%"
+		</if>
+
+		<if test="startDate != null and startDate!=''">
+			and o.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and o.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		<if test="parentCompany!=null and parentCompany!='' ">
+			 and ( c.parentId =#{parentCompany,jdbcType=VARCHAR}  or o.companyId=#{parentCompany,jdbcType=VARCHAR} )
+		</if>
+		<if test="companyId!=null and companyId!='' ">
+			and o.companyId =#{companyId}
+		</if>
+		<if test="companyName!=null and companyName!='' ">
+			and c.name like ""#{companyName}"%"
+		</if>
+		order by o.id
+	</select>
+
+</mapper>

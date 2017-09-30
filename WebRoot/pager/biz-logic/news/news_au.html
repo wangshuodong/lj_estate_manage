@@ -1,0 +1,118 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>重庆xxx商贸公司|公告</title> 
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<!-- <script src="${base}/assets/ckeditor/ckeditor.js" type="text/javascript"></script> -->
+<link rel="stylesheet" type="text/css" href="${base}/assets/biz-logic/css/sysconfig.css"/>
+<script type="text/javascript" src="${base}/assets/ckeditor/ckeditor.js"></script>
+<script src="${base}/assets/biz-logic/js/news/news_addupdate.js" type="text/javascript"></script>
+
+
+
+<script type="text/javascript">
+var news_id="${(news.id)!}";
+var show_val="${(news.isShow)!}";
+$(function(){
+	$("#type").val("${(news.type)!}");
+	isShow($("#type").val());
+});
+</script>
+
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>系统管理&gt;&gt; <small>公告管理</small>&gt;&gt; <small>公告管理</small></h5>
+		</div>
+		<div class="alert" style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;">
+			<form action="${base}/news_au.html" id="submitForm" method="post">
+				<div class="line-frame">
+					<input type="hidden" name="id" value="${(news.id)!}">
+					<div class="col-md-1 text-right" style="padding:0px;width:100px;">类型</div>
+					<div class="col-md-3">
+						<select class="form-control"  name="type" id="type">
+							<option value="1">公告</option>
+							<option value="2">新闻</option>
+						</select>
+					</div>
+				</div>
+				<div class="line-frame" id="isLoginShow_frame" >
+					<div class="col-md-1 text-right" style="padding:0px;width:100px;">是否登录页显示</div>
+					<div class="col-md-3">
+						<label><input type="radio" value="1" name="isShow" checked="checked">&nbsp;是</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<label><input type="radio" value="0" name="isShow" >&nbsp;否</label>
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:100px;">发布日期</div>
+					<div class="col-md-3">
+						<input type="text" value="${(news.date)!}" class="form-control input-sm" name="enddate" data-format="yyyy-MM-dd">
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:100px;">
+						公告 / 新闻名称
+					</div>
+					<div class="col-md-6 ">
+						<input type="text" class="form-control input-sm" value="${(news.title)!}"  name="title">
+					</div>
+					<div class="col-md-2 tip_name" >
+						<span style="color:red;">* </span>
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:100px;" >公告 / 新闻内容<span style="color:red;">* </span></div>
+					<div class="col-md-11" style="width: 90.6%;">
+						<textarea class="form-control ckeditor" id="context" name="context" rows="15" cols="200">${(news.context)!}</textarea>
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-2 text-right" ></div>
+					<div class="col-md-3">
+						<button type="button" class="btn btn-info btn-lg" id="submitBTN_news">保&nbsp;&nbsp;存</button>
+						<button onclick="javascript:location.href='news.html'" style="margin-left:40px;" type="button" class="btn btn-info btn-lg" >返&nbsp;&nbsp;回</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+<!-- 缓冲 -->
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <!--   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+        <h4 class="modal-title" id="myModalLabel">数据提交中，请等待。。.</h4>
+      </div>
+      <div class="modal-body" style="width: 600px;height: 520px;">
+      		<img alt="" src="${base}/assets/biz-logic/images/loading_circle.gif" style="margin-top: 220px;margin-left: 250px;">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<!-- 提示-->
+<div class="modal fade" id="infowindow" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">温馨提醒</h4>
+      </div>
+      <div class="modal-body" style="width: 200px;height: 100px;" id="modal-body">
+      		
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+</body>
+</html>
+
+</@compress>

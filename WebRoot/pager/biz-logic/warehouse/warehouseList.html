@@ -1,0 +1,88 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>重庆京莱米商贸公司|仓库目录</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+a {cursor: pointer}
+td {font-size:10px;}
+</style>
+<script type="text/javascript" src="${base}/assets/common/jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js"></script>
+<link rel="stylesheet" href="${base}/assets/common/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" type="text/css"></link>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="page-header alert alert-info">
+			<h5>库存中心>> <small>仓库目录</small></h5>
+		</div>
+		<form action="product_list.do" id="submitForm" method="post">
+		<input type="hidden" name="currPage" id="currPage" value="1">
+           <div class="row">
+            	<div class="col-md-3" style="float: left;">
+					<div style="float: right;" class="btn-group">
+            			<button type="button" class="btn btn-default" onclick="jumpToAdd()">添加&nbsp;&nbsp;</button>
+				  </div>
+				</div>
+           </div>
+		</form>
+		
+		<div style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;" class="alert" >
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover  alert-warning">
+					<thead>
+				  	  <tr>
+				  	    <th scope="col" class="text-center" nowrap="nowrap">ID</th>
+				  		<th scope="col" class="text-center" nowrap="nowrap">仓库</th>
+				  		<th scope="col" class="text-center" nowrap="nowrap">所属工厂</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">地址</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">联系人</th>
+				  		<th scope="col" width="11%" class="text-center" nowrap="nowrap">电话</th>
+				  		<th scope="col" width="6%" class="text-center" nowrap="nowrap">移动电话</th>
+				  		<th scope="col" width="22%" class="text-center" nowrap="nowrap">操作</th>
+				  	  </tr>
+				  	</thead>
+				  	
+				  	<tbody id="d_body">
+				  	
+					</tbody>
+				</table>
+				<div class="row">
+		            <div class="col-md-12">
+		                <div class=" pull-left" style="margin-top: 26px;" id="totalCount"></div>
+		                <div class=" pull-right">
+		                    <ul id='pagination'></ul>
+		                </div>
+		            </div>
+		        </div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 缓冲 -->
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <!--   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+        <h4 class="modal-title" id="myModalLabel">数据提交中，请等待</h4>
+      </div>
+      <div class="modal-body" style="width: 600px;height: 520px;">
+      		<img alt="" src="${base}/assets/biz-logic/images/loading_circle.gif" style="margin-top: 220px;margin-left: 250px;">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+</div>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

@@ -1,0 +1,112 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统</title>
+
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+
+<style type="text/css">
+ul.nav.nav-tabs a {
+	cursor: pointer
+}
+
+div.tab-content a {
+	cursor: pointer
+}
+</style>
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="alert alert-warning">
+		</br>
+			<table class="table">
+				<tr>
+					<td><b>今日账单数</b></td>
+					<td><b>昨日账单数</b></td>
+					<td><b>前七日账单数</b></td>
+					<td><b>本月账单数</b></td>
+					<td><b>上月账单数</b></td>
+					<td><b>总账单数</b></td>
+				</tr>
+				<tr>
+					<td><b>${today}</b></td>
+					<td><b>${yestoday}</b></td>
+					<td><b>${seven}</b></td>
+					<td><b>${month}</b></td>
+					<td><b>${lastmonth}</b></td>
+					<td><b>${total}</b></td>
+				</tr>
+			</table>
+		</div>
+		<div class="row">
+		  <div class="col-md-12"><div id="container" class="manager_index_container" style="min-width: 310px; height: 400px; margin: 0 auto"></div></div>
+		</div>
+	</div>
+	
+</body>
+		<script type="text/javascript">
+$(function () {
+       $('#container').highcharts({
+           chart: {
+               type: 'column'
+           },
+           title: {
+               text: '前四周报表'
+           },
+           subtitle: {
+               text: 'Source: iadpush.com'
+           },
+           xAxis: {
+               categories: [
+                   '${w4.startDate}~${w4.endDate}',
+                   '${w3.startDate}~${w3.endDate}',
+                   '${w2.startDate}~${w2.endDate}',
+                   '${w1.startDate}~${w1.endDate}'
+               ]
+           },
+           yAxis: {
+               min: 0,
+               title: {
+                   text: 'Rainfall (mm)'
+               }
+           },
+           tooltip: {
+               headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+               pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                   '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+               footerFormat: '</table>',
+               valueDecimals : 2,
+               shared: true,
+               useHTML: true
+           },
+           plotOptions: {
+               column: {
+                   pointPadding: 0.2,
+                   borderWidth: 0
+               }
+           },
+           series: [{
+               name: '账单数',
+               data: [${w4.orderCount}, ${w3.orderCount}, ${w2.orderCount}, ${w1.orderCount}]
+   
+           }, {
+               name: '账单金额',
+               data: [${w4.orderMoney}, ${w3.orderMoney}, ${w2.orderMoney}, ${w1.orderMoney}]
+   
+           }, {
+               name: '付款金额',
+               data: [${w4.payMoney}, ${w3.payMoney}, ${w2.payMoney}, ${w1.payMoney}]
+   
+           }]
+       });
+ });
+</script>
+</html>
+
+</@compress>

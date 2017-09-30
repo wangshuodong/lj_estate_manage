@@ -1,0 +1,142 @@
+
+
+
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>陆甲物业在线缴费系统|物业管理</title> 
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<!-- <script src="${base}/assets/ckeditor/ckeditor.js" type="text/javascript"></script> -->
+<link rel="stylesheet" type="text/css" href="${base}/assets/biz-logic/css/sysconfig.css"/>
+<script type="text/javascript" src="${base}/assets/ckeditor/ckeditor.js"></script>
+
+
+
+<script type="text/javascript">
+var news_id="${(news.id)!}";
+var show_val="${(news.isShow)!}";
+$(function(){
+	$("#type").val("${(news.type)!}");
+	isShow($("#type").val());
+});
+</script>
+
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>物业管理&gt;&gt; <small></small>小区修改</small></h5>
+		</div>
+		<div class="alert" style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;">
+		
+			<form action="${base}/news_au.html" id="submitForm" method="post">
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">小区名称:</div>
+					<div class="col-md-2">
+						  <input type="text"  value="${(order.name)!}"   id ="name" name="name" />
+					</div>
+				</div>
+				
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">街道地址:</div>
+					<div class="col-md-2">
+						  <input type="text"  value="${(order.community_address)!}"   id ="community_address" name="community_address" />
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">详细地址:</div>
+					<div class="col-md-2 text-left">
+						 <input type="text"  value="${(order.address)!}"   id ="address" name="address" />
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">省份编码:</div>
+					<div class="col-md-2 text-left">
+						 <input type="text"  value="${(order.province_code)!}"   id ="province_code" name="province_code" />
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">地级市编码:</div>
+					<div class="col-md-2 text-left">
+						 <input type="text"  value="${(order.city_code)!}"   id ="city_code" name="city_code" />
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">区县编码:</div>
+					<div class="col-md-2 text-left">
+						 <input type="text"  value="${(order.district_code)!}"   id ="district_code" name="district_code" />
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">经纬度:</div>
+					<div class="col-md-2 text-left">
+						 <input type="text"  value="${(order.community_locations)!}"   id ="community_locations" name="community_locations" />
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">联系电话:</div>
+					<div class="col-md-2 text-left">
+						 <input type="text"  value="${(order.phone)!}"   id ="phone" name="phone" />
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">token:</div>
+					<div class="col-md-2 text-left">
+						 <input type="text"  value="${(order.token)!}"   id ="token" name="token" />
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">商户PID:</div>
+					<div class="col-md-2 text-left">
+						 <input type="text"  value="${(order.pid)!}"   id ="pid" name="pid" />
+					</div>
+				</div>
+				<div class="line-frame">
+					<div class="col-md-1 text-right" style="padding:0px;width:70px;">支付宝账户:</div>
+					<div class="col-md-2 text-left">
+						 <input type="text"  value="${(order.payAccount)!}"   id ="payAccount" name="payAccount" />
+					</div>
+				</div>
+			 <input type="hidden" class="form-control input-sm" value="${(order.id)!}"  name="id">
+			<button type="button" class="btn btn-info btn-lg" id="submitBTN_news">保&nbsp;&nbsp;存</button>
+			</form>
+		</div>
+	</div>
+<!-- 缓冲 -->
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <!--   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+        <h4 class="modal-title" id="myModalLabel">数据提交中，请等待。。.</h4>
+      </div>
+      <div class="modal-body" style="width: 600px;height: 520px;">
+      		<img alt="" src="${base}/assets/biz-logic/images/loading_circle.gif" style="margin-top: 220px;margin-left: 250px;">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<!-- 提示-->
+<div class="modal fade" id="infowindow" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <button type="button" class="close closeTipModal" data-dismiss="modal"  aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">温馨提醒</h4>
+      </div>
+      <div class="modal-body" style="width: 200px;height: 100px;" id="modal-body">
+      		
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default closeTipModal" data-dismiss="modal" >关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+</body>
+</html>
+</@compress>

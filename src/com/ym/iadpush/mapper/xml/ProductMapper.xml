@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.ProductMapper" >
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Product" >
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="material" property="material" jdbcType="VARCHAR" />
+		<result column="productDate" property="productDate" jdbcType="DATE" />
+		<result column="manufacture" property="manufacture" jdbcType="VARCHAR" />
+		<result column="endDate" property="endDate" jdbcType="DATE" />
+		<result column="unit" property="unit" jdbcType="VARCHAR" />
+		<result column="weight" property="weight" jdbcType="DECIMAL" />
+		<result column="standard" property="standard" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="lastUpdateTime" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="facadeDesc" property="facadeDesc" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<sql id="query_where_Sql">
+		<where>
+			<if test="productName != null">
+				and name like concat('%', #{productName,jdbcType=VARCHAR}, '%')
+			</if>
+		</where>
+	</sql>
+	
+	<select id="query" parameterType="map" resultMap="BaseResultMap">
+		select * from product <include refid="query_where_Sql"/> limit ${currPage*pageSize},${pageSize}
+	</select>
+	
+	<select id="getTopOneProduct" resultMap="BaseResultMap">
+		select * from product order by id asc limit 0,1
+	</select>
+	
+	<select id="countByQuery" parameterType="map" resultType="java.lang.Integer">
+		select count(1) count from product  <include refid="query_where_Sql"/>
+	</select>
+	
+	<insert id="insertProduct" parameterType="com.ym.iadpush.manage.entity.Product" keyProperty="id">
+		insert into product(facadeDesc,name,material,productDate,manufacture,endDate,unit,weight,standard,remark,uid,createTime,price,lastUpdateTime,code) values(#{facadeDesc},#{name},#{material},#{productDate},#{manufacture},#{endDate},#{unit},#{weight},#{standard},#{remark},#{uid},#{createTime},#{price},#{lastUpdateTime},#{code})
+	</insert>
+	
+	<delete id="delByPid">
+		delete from product where id = #{pid}
+	</delete>
+	
+	<select id="findById" resultType="com.ym.iadpush.manage.entity.Product">
+		select * from product where id = #{pid}
+	</select>
+	
+	<update id="updateById" parameterType="com.ym.iadpush.manage.entity.Product">
+		update product set  facadeDesc=#{facadeDesc},name=#{name},code=#{code},material=#{material},productDate=#{productDate},manufacture=#{manufacture},endDate=#{endDate},unit=#{unit},weight=#{weight},standard=#{standard},remark=#{remark},price=#{price} where id=#{id}
+	</update>
+	
+	<select id="getAllProducts" resultType="com.ym.iadpush.manage.entity.Product">
+		select * from product 
+	</select>
+	
+	<select id="getAllProductsUse" resultType="com.ym.iadpush.manage.entity.Product">
+		select * from product  where `status`=0
+	</select>
+	
+</mapper>

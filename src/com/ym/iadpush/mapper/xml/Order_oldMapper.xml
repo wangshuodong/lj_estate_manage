@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.Order_oldMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Order_old">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="departmentCode" jdbcType="VARCHAR" property="departmentCode" />
+		<result column="number" jdbcType="INTEGER" property="number" />
+		<result column="endNumber" jdbcType="INTEGER" property="endNumber" />
+		<result column="payUid" jdbcType="INTEGER" property="payUid" />
+		<result column="createUid" jdbcType="INTEGER" property="createUid" />
+		<result column="productId" jdbcType="INTEGER" property="productId" />
+		<result column="money" jdbcType="DECIMAL" property="money" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="paydate" jdbcType="DATE" property="paydate" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="payMoney" jdbcType="DECIMAL" property="payMoney" />
+		<result column="companyId" property="companyId" jdbcType="INTEGER" />
+		<result column="no" jdbcType="VARCHAR" property="no" />
+		<result column="productName" jdbcType="VARCHAR" property="productName" />
+		<result column="price" jdbcType="DECIMAL" property="price" />
+		<result column="unit" jdbcType="VARCHAR" property="unit" />
+		<result column="weight" jdbcType="DECIMAL" property="weight" />
+		<result column="departmentName" jdbcType="VARCHAR" property="departmentName" />
+		<result column="companyName" jdbcType="VARCHAR" property="companyName" />
+		<result column="propertyId" jdbcType="INTEGER" property="propertyId" />
+		<result column="color" jdbcType="VARCHAR" property="color" />
+		<result column="thickness" jdbcType="VARCHAR" property="thickness" />
+
+	</resultMap>
+
+	<insert id="inserOrder_old" parameterType="com.ym.iadpush.manage.entity.Order_old"
+		keyProperty="id">
+		insert into
+		orders_old(old_orderId,addate,productId,number,endNumber,money,departmentId,departmentCode,companyId,createUid,createTime,propertyId,remark,price,shippingAddress,code,endMoney)
+		values(#{old_orderId},#{addate},#{productId},#{number},#{endNumber},#{money},#{departmentId},#{departmentCode},#{companyId},#{createUid},#{createTime},#{propertyId},#{remark},#{price},#{shippingAddress},#{code},#{endMoney})
+	</insert>
+
+</mapper>

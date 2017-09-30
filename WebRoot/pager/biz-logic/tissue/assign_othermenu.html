@@ -1,0 +1,48 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|管理后台权限</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+<link type="text/css" rel="stylesheet" href="${base}/assets/common/ztree/css/zTreeStyle/zTreeStyle.css" />
+<script type="text/javascript" src="${base}/assets/common/ztree/js/jquery.ztree.all-3.5.min.js"></script>
+<link href="${base}/assets/biz-logic/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="${base}/assets/biz-logic/css/jquery-ui-1.8.19.custom.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="${base}/assets/common/jquery-ui.min.js"></script>
+<script type="text/javascript">
+window.othermenusJson = ${othermenusJson};
+window.roles = ${rolesJson};
+</script>
+<style type="text/css">
+    #roleMgrPanel {width:200px;float:left;padding:10px;}
+    #devmenuMgrPanel {width:240px;float:left;padding:10px;margin-left:160px;}
+    #othermenuMgrPanel {float:left;padding:10px;margin-left:20px;}
+</style>
+</head>
+<body>
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+        <div class="page-header alert alert-info">
+		    <h5>用户管理>> <small>后台权限</small></h5>
+		</div>
+		<div class="tab-content">
+			<div id="roleMgrPanel">
+				<b>角色</b>
+                <div id="rolePanel" class="ztree"></div>
+            </div>
+            <div id="othermenuMgrPanel">
+                <input type="checkbox" id="chkAll" name="chkMenu">全选
+                <input type="checkbox" id="chkNotAll" name="chkMenu" style="margin-left:10px;">反选
+                <br>
+			    <b>菜单权限</b>
+			    <span id="othertitleRoleName" style="width:80px;"></span>
+                <div id="othermenuPanel" class="ztree"></div>
+            </div>
+		</div>
+	</div>
+	<#include "../footer.html">
+</body>
+</html>
+</@compress>

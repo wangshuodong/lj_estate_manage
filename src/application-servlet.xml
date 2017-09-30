@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="
+           http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context   
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+           http://www.springframework.org/schema/mvc
+           http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <!-- 配置扫描包（多个包之间用逗号分割；注意：修改base为对应的项目名称） -->
+    <context:component-scan base-package="com.ym.iadpush">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+    
+    <!-- AOP岗位权限控制（注意修改permission对应的包名） -->
+    <bean id="postPermissionInterceptor" class="com.ym.common.inteceptor.PostPermissionInterceptor" />
+    <aop:config>
+        <aop:pointcut id="permission" expression="execution(* com.ym.iadpush.*.action..*.*(..))" />
+        <aop:advisor pointcut-ref="permission" advice-ref="postPermissionInterceptor" />
+    </aop:config>
+    
+    <!-- 全局异常处理 -->
+    <bean id="exceptionResolver" class="com.ym.common.exception.MySimpleMappingExceptionResolver">
+        <property name="warnLogCategory" value="com.ym.common.exception.MySimpleMappingExceptionResolver" />
+        <property name="exceptionAttribute" value="ex" />
+        <property name="defaultStatusCode" value="500" />
+        <property name="defaultErrorView" value="biz-logic/index.html" />
+    </bean>
+    
+    <!-- 静态资源 -->
+    <mvc:resources mapping="/assets/**" location="/assets/" cache-period="31556926" />
+    <mvc:resources mapping="/jslib/**" location="/jslib/" cache-period="31556927" />
+    <mvc:resources mapping="/newiadpush/**" location="/iadpush/" cache-period="31556928" />
+    <mvc:resources mapping="/java/**" location="/java/" cache-period="31556929" />
+    <mvc:resources mapping="/reportJsp/**" location="/reportJsp/" cache-period="31556930" />
+    <mvc:resources mapping="/admin/**" location="/admin/" cache-period="31556931" />
+    <mvc:resources mapping="/downloadfile/**" location="/downloadfile/" cache-period="31556932" />
+    <bean id="defaultAnnotationHandlerMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+    <bean id="annotationMethodHandlerAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="mappingJacksonHttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Jackson(JSON配置) -->
+    <bean name="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+            </list>
+        </property>
+        <property name="objectMapper">
+            <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                <property name="dateFormat">
+                    <bean class="java.text.SimpleDateFormat">
+                        <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- 多视图模式 -->
+    <!-- freemarker页面视图 -->
+    <bean id="freemarkerViewResolver" class="com.ym.common.freemarker.MVCFreeMarkerViewResolver">
+        <property name="cache" value="true" />
+        <property name="prefix" value="/pager/" />
+        <property name="suffix" value=".html" />
+        <property name="contentType" value="text/html; charset=UTF-8"/>
+        <property name="requestContextAttribute" value="rc" />
+        <property name="exposeRequestAttributes" value="true" />
+        <property name="exposeSessionAttributes" value="true" />
+        <property name="exposeSpringMacroHelpers" value="true" />
+        <property name="order" value="0" />
+    </bean>
+    
+    <!-- jsp页面视图 -->
+    <!-- <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/pager/" />
+        <property name="suffix" value=".jsp" />
+        <property name="order" value="1" />
+    </bean> -->
+</beans>

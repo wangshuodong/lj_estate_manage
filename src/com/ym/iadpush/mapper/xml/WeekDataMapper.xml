@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.WeekDataMapper">
+	<resultMap type="com.ym.iadpush.manage.entity.WeekData" id="BaseResultMap">
+		<result column="money" property="earn" jdbcType="DECIMAL" />
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="acount" property="acount" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="queryWeekDataByDeverReport" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT SUM(icount) icount,SUM(acount) acount,SUM(earn) money FROM
+		developer_report
+		<where>
+			<if test="startDate != null">AND   <![CDATA[addate >= #{startDate,jdbcType=DATE}]]>
+			</if>
+			<if test="endDate != null">AND <![CDATA[addate <= #{endDate,jdbcType=DATE}]]></if>
+			<if test="serviceId != null">And uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+		</where>
+	</select>
+</mapper>

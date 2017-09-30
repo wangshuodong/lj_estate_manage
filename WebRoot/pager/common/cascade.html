@@ -1,0 +1,15 @@
+<@compress single_line=isCompress>
+(function($){
+    var ${cfgId} = {};
+    <#if configs?? && configs?size gt 0>
+        <#list configs as cfg>
+            ${cfg.parentCfg}['${cfg.parentKey}'] = (${cfg.parentCfg}[${cfg.parentKey}] ? ${cfg.parentCfg}[${cfg.parentKey}] : '') + "'${cfg.cfgKey}':'${cfg.cfgVal}',";
+        </#list>
+    </#if>
+    for(var i in ${cfgId}) {
+        var val = ${cfgId}[i]; 
+        ${cfgId}[i] = eval("({" + val.substring(0, val.length - 1) + "})");
+    }
+    $.fn.cascade = {${cfgId}:${cfgId}};
+})(jQuery);
+</@compress>

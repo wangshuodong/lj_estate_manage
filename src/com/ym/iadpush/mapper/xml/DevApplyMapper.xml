@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.dev.mapper.DevApplyMapper" >
+
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.dev.entity.DevApp" >
+		<result column="id" property="aid" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="qid" property="qid" jdbcType="INTEGER" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="qname" property="qname" jdbcType="VARCHAR" />
+		<result column="appname" property="appname" jdbcType="VARCHAR" />
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="money" property="earn_money" jdbcType="DOUBLE" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+	</resultMap>
+  
+  	
+	
+	<update id="updateAppStatus" parameterType="map">
+		update app set status=#{status} where id=#{appid}
+	</update>
+	
+	<select id="selectChannel" resultMap="DevChannerl_BaseResultMap" >
+		select id,name from channel
+	</select>
+	<resultMap id="DevChannerl_BaseResultMap" type="com.ym.iadpush.dev.entity.DevChannel" >
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="selectAppById" resultMap="BaseResultMap_AppById" >
+		select id,qid,uid,name appname,ex,packagename from app where id=#{id}
+	</select>
+	<resultMap id="BaseResultMap_AppById" type="com.ym.iadpush.dev.entity.DevApp" >
+		<result column="id" property="aid" jdbcType="INTEGER" />
+		<result column="qid" property="qid" jdbcType="INTEGER" />
+		<result column="appname" property="appname" jdbcType="VARCHAR" />
+		<result column="ex" property="ex" jdbcType="VARCHAR" />
+		<result column="packagename" property="packagename" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<insert id="insertApp" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+	<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id"> 
+	SELECT LAST_INSERT_ID() 
+	</selectKey> 
+		insert into app(name,qid,uid,ex,packagename,createTime,status) values(#{appname},#{qid},#{uid},#{ex},#{packagename},now(),'1,1,1')
+	</insert>
+	<update id="updatetApp">
+		update app set name=#{appname},ex=#{ex} where id=#{id}
+	</update>
+	
+</mapper>

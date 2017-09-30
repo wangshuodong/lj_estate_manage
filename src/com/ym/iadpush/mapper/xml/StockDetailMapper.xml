@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.StockDetailMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.StockDetail">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="month" jdbcType="VARCHAR" property="month" />
+		<result column="warehouseId" jdbcType="INTEGER" property="warehouseId" />
+		<result column="productId" jdbcType="INTEGER" property="productId" />
+		<result column="startNumber" jdbcType="INTEGER" property="startNumber" />
+		<result column="enterNumber" jdbcType="INTEGER" property="enterNumber" />
+		<result column="outNumber" jdbcType="INTEGER" property="outNumber" />
+		<result column="endNumber" jdbcType="INTEGER" property="endNumber" />
+		<result column="proProperty" jdbcType="INTEGER" property="proProperty" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="warehouseName" jdbcType="VARCHAR" property="warehouseName" />
+		<result column="productName" jdbcType="VARCHAR" property="productName" />
+	</resultMap>
+	
+	<resultMap id="stockDetailDataStatement" type="com.ym.iadpush.manage.entity.StockDetailDataStatement">
+		<result column="enterNumber" property="enterNumber" jdbcType="DECIMAL" />
+		<result column="outNumber" property="outNumber" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<select id="queryStockDetailCollect" resultMap="stockDetailDataStatement"  parameterType="map">
+		select  sum(enterNumber) enterNumber,sum(outNumber) outNumber  from stockdetail  sd
+		left join product p on p.id=sd.productId
+		left join warehouse w on w.id=sd.warehouseId
+		where 1=1  
+		
+		<if test="companyId!=null and companyId!='' ">
+			and w.companyId =#{companyId}
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and sd.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and sd.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="month!=null and month!='' ">
+			and sd.month =#{month}
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and sd.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and sd.productId =#{product}
+		</if>
+	</select>
+	
+	<select id="queryStockDetailList" resultMap="BaseResultMap"
+		parameterType="map">
+		select  sd.*,p.name productName,w.name warehouseName,p.unit unit  from stockdetail  sd
+		left join product p on p.id=sd.productId
+		left join warehouse w on w.id=sd.warehouseId
+		where 1=1
+		
+		<if test="companyId!=null and companyId!='' ">
+			and w.companyId =#{companyId}
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and sd.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and sd.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="month!=null and month!='' ">
+			and sd.month =#{month}
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and sd.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and sd.productId =#{product}
+		</if>
+
+		order by sd.addate,sd.warehouseId,sd.productId
+		
+		limit #{currPage},#{pageSize}
+
+	</select>
+	
+	<select id="queryStockDetailCount" parameterType="map" 	resultType="java.lang.Integer">
+		select  count(1)  from stockdetail  sd
+		left join product p on p.id=sd.productId
+		left join warehouse w on w.id=sd.warehouseId
+		where 1=1  
+		
+		<if test="companyId!=null and companyId!='' ">
+			and w.companyId =#{companyId}
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and sd.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and sd.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="month!=null and month!='' ">
+			and sd.month =#{month}
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and sd.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and sd.productId =#{product}
+		</if>
+		
+	</select>
+
+	<select id="getLatelyStockDetail" resultMap="BaseResultMap">
+		SELECT * from
+		stockdetail  where productId=#{productId,jdbcType=INTEGER}  and warehouseId=#{warehouseId,jdbcType=INTEGER}
+		and addate!=#{addate,jdbcType=DATE}   order by addate desc  limit 0,1
+	</select>
+	
+	<select id="getStockDetail" resultMap="BaseResultMap">
+		SELECT * from
+		stockdetail where productId=#{productId,jdbcType=INTEGER}  and warehouseId=#{warehouseId,jdbcType=INTEGER}
+		and addate=#{addate,jdbcType=DATE}    limit 0,1
+		
+		
+	</select>
+	
+
+	<insert id="insertStockDetail" parameterType="com.ym.iadpush.manage.entity.StockDetail"
+		keyProperty="id">
+		insert  into  stockdetail (addate,createTime,warehouseId,productId,month,startNumber,enterNumber,outNumber,endNumber )
+		values(#{addate},#{createTime},#{warehouseId},#{productId},#{month},#{startNumber},#{enterNumber},#{outNumber},#{endNumber} )
+	</insert>
+	
+	<insert id="updateStockDetail">
+		update stockdetail set 
+		startNumber=#{stockDetail.startNumber,jdbcType=INTEGER},enterNumber=#{stockDetail.enterNumber,jdbcType=INTEGER},outNumber=#{stockDetail.outNumber,jdbcType=INTEGER},endNumber=#{stockDetail.endNumber,jdbcType=INTEGER}
+		where id=#{id,jdbcType=INTEGER}
+	</insert>
+	
+</mapper>

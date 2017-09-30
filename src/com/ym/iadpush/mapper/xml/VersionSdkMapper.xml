@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.VersionSdkMapper">
+  <resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.VersionSdk">
+    <result column="mid" jdbcType="VARCHAR" property="mid" />
+    <result column="sv" jdbcType="VARCHAR" property="sv" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <resultMap type="com.ym.iadpush.manage.entity.VersionPie" id="Pie_Result">
+  	<result column="count" property="count"/>
+  	<result column="v" property="v"/>
+  </resultMap>
+  
+  <insert id="insert" parameterType="com.ym.iadpush.manage.entity.VersionSdk">
+    insert into version_sdk (sv, name, 
+      type, create_time)
+    values ( #{sv,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{create_time,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.ym.iadpush.manage.entity.VersionSdk">
+    insert into version_sdk
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="mid != null">
+        mid,
+      </if>
+      <if test="sv != null">
+        sv,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="create_time != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="mid != null">
+        #{mid,jdbcType=VARCHAR},
+      </if>
+      <if test="sv != null">
+        #{sv,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="create_time != null">
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  
+	<select id="selectVersionSdkByParamMap" resultType="java.util.HashMap"
+		parameterType="map">
+		SELECT * FROM version_sdk vs
+	    WHERE 1=1
+		<if test="sv !=null and  sv!=''">
+		 	and sv = #{sv,jdbcType=VARCHAR}
+	    </if>
+	    
+	    <if test="name !=null and  name!=''">
+		 	and name = #{name,jdbcType=VARCHAR}
+	    </if>
+	    
+	    <if test="mid !=null  and  mid!='' ">
+		 	and mid= #{mid,jdbcType=VARCHAR}
+	    </if>
+	    
+
+		LIMIT #{begRow},#{pageSize}
+	
+ 		
+	</select>
+	<select id="selectTotalRecord" resultType="java.lang.Integer"
+		parameterType="map">
+		SELECT count(0) FROM version_sdk vs
+	    WHERE 1=1
+		<if test="sv !=null and  sv!=''">
+		 	and sv = #{sv,jdbcType=VARCHAR}
+	    </if>
+	    
+	    <if test="name !=null and  name!=''">
+		 	and name = #{name,jdbcType=VARCHAR}
+	    </if>
+	    
+	    <if test="mid !=null  and  mid!='' ">
+		 	and mid= #{mid,jdbcType=VARCHAR}
+	    </if>
+	    
+
+	</select>
+	
+	<select id="selectVersionSdkByPrimaryKey" resultType="com.ym.iadpush.manage.entity.VersionSdk"
+		parameterType="map">
+		SELECT * FROM version_sdk where 
+		<choose>
+			<when test="sv!=null">sv = #{sv}</when>
+			<otherwise>mid = #{id}</otherwise>
+		</choose>
+	</select>
+	<select id="queryForPie" parameterType="map" resultMap="Pie_Result">
+		SELECT SUM(${count}) count,${vtype} v FROM iadpush_vcount 
+			<where>
+				<if test="adate != null">
+					AND adate = #{adate,jdbcType=DATE}
+				</if>
+				<if test="serviceId != null">And uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+			</where>
+		 GROUP BY ${vtype}
+	</select>
+	
+	<update id="updateVersionSdkByPrimaryKeySelective" parameterType="com.ym.iadpush.manage.entity.VersionSdk" >
+    	update version_sdk
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      
+       <if test="sv != null" >
+       	sv =  #{sv,jdbcType=VARCHAR},
+      </if>
+      
+    </set>
+    where mid = #{mid,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="deleteVersionSdkByPrimaryKey" parameterType="map">
+  	delete from version_sdk where mid=${mid}
+  </delete>
+  
+  <select id="selectAllVersionKit" resultMap="BaseResultMap_kit"  >
+  		SELECT sv,mid,name FROM version_sdk
+  </select>
+  <resultMap id="BaseResultMap_kit" type="com.ym.iadpush.manage.entity.VersionSdk">
+    <result column="mid" jdbcType="VARCHAR" property="mid" />
+    <result column="sv" jdbcType="VARCHAR" property="sv" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+</mapper>

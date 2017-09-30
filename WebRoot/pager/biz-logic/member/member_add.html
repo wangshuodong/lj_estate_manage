@@ -1,0 +1,115 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>重庆京莱米商贸公司|会员等级</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+<link href="${base}/assets/biz-logic/css/cloud-zoom.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${base}/assets/biz-logic/js/cloud-zoom.1.0.2.min.js"></script>
+<script type="text/javascript" src="${base}/assets/common/ajaxfileupload.js"></script>
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+.progress-striped .bar {
+background-color: #149bdf;}
+</style>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="panel panel-default">
+		<div class="panel-heading">
+           		<h3 class="panel-title">会员等级</h3>
+           	</div>
+           	<div class="panel-body text-center">
+				<div class="tab-content">
+				  <div class="tab-pane active" id="daily" style="height:auto !important;">
+				  
+				 <form id="submitForm" action="${base}" class="form form-inline" method="post">
+					 <table class="table table-bordered" style="width:860px;">
+					 	<tr>
+					 		<td align="right">会员等级</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" name="level" style="width:300px;">
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">折扣比率</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="bankNo" name="rate" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="18%" align="right">会员描述</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="bank" name="desc" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td></td>
+					 		<td>
+					 			<button type="button" onclick="ajaxSubmit()" class="btn btn-info btn-sm col-md-1">保存</button>
+					 		</td>
+					 	</tr>
+					 </table>
+					 
+		            <!-- 操作消息记录 -->
+		            <div class="row" id="messageDiv" align="left" style="color:red">
+		            </div>
+		            
+		            </form>
+				  </div>
+				</div>
+				</div>
+           	</div>
+	</div>
+	<!-- 缓冲 -->
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <!--   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+        <h4 class="modal-title" id="myModalLabel">数据提交中，请等待</h4>
+      </div>
+      <div class="modal-body" style="width: 600px;height: 520px;">
+      		<img alt="" src="${base}/assets/biz-logic/images/loading_circle.gif" style="margin-top: 220px;margin-left: 250px;">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+	<script type="text/javascript">
+		function ajaxSubmit(){
+			var d = $("#submitForm").serialize();
+			$.ajax({
+				 url:"member_add.do",
+				type:"post",
+			dataType:"json",
+				data:d,
+			beforeSend:function(){
+				$("#loading").modal('show');
+			},
+			complete:function(){
+				$("#loading").modal('hide');
+			},
+			success:function(data){
+					if(data.status == true){
+						alert("操作成功");
+						window.location.href="member_list.html";
+					}else{
+						alert("操作失败");
+					}
+				}
+			
+			})
+		}
+	</script>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

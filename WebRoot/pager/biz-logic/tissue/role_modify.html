@@ -1,0 +1,112 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|修改角色</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+a {
+	cursor: pointer
+}
+</style>
+<script type="text/javascript">
+	$(function(){
+		$("#roleSave").click(function(){
+			var messageDiv = $("#messageDiv");
+			var addMenuForm = $("#addMenuForm");
+            
+            $.ajax({
+            	type : "post",
+            	url : "updRole.html",
+            	dataType : 'json',
+            	data : addMenuForm.serialize(),
+            	success : function(result) {
+				     var message = result.m;
+					alert(message);
+					window.location.href = "role.html";
+			    },
+			    error : function() {
+				    // 请求出错处理
+				    messageDiv.html('服务器内部错误，请联系管理员!');
+			    }
+            });
+		});
+	});
+</script>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="panel panel-default">
+		    <div class="panel-heading">
+         		<h3 class="panel-title">修改角色</h3>
+         	</div>
+           	<div class="panel-body text-center">
+				<div class="tab-content">
+				  <div class="tab-pane active" id="daily" style="height:400px;">
+				  
+				 <form  class="form form-inline" id="addMenuForm" name="addMenuForm" method="post" style="margin-left:180px;">
+				  	<div class="row">
+				  	    <input type="hidden" id="roleId" name="roleId" value="${role.roleId}"/>
+		            	<div class="col-md-2 text-right">角色名称</div>
+		            	<div class="col-md-2">
+		            		<input type="text" class="form-control input-sm" id="roleName" style="width:180px;" name="roleName" value="${role.roleName}"/>
+		            	</div>
+		            </div>
+		            <div class="row">
+		            	<div class="col-md-2 text-right">角色类型</div>
+		            	<div class="col-md-2">
+		            		<select id="type" name="type" class="form-control" style="width:180px;">
+		            			<option value="manger">超级管理员</option>
+		            			<option value="wyManger ">物业管理员</option>
+		            			<option value="saler">业务员</option>
+	            		    </select>
+		            	</div>
+		            </div>
+		            <div class="row">
+		            	<div class="col-md-2 text-right">状态</div>
+		            	<div class="col-md-2">
+		            		<label class="radio-inline">
+		            		    <#if role.status?? && role.status == 0>
+		            		    	<input type="radio" id="status" name="status" checked="checked" value="0"/>正常
+		            		    <#else>
+		            		    	<input type="radio" id="status" name="status" value="0"/>正常
+		            		    </#if>
+	            		    </label>
+	            		    <label class="radio-inline">
+	            		    	<#if role.status?? && role.status == 1>
+		            		    	<input type="radio" id="status" name="status" checked="checked" value="1"/>停用
+		            		    <#else>
+		            		    	<input type="radio" id="status" name="status" value="1"/>停用
+		            		    </#if>
+	            		    </label>
+		            	</div>
+		            </div>
+		            <div class="row">
+		            	<div class="col-md-2 text-right"></div>
+		            	<div class="col-md-2">
+		            		<button type="button" class="btn btn-info btn-sm" id="roleSave" style="width:60px;">保存</button>
+		            	</div>
+		            </div>
+		            
+		            <!-- 操作消息记录 -->
+		            <div class="row" id="messageDiv" align="left" style="color:red">
+		            </div>
+		            
+		            </form>
+				  </div>
+				</div>
+				</div>
+           	</div>
+	</div>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

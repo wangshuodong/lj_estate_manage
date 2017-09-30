@@ -1,0 +1,255 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title></title> <#include "/pager/common/quote.html" /> <#include
+"/common/bootstrapBase.html" />
+
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+
+<style type="text/css">
+ul.nav.nav-tabs a {
+	cursor: pointer
+}
+
+div.tab-content a {
+	cursor: pointer
+}
+
+.main_content {
+	padding: 64px 30px 30px;
+	background: #fff;
+	border-left: 1px solid transparent;
+}
+
+.heading {
+	border-bottom: 1px solid #dcdcdc;
+	margin-bottom: 18px;
+	padding-bottom: 5px;
+}
+
+#mine {
+	border: solid 1px #f7f7f7;
+	border-radius: 4px;
+	overflow: hidden;
+	margin: 20px;
+}
+
+.bor1 {
+	border: solid 3px #f7f7f7;
+	border-radius: 4px;
+	margin: 2px;
+	overflow: hidden;
+}
+
+.center {
+	margin: 0 auto;
+	font-family: '宋体';
+	margin-top: 20px;
+	font-size: 13px;
+	color: #3f3f40;
+	margin-bottom: 20px;
+	overflow: hidden;
+}
+
+.form-horizontal .control-group {
+	margin-bottom: 14px;
+}
+
+.form-horizontal .control-label {
+	float: left;
+	width: 160px;
+	padding-top: 5px;
+	text-align: right;
+}
+
+.label-info,.badge-info {
+	background: #058DC7;
+}
+
+label,input,button,select,textarea,select,textarea,input[type="text"],input[type="password"],input[type="datetime"],input[type="datetime-local"],input[type="date"],input[type="month"],input[type="time"],input[type="week"],input[type="number"],input[type="email"],input[type="url"],input[type="search"],input[type="tel"],input[type="color"],.uneditable-input,.btn
+	{
+	font-size: 13px;
+}
+</style>
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container" id="contentwrapper">
+		<div class="main_content">
+			<#if message??>
+			<div class="alert alert-success alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert"
+					aria-hidden="true">&times;</button>
+				<strong>${message}</strong>
+			</div>
+			</#if>
+			<h3 class="heading">个人信息&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h3>
+			<div align="center">
+				<div id="mine">
+					<div class="bor1">
+						<div class="center" align="left">
+							<form id="userinfo" action="${base}/update_dev_user_info.html"
+								method="post" class="form-horizontal" role="form"
+								novalidate="novalidate">
+								<!--      		<div class="form-horizontal userinfo "> -->
+
+								<div class="form-group">
+									<label class="control-label">用户名</label>
+									<div class="col-sm-4">
+										<label class="label label-info" style="margin-top: 6px">${user.username}</label>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">电子邮箱</label>
+									<div class="col-sm-4">
+										<a href="mailto:110@q.com" style="margin-top: 6px"> <span
+											class="label label-info"
+											style="margin-top: 6px;cursor: pointer;">${user.email}</span>
+										</a>
+									</div>
+								</div>
+								<hr>
+								<div class="form-group">
+									<label class="control-label">昵称<span
+										style="color: red; margin-left: 10px">*</span> </label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" name="nick"
+											value="${userinfo.nick}">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">姓名<span
+										style="color: red; margin-left: 10px">*</span> </label>
+									<div class="col-sm-4">
+									<#if userinfo.bankUserName?? && userinfo.bankUserName != "">
+									<label class="label label-info">${userinfo.bankUserName}</label>
+									<#else>
+									
+										<input type="text" class="form-control" name="bankUserName"
+											value="${userinfo.bankUserName}">
+									</#if>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">身份号<span
+										style="color: red; margin-left: 10px">*</span> </label>
+									<div class="col-sm-4">
+									<#if userinfo.bankUserName?? && userinfo.bankUserName != "">
+									<label class="label label-info">${userinfo.certificate}</label>
+									<#else>
+										<input type="text" class="form-control" name="idcard"
+											value="${userinfo.certificate}">
+									</#if>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">手机/电话<span
+										style="color: red; margin-left: 10px">*</span> </label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" name="phone"
+											value="${userinfo.phone}">
+
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">QQ账号<span
+										style="color: red; margin-left: 10px">*</span> </label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" name="qq"
+											value="${userinfo.qq}">
+
+									</div>
+								</div>
+								<hr>
+								<div class="form-group">
+									<label class="control-label"></label>
+									<div class="col-sm-4">
+										<button id="save_info_btn" data-loading-text="正在提交..."  type="submit"
+											class="btn btn-info">保存</button>
+									</div>
+								</div>
+								<!-- </div> -->
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="alert alert-warning alert-dismissable" style="display: none;" id="alert-warning">
+				<button type="button" class="close" data-dismiss="alert"
+					aria-hidden="true">&times;</button>
+				<strong>提示!</strong> <span id="alert-warning-info">提交失败</span>
+			</div>
+			<div class="alert alert-success alert-dismissable" style="display: none;" id="alert-success">
+				<button type="button" class="close" data-dismiss="alert"
+					aria-hidden="true">&times;</button>
+				<strong>提示!</strong> <span id="alert-success-info">提交失败</span>
+			</div>
+			<h3>密码修改</h3>
+			<hr>
+			<div align="center">
+				<div id="mine">
+					<div class="bor1">
+						<div class="center" align="left">
+							<form id="pwdForm" method="post" class="form-horizontal"
+								role="form" novalidate="novalidate">
+								<div class="form-group">
+									<label class="control-label">旧密码</label>
+									<div class="col-sm-4">
+										<input type="password" class="form-control" name="oldPwd">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">新密码</label>
+									<div class="col-sm-4">
+										<input type="password" class="form-control" name="newPwd">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">确认密码</label>
+									<div class="col-sm-4">
+										<input type="password" class="form-control" name="confirmPwd">
+									</div>
+								</div>
+								<hr>
+								<div class="form-group">
+									<label class="control-label"></label>
+									<div class="col-sm-4">
+										<button id="save_info_btn" onclick="updatePwd()"  type="button"
+											class="btn btn-info">修改</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript" src="${base}/assets/biz-logic/js/user-info.js"></script>
+<script type="text/javascript">
+	function updatePwd() {
+		var d = $("#pwdForm").serialize();
+		$.ajax({
+			url : "${base}/update_pwd.html",
+			type : "post",
+			data : d,
+			dataType : "json",
+			success : function(data) {
+				if(data.status == false){
+					$("#alert-warning-info").html(data.pwdMessage);
+					$("#alert-warning").css("display","");
+				}else{
+					$("#alert-success-info").html(data.pwdMessage);
+					$("#alert-success").css("display","");
+				}
+			}
+		})
+	}
+</script>
+</html>
+
+</@compress>

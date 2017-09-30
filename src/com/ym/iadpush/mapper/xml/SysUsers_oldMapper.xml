@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.SysUsers_oldMapper" >
+  <resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.SysUsers_old" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="nick" property="nick" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="old_userId" property="old_userId" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="qq" property="qq" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR"/>
+    <result column="city" property="city" jdbcType="VARCHAR"/>
+    <result column="member_levelId" property="member_levelId" jdbcType="INTEGER"/>
+     <result column="assortment" property="assortment" jdbcType="VARCHAR"/>
+    <result column="desc" property="desc" jdbcType="VARCHAR"/>
+    <result column="companyName" property="companyName" jdbcType="VARCHAR"/>
+    <result column="login_count" property="login_count" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <insert id="insertSysUsers_old" parameterType="com.ym.iadpush.manage.entity.SysUsers_old" >
+    insert into sys_users_old
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="old_userId != null" >
+       old_userId,
+      </if>
+      <if test="nick != null" >
+        nick,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="member_levelId != null">
+      	member_levelId,
+      </if>
+      <if test="departmentCode != null">
+      	departmentCode,
+      </if>
+      <if test="qq != null">
+      	qq,
+      </if>
+      <if test="departmentId != null">
+      	departmentId,
+      </if>
+      <if test="companyId != null">
+      	companyId,
+      </if>
+      <if test="ptpwd != null">
+      	ptpwd,
+      </if>
+      <if test="province != null">
+      	province,
+      </if>
+       <if test="city != null">
+      	city,
+      </if>
+       <if test="phone != null">
+      	phone,
+      </if>
+      <if test="county != null">
+      	county,
+      </if>
+       <if test="towns != null">
+      	towns,
+      </if>
+      <if test="roleId != null">
+      	roleId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+       <if test="old_userId != null" >
+        #{old_userId,jdbcType=INTEGER},
+      </if>
+      <if test="nick != null" >
+        #{nick,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="member_levelId != null" >
+        #{member_levelId,jdbcType=INTEGER},
+      </if>
+      <if test="departmentCode != null" >
+        #{departmentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="qq != null" >
+        #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null" >
+        #{departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="ptpwd != null" >
+        #{ptpwd,jdbcType=VARCHAR},
+      </if>
+       <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+       <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+       <if test="county != null" >
+        #{county,jdbcType=VARCHAR},
+      </if>
+       <if test="towns != null" >
+        #{towns,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>

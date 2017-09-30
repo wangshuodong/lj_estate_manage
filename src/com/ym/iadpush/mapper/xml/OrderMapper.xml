@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.OrderMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Order">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="departmentCode" jdbcType="VARCHAR" property="departmentCode" />
+		<result column="number" jdbcType="INTEGER" property="number" />
+		<result column="endNumber" jdbcType="INTEGER" property="endNumber" />
+		<result column="payUid" jdbcType="INTEGER" property="payUid" />
+		<result column="createUid" jdbcType="INTEGER" property="createUid" />
+		<result column="productId" jdbcType="INTEGER" property="productId" />
+		<result column="money" jdbcType="DECIMAL" property="money" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="paydate" jdbcType="DATE" property="paydate" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="payMoney" jdbcType="DECIMAL" property="payMoney" />
+		<result column="companyId" property="companyId" jdbcType="INTEGER" />
+		<result column="no" jdbcType="VARCHAR" property="no" />
+		<result column="productName" jdbcType="VARCHAR" property="productName" />
+		<result column="price" jdbcType="DECIMAL" property="price" />
+		<result column="unit" jdbcType="VARCHAR" property="unit" />
+		<result column="weight" jdbcType="DECIMAL" property="weight" />
+		<result column="departmentName" jdbcType="VARCHAR" property="departmentName" />
+		<result column="companyName" jdbcType="VARCHAR" property="companyName" />
+		<result column="propertyId" jdbcType="INTEGER" property="propertyId" />
+		<result column="color" jdbcType="VARCHAR" property="color" />
+		<result column="thickness" jdbcType="VARCHAR" property="thickness" />
+		<result column="payRemark" jdbcType="VARCHAR" property="payRemark" />
+
+	</resultMap>
+	
+	<resultMap id="orderDataStatement" type="com.ym.iadpush.manage.entity.OrderDataStatement">
+		<result column="money" property="money" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<delete id="deleteOrder" parameterType="java.lang.Integer">
+		delete from orders where id=#{orderId}
+	</delete>
+	
+	<select id="getOrderCollect" resultMap="orderDataStatement"  parameterType="map">
+		SELECT sum(o.money) money,sum(o.number) number,sum(o.payMoney) payMoney,sum(o.endNumber) endNumber   FROM orders o
+		
+		LEFT JOIN product p on o.productId=p.id
+		LEFT JOIN department d on d.id=o.departmentId
+		LEFT JOIN company_info c on c.id=o.companyId
+		LEFT JOIN product_property pp on pp.id=o.propertyId
+		LEFT JOIN company_info cp on c.parentId=cp.id
+
+		where 1=1
+		
+		<if test="code!=null and code!='' ">
+			and o.code like ""#{code}"%"
+		</if>
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and o.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="province!=null and province!='' ">
+			 and c.province like "%"#{province}"%" 
+		</if>
+		
+		<if test="city!=null and city!='' ">
+			 and c.city like "%"#{city}"%" 
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and o.departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="companyId!=null and companyId!='' ">
+			and o.companyId =#{companyId,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="productId!=null and productId!='' ">
+			and o.productId =#{productId,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="djcompanyName   and  djcompanyName!='' ">
+			and ( cp.name like "%"#{djcompanyName}"%"   or    c.name  like "%"#{djcompanyName}"%"   )
+		</if>
+		
+		<if test="parentCompany!=null and parentCompany!='' ">
+			and  (  c.parentId =#{parentCompany,jdbcType=VARCHAR}  or o.companyId=#{parentCompany,jdbcType=VARCHAR}  ) 
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name like "%"#{name}"%" 
+		</if>
+		<if test="number!=null and number!='' ">
+			and o.number = #{number }
+		</if>
+		<if test="money != null and money!='' ">
+			and o.money = #{money }
+		</if>
+		<if test="startDate != null and startDate!=''">
+			 and o.addate &gt;= #{startDate,jdbcType=VARCHAR}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			 and o.addate &lt;= #{endDate,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="status!=null ">
+			  and  o.status in
+			  <foreach item="statusValue" index="index" collection="status" open="(" separator="," close=")">  
+			  	#{statusValue}  
+			 </foreach>  
+		</if>
+
+		order by o.id desc,o.status  
+	</select>
+	
+	<select id="getAllOrders" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT o.*,p.name productName,p.unit,o.price,p.weight,d.name
+		departmentName,c.name companyName,pp.color,pp.thickness   FROM orders o
+		
+		LEFT JOIN product p on o.productId=p.id
+		LEFT JOIN department d on d.id=o.departmentId
+		LEFT JOIN company_info c on c.id=o.companyId
+		LEFT JOIN product_property pp on pp.id=o.propertyId
+		LEFT JOIN company_info cp on c.parentId=cp.id
+
+		where 1=1
+		
+		<if test="productId!=null and productId!='' ">
+			and o.productId =#{productId,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			and o.code like ""#{code}"%"
+		</if>
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and o.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="province!=null and province!='' ">
+			 and c.province like "%"#{province}"%" 
+		</if>
+		
+		<if test="city!=null and city!='' ">
+			 and c.city like "%"#{city}"%" 
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and o.departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="companyId!=null and companyId!='' ">
+			and o.companyId =#{companyId,jdbcType=VARCHAR}
+		</if>
+		<if test="djcompanyName   and  djcompanyName!='' ">
+			and (cp.name like "%"#{djcompanyName}"%"   or    c.name  like "%"#{djcompanyName}"%"   )
+		</if>
+		<if test="parentCompany!=null and parentCompany!='' ">
+			and  (  c.parentId =#{parentCompany,jdbcType=VARCHAR}  or o.companyId=#{parentCompany,jdbcType=VARCHAR}  ) 
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name like "%"#{name}"%" 
+		</if>
+		<if test="number!=null and number!='' ">
+			and o.number = #{number }
+		</if>
+		<if test="money != null and money!='' ">
+			and o.money = #{money }
+		</if>
+		<if test="startDate != null and startDate!=''">
+			 and o.addate &gt;= #{startDate,jdbcType=VARCHAR}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			 and o.addate &lt;= #{endDate,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="status!=null ">
+			  and  o.status in
+			  <foreach item="statusValue" index="index" collection="status" open="(" separator="," close=")">  
+			  	#{statusValue}  
+			 </foreach>  
+		</if>
+		
+		
+		
+		order by o.id desc,o.status  
+		limit #{currPage},#{pageSize}
+	</select>
+
+	<select id="getOrderCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(1) FROM orders o
+		LEFT JOIN product p on o.productId=p.id
+		LEFT JOIN department d on d.id=o.departmentId
+		LEFT JOIN company_info c on c.id=o.companyId
+		LEFT JOIN product_property pp on pp.id=o.propertyId
+		LEFT JOIN company_info cp on c.parentId=cp.id
+		
+		where 1=1
+		
+		<if test="code!=null and code!='' ">
+			and o.code like ""#{code}"%"
+		</if>
+		
+		<if test="productId!=null and productId!='' ">
+			and o.productId =#{productId,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and o.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="province!=null and province!='' ">
+			 and c.province like "%"#{province}"%" 
+		</if>
+		
+		<if test="city!=null and city!='' ">
+			 and c.city like "%"#{city}"%" 
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and o.departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="companyId!=null and companyId!='' ">
+			and o.companyId =#{companyId,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="djcompanyName   and  djcompanyName!='' ">
+			and (cp.name like "%"#{djcompanyName}"%"   or    c.name  like "%"#{djcompanyName}"%"   )
+		</if>
+		
+		<if test="parentCompany!=null and parentCompany!='' ">
+			and  (  c.parentId =#{parentCompany,jdbcType=VARCHAR}  or o.companyId=#{parentCompany,jdbcType=VARCHAR}  ) 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			 and o.addate &gt;= #{startDate,jdbcType=VARCHAR}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			 and o.addate &lt;= #{endDate,jdbcType=VARCHAR}
+		</if>
+		<if test="money != null and money!='' ">
+			and o.money = #{money }
+		</if>
+		<if test="name!=null and name!='' ">
+			 and c.name like "%"#{name}"%" 
+		</if>
+		<if test="number!=null and number!='' ">
+			and o.number = #{number }
+		</if>
+		<if test="money != null and money!='' ">
+			and o.money = #{money }
+		</if>
+		<if test="status!=null ">
+			  and  o.status in
+			  <foreach item="statusValue" index="index" collection="status" open="(" separator="," close=")">  
+			  	#{statusValue}  
+			 </foreach>  
+		</if>
+
+		order by o.id desc,o.status  
+	</select>
+
+	<select id="sumOrderByDate" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from orders  o left join  company_info c  on c.id=o.companyid
+		<include refid="sumOrderByDate_Where_Sql" />
+	</select>
+
+	<select id="queryWeekData" resultType="com.ym.iadpush.manage.entity.WeekData">
+		SELECT COUNT(1) orderCount,SUM(money) orderMoney,SUM(payMoney)
+		payMoney FROM orders   o  left join  company_info c  on c.id=o.companyid
+		<include refid="queryWeekData_Where_Sql" />
+	</select>
+	<sql id="queryWeekData_Where_Sql">
+		<where>
+			<if test="djsaleId   and  djsaleId!='' ">
+				and  (  c.parentId =#{djsaleId,jdbcType=INTEGER}  or o.companyId=#{djsaleId,jdbcType=INTEGER}  ) 
+			</if>
+		
+			<if test="startDate != null">
+				and o.addate >= #{startDate}
+			</if>
+			<if test="endDate != null">
+				and o.addate <![CDATA[<= #{endDate}]]>
+			</if>
+
+			<if test="departmentCode!=null and departmentCode!='' ">
+				and o.departmentCode like ""#{departmentCode}"%"
+			</if>
+			<if test="companyId!=null and companyId!='' ">
+				and o.companyId =#{companyId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="sumOrderByDate_Where_Sql">
+		<where>
+			<if test="djsaleId   and  djsaleId!='' ">
+				and  (  c.parentId =#{djsaleId,jdbcType=INTEGER}  or o.companyId=#{djsaleId,jdbcType=INTEGER}  ) 
+			</if>
+			<if test="startTime != null">
+				and o.addate >= #{startTime}
+			</if>
+			<if test="endTime != null">
+				and o.addate <![CDATA[<= #{endTime}]]>
+			</if>
+
+			<if test="departmentCode!=null and departmentCode!='' ">
+				and o.departmentCode like ""#{departmentCode}"%"
+			</if>
+			<if test="companyId!=null and companyId!='' ">
+				and o.companyId =#{companyId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="getMaxOrderCode" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT  *  from orders   where 1=1
+		and  code like ""#{date}"%"     order by code desc  limit 0,1
+	</select>
+	
+	<select id="getOrderById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		SELECT o.*,p.name
+		productName,p.unit,o.price,p.weight,c.name companyName ,pp.color,pp.thickness
+		from orders o
+		left join product p on p.id=o.productId
+		left join company_info c on c.id=o.companyId
+		LEFT JOIN product_property pp on pp.id=o.propertyId
+		
+		where 1=1
+		and o.id=#{orderId,jdbcType=INTEGER}
+	</select>
+
+	<insert id="updateOrder">
+		update orders set status=#{status,jdbcType=INTEGER}
+		where id=#{orderId,jdbcType=INTEGER}
+	</insert>
+
+	<insert id="updateOrderBill">
+		update orders set 
+		payRemark=#{order.payRemark,jdbcType=VARCHAR},money=#{order.money,jdbcType=DECIMAL},price=#{order.price,jdbcType=DECIMAL},payMoney=#{order.payMoney,jdbcType=DECIMAL},payUid=#{order.payUid,jdbcType=INTEGER},paydate=#{order.paydate,jdbcType=DATE},no=#{order.no,jdbcType=VARCHAR},endNumber=#{order.endNumber,jdbcType=VARCHAR},endMoney=#{order.endMoney,jdbcType=DECIMAL}
+		where id=#{orderId,jdbcType=INTEGER}
+	</insert>
+
+	<insert id="inserOrder" parameterType="com.ym.iadpush.manage.entity.Order"
+		keyProperty="id">
+		insert into
+		orders(addate,productId,number,endNumber,money,departmentId,departmentCode,companyId,createUid,createTime,propertyId,remark,price,shippingAddress,code,endMoney)
+		values(#{addate},#{productId},#{number},#{endNumber},#{money},#{departmentId},#{departmentCode},#{companyId},#{createUid},#{createTime},#{propertyId},#{remark},#{price},#{shippingAddress},#{code},#{endMoney})
+	</insert>
+
+	<insert id="inserOrderStatus" parameterType="map">
+		insert into
+		order_status(status,`desc`,createUid,createTime,orderId)
+		values(#{status},#{desc},#{createUid},#{createTime},#{orderId})
+	</insert>
+
+</mapper>

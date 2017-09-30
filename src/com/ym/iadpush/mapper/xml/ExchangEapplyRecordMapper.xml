@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.ExchangEapplyRecordMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.ExchangEapplyRecord">
+		<result column="id"  jdbcType="INTEGER" property="id" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="warehouseId" jdbcType="INTEGER" property="warehouseId" />
+		<result column="productId" jdbcType="INTEGER" property="productId" />
+		<result column="productName" jdbcType="VARCHAR" property="productName" />
+
+		<result column="newProductId" jdbcType="INTEGER" property="newProductId" />
+		<result column="newproductName" jdbcType="VARCHAR" property="newproductName" />
+		
+		<result column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="number" jdbcType="INTEGER" property="number" />
+		<result column="exchangNumber" jdbcType="INTEGER" property="exchangNumber" />
+		
+		<result column="companyName" jdbcType="VARCHAR" property="companyName" />
+		<result column="outsideCode" jdbcType="VARCHAR" property="outsideCode" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="checked" jdbcType="INTEGER" property="checked" />
+		<result column="auditingPeople" jdbcType="INTEGER" property="auditingPeople" />
+		<result column="auditingDate" jdbcType="DATE" property="auditingDate" />
+		<result column="auditingTime" jdbcType="TIMESTAMP" property="auditingTime"  />
+	</resultMap>
+	
+	<resultMap id="exchangEapplyRecordStatement" type="com.ym.iadpush.manage.entity.ExchangEapplyRecordStatementStatement">
+		<result column="number" property="number" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<insert id="updateExchangEapplyRecord">
+		update exchangEapplyRecord set  remark=#{exchangEapplyRecord.remark},outsideCode=#{exchangEapplyRecord.outsideCode},
+		deliverCode=#{exchangEapplyRecord.deliverCode},status=#{exchangEapplyRecord.status},exchangNumber=#{exchangEapplyRecord.exchangNumber},
+		warehouseId=#{exchangEapplyRecord.warehouseId},newProductId=#{exchangEapplyRecord.newProductId},
+		checked=#{exchangEapplyRecord.checked,jdbcType=INTEGER},auditingPeople=#{exchangEapplyRecord.auditingPeople,jdbcType=INTEGER},auditingDate=#{exchangEapplyRecord.auditingDate,jdbcType=DATE}
+		,auditingTime=#{exchangEapplyRecord.auditingTime,jdbcType=TIMESTAMP}
+
+		where id=#{id,jdbcType=INTEGER}
+	</insert>
+	
+	<select id="getExchangEapplyRecordById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select  e.*,p.name productName,c.name companyName,c.id companyId,p.unit unit,su.username  auditingUsername   from exchangEapplyRecord  e
+		
+		left join company_info c on c.id=e.companyId
+		left join product p on p.id=e.productId
+		left join sys_users su on su.user_id=e.auditingPeople
+		where 1=1 
+		and e.id=#{id,jdbcType=INTEGER}
+	</select>
+
+	<insert id="insertExchangEapplyRecord" parameterType="com.ym.iadpush.manage.entity.ExchangEapplyRecord"
+		keyProperty="id">
+		insert  into  exchangEapplyRecord (status,departmentCode,companyId,departmentId,uid,addate,createTime,code,outsideCode,productId,number,remark)
+		values(#{status},#{departmentCode},#{companyId},#{departmentId},#{uid},#{addate},#{createTime},#{code},#{outsideCode},#{productId},#{number},#{remark} )
+	</insert>
+	
+	<select id="getMaxExchangEapplyRecordCode" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT  *  from exchangEapplyRecord   where 1=1
+		and  code like ""#{date}"%"     order by code desc  limit 0,1
+	</select>
+	
+	<select id="getAllExchangEapplyRecordCollect" resultMap="exchangEapplyRecordStatement"  parameterType="map">
+		select  sum(number)  number   from exchangEapplyRecord  e
+		left join company_info c on c.id=e.companyId
+		left join product p on p.id=e.productId
+		left join sys_users su on su.user_id=e.auditingPeople
+		where 1=1 
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and e.departmentCode like ""#{departmentCode}"%"
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			and e.code like ""#{code}"%"
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			 and e.addate &gt;= #{startDate,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="endDate != null and endDate!=''">
+			 and e.addate &lt;= #{endDate,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="companyId!=null and companyId!='' ">
+			and e.companyId =#{companyId,jdbcType=VARCHAR}
+		</if>
+		
+	</select>
+	
+	<select id="getAllExchangEapplyRecord" resultMap="BaseResultMap"  parameterType="map">
+		select  e.*,p.name productName,c.name companyName,c.id companyId,p.unit unit,su.username auditingUsername,np.name newproductName    from exchangEapplyRecord  e
+		left join company_info c on c.id=e.companyId
+		left join product np on np.id=e.newProductId
+		left join product p on p.id=e.productId
+		
+		left join sys_users su on su.user_id=e.auditingPeople
+		where 1=1 
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and e.departmentCode like ""#{departmentCode}"%"
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			and e.code like ""#{code}"%"
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			 and e.addate &gt;= #{startDate,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="endDate != null and endDate!=''">
+			 and e.addate &lt;= #{endDate,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="companyId!=null and companyId!='' ">
+			and e.companyId =#{companyId,jdbcType=VARCHAR}
+		</if>
+		
+	</select>
+	
+	<select id="getAllExchangEapplyRecordCount" parameterType="map"  resultType="java.lang.Integer">
+		select  count(1)  from exchangEapplyRecord  e
+		left join company_info c on c.id=e.companyId
+		left join product p on p.id=e.productId
+		left join sys_users su on su.user_id=e.auditingPeople
+		where 1=1 
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and e.departmentCode like ""#{departmentCode}"%"
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			and e.code like ""#{code}"%"
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			 and e.addate &gt;= #{startDate,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="endDate != null and endDate!=''">
+			 and e.addate &lt;= #{endDate,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="companyId!=null and companyId!='' ">
+			and e.companyId =#{companyId,jdbcType=VARCHAR}
+		</if>
+		
+	</select>
+	
+</mapper>

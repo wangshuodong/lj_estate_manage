@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.NoiconCountMapper" >
+
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.NoiconCount" >
+		<result column="noIcon_id" property="id" jdbcType="INTEGER" />
+		<result column="adate" property="adate" jdbcType="DATE" />
+		<result column="scount" property="scount" jdbcType="INTEGER" />
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="infoc" property="infoc" jdbcType="INTEGER" />
+		<result column="infoc_rate" property="infoc_rate" jdbcType="DOUBLE" />
+		<result column="icount_rate" property="icount_rate" jdbcType="DOUBLE" />
+		<result column="kv" property="kv" jdbcType="VARCHAR" />
+		<result column="sv" property="sv" jdbcType="VARCHAR" />
+	</resultMap>
+  	
+  	<sql id="noicon_count_Where_Clause">
+  		<if test="serviceId!=null">
+  			and uid in (select user_id from sys_users where serviceId=#{serviceId})
+  		</if>
+		<if test="startDate!=null">and <![CDATA[ adate>=#{startDate,jdbcType=DATE}]]></if>
+		<if test="endDate!=null">and <![CDATA[ adate<=#{endDate,jdbcType=DATE}]]></if>
+		<if test="kv_val != null">and kv = #{kv_val}</if>
+		<if test="sv_val != null">and sv = #{sv_val}</if>
+  	</sql>
+	<select id="getAllNoicon" resultMap="BaseResultMap" parameterType="map">
+		select adate,kv,sv,sum(scount) scount,sum(icount) icount,sum(infoc) infoc,noIcon_id ,FORMAT(FORMAT((sum(infoc)/sum(scount)),2)*100,2)  infoc_rate,
+		FORMAT(FORMAT((sum(icount)/sum(infoc)),2)*100,2)icount_rate 
+		from noicon_count 
+		 where 1=1 
+		<include refid="noicon_count_Where_Clause" />
+		group by adate
+		<if test="kv != null">,${kv} </if>
+		<if test="sv != null">,${sv} </if>
+		  ORDER BY adate desc limit #{currPage},#{pageSize}
+	</select>
+	<select id="getCountNoicon" resultMap="BaseResultMap" parameterType="map">
+		select adate,sum(scount) scount,sum(icount) icount,sum(infoc) infoc,noIcon_id ,FORMAT(FORMAT((sum(infoc)/sum(scount)),2)*100,2)  infoc_rate,
+		FORMAT(FORMAT((sum(icount)/sum(infoc)),2)*100,2)icount_rate 
+		from noicon_count 
+		 where 1=1 
+		<include refid="noicon_count_Where_Clause" />
+		group by adate
+		<if test="kv != null">,${kv} </if>
+		<if test="sv != null">,${sv} </if>
+	</select>
+	
+	<select id="getTotallCountNoicon"  resultMap="BaseResultMap_noiconCount" parameterType="map">
+		select sum(scount) count_scount,sum(icount) count_icount,sum(infoc) count_infoc,FORMAT(FORMAT((sum(infoc)/sum(scount)),2)*100,2)  count_infoc_rate,
+		FORMAT(FORMAT((sum(icount)/sum(infoc)),2)*100,2)   count_icount_rate from noicon_count where 1=1 
+		<include refid="noicon_count_Where_Clause" />
+	</select>
+	<resultMap id="BaseResultMap_noiconCount" type="com.ym.iadpush.manage.entity.NoiconCount" >
+		<result column="count_scount" property="scount" jdbcType="INTEGER" />
+		<result column="count_icount" property="icount" jdbcType="INTEGER" />
+		<result column="count_infoc" property="infoc" jdbcType="INTEGER" />
+		<result column="count_infoc_rate" property="infoc_rate" jdbcType="DOUBLE" />
+		<result column="count_icount_rate" property="icount_rate" jdbcType="DOUBLE" />
+	</resultMap>
+	
+	<update id="updateNoiconAd" parameterType="map">
+		update noicon_ad set title=#{title},packagename=#{packagename},popCount=#{popCount},intervalTime=#{intervalTime},
+		<if test="imgrealname!=null and imgUrlpre!=null">
+			imgUrlpre=#{imgUrlpre},imgrealname=#{imgrealname},
+		</if>
+		<if test="apkrealname!=null and apkUrlpre!=null">
+			apkUrlpre=#{apkUrlpre},apkrealname=#{apkrealname},
+		</if>
+		context=#{context} where id=#{id}
+	</update>
+	
+	
+	<select id="selectByKey" parameterType="java.lang.Integer" resultType="com.ym.iadpush.manage.entity.NoiconAd">
+		select * from noicon_ad where id = #{id}
+	</select>
+	<select id="select_noicon_config_data"  resultMap="BaseResultMap_noiconAD">
+		select * from noicon_ad limit 0,1
+	</select>
+	<resultMap id="BaseResultMap_noiconAD" type="com.ym.iadpush.manage.entity.NoiconAd" >
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="packagename" property="packagename" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="popCount" property="popCount" jdbcType="INTEGER" />
+		<result column="intervalTime" property="intervalTime" jdbcType="INTEGER" />
+		<result column="imgUrlpre" property="imgUrlpre" jdbcType="VARCHAR" />
+		<result column="apkUrlpre" property="apkUrlpre" jdbcType="VARCHAR" />
+		<result column="context" property="context" jdbcType="VARCHAR" />
+		<result column="imgrealname" property="imgrealname" jdbcType="VARCHAR" />
+		<result column="apkrealname" property="apkrealname" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 新增活跃 start-->
+	<resultMap id="NoiconActive_ResultMap" type="com.ym.iadpush.manage.entity.NoiconActive" >
+		<result column="sv" property="sv" jdbcType="VARCHAR" />
+		<result column="kv" property="kv" jdbcType="VARCHAR" />
+		<result column="appid" property="appid" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="qdid" property="qdid" jdbcType="INTEGER" />
+		<result column="version" property="version" jdbcType="VARCHAR" />
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="acount" property="acount" jdbcType="INTEGER" />
+		<result column="appName" property="appName" jdbcType="VARCHAR" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="qdName" property="qdName" jdbcType="VARCHAR" />
+		<result column="adate" property="adate" jdbcType="DATE" />
+		<result column="totalIcount" property="totalIcount" jdbcType="BIGINT" />
+		<result column="totalAcount" property="totalAcount" jdbcType="BIGINT" />
+	</resultMap>
+	<select id="getAllNoiconActiveReport" resultMap="NoiconActive_ResultMap" parameterType="map">
+		SELECT t.*,iFNULL(a.`name`,concat('未知应用id：',convert(t.appid,char))) appName,iFNULL(u.username,concat('未知用户id：',convert(t.uid,char))) userName,
+		iFNULL(qd.`name`,concat('未知渠道id：',convert(t.qdid,char))) qdName FROM 
+		<include refid="join_son_sql"/> 
+		<include refid="NoticonActive_where"/> 
+		 limit #{currPage},#{pageSize} 
+	</select>
+	<select id="getCountAllNoiconActiveReport" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(1) FROM 
+		<include refid="join_son_sql"/> 
+		<include refid="NoticonActive_where"/> 
+	</select>
+	<select id="getTotalIcountAndAcount" resultMap="NoiconActive_ResultMap"  parameterType="map">
+		SELECT sum(t.icount) totalIcount,sum(t.acount) totalAcount FROM 
+		<include refid="join_son_sql"/> 
+		<include refid="NoticonActive_where"/> 
+	</select>
+	<sql id="join_son_sql">
+		( SELECT nc.adate, nc.sv, nc.kv, nc.appid, nc.uid, nc.qdid, nc.version, sum(nc.icount) icount, sum(nc.acount) acount FROM noicon_cpacount nc 
+		GROUP BY nc.adate, nc.sv, nc.kv, nc.appid, nc.uid, nc.qdid, version ORDER BY nc.adate DESC ) t 
+		LEFT JOIN app a ON t.appid = a.id LEFT JOIN sys_users u ON t.uid = u.user_id LEFT JOIN channel qd ON t.qdid = qd.id  
+	</sql>
+	<sql id="NoticonActive_where">
+		<where>
+			<if test="serviceId!=null">
+  				and t.uid in (select user_id from sys_users where serviceId=#{serviceId}) 
+	  		</if>
+			<if test="startDate!=null"> and <![CDATA[ t.adate>=#{startDate,jdbcType=DATE}]]></if>
+			<if test="endDate!=null"> and <![CDATA[ t.adate<=#{endDate,jdbcType=DATE}]]></if>
+			<if test="uid!=null"> and t.uid = #{uid}</if>
+			<if test="qdid!=null"> and t.qdid = #{qdid}</if>
+			<if test="appid!=null"> and t.appid = #{appid}</if>
+			<if test="appName!=null"> and a.`name` like #{appName}</if>
+			<if test="sv!=null"> and t.sv = #{sv}</if>
+			<if test="kv!=null"> and t.kv = #{kv}</if>
+			<if test="version!=null"> and t.version = #{version}</if>
+		</where>
+	</sql>
+	
+	<!-- 新增活跃 end -->
+		
+	<!-- 激活率 start -->
+	<resultMap id="NoiconActiveRate_ResultMap" type="com.ym.iadpush.manage.entity.NoiconActiveRate" >
+		<result column="adate" property="date" jdbcType="DATE" />
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="acount" property="acount" jdbcType="INTEGER" />
+		<result column="rate" property="rate" jdbcType="DOUBLE" />
+		<result column="kv" property="kv" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="nar_where_caluse">
+		<where>
+			<if test="serviceId!=null">
+  				and nc.uid in (select user_id from sys_users where serviceId=#{serviceId}) 
+	  		</if>
+			<if test="startDate!=null"> and <![CDATA[ nc.adate>=#{startDate,jdbcType=DATE}]]></if>
+			<if test="endDate!=null"> and <![CDATA[ nc.adate<=#{endDate,jdbcType=DATE}]]></if>
+			<if test="kv!=null"> and nc.kv=#{kv} </if>
+		</where>
+		<choose>
+			<when test="groupKv!=null"> GROUP By nc.kv, nc.adate </when>
+			<otherwise> GROUP By nc.adate </otherwise>
+		</choose>
+	</sql>
+	<sql id="nar_son_where_caluse">
+		<where>
+			<if test="startDate!=null"> and <![CDATA[ adate>=#{startDate,jdbcType=DATE}]]></if>
+			<if test="endDate!=null"> and <![CDATA[ adate<=#{endDate,jdbcType=DATE}]]></if>
+		</where>
+	</sql>
+	<sql id="active_rate_main_sql">
+		noicon_count nc left join (select icount,appid,uid,qdid,adate,kv from noicon_cpacount <include refid="nar_son_where_caluse"/> ) cpa
+		on nc.appid=cpa.appid and nc.uid=cpa.uid and nc.qid=cpa.qdid 
+		<if test="groupKv!=null"> and nc.kv=cpa.kv </if>
+		and nc.adate=cpa.adate <include refid="nar_where_caluse"/>
+	</sql>
+	<select id="getAllNoiconActiveRate" parameterType="map" resultMap="NoiconActiveRate_ResultMap">
+		select nc.kv,nc.adate,IFNULL(sum(nc.icount),0) icount,IFNULL(sum(cpa.icount),0) acount,IFNULL(ROUND(sum(nc.icount) / sum(cpa.icount)*100, 2),0) rate 
+		 from <include refid="active_rate_main_sql"/> 
+		order by nc.adate desc limit #{currPage},#{pageSize}  
+	</select>
+	<select id="getCountAllNoiconActiveRate" parameterType="map" resultType="java.lang.Integer">
+		select count(*) from ( select 1 from  <include refid="active_rate_main_sql"/>  ) t
+	</select>
+	<select id="totalNoiconActiveRate" parameterType="map"  resultMap="NoiconActiveRate_ResultMap">
+		select IFNULL(sum(t.icount),0) icount,IFNULL(sum(t.acount),0) acount,IFNULL(ROUND(sum(t.icount) / sum(t.acount)*100, 2),0) rate from (
+		select sum(nc.icount) icount,sum(cpa.icount) acount from  <include refid="active_rate_main_sql"/>  ) t 
+	</select>
+	<!-- 激活率 end -->
+	
+</mapper>

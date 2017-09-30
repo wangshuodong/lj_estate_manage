@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.CurrentAcountCollectMapper">
+	<resultMap id="BaseResultMap"
+		type="com.ym.iadpush.manage.entity.CurrentAccountCollect">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="departmentId" jdbcType="INTEGER" property="departmentId" />
+		<result column="departmentCode" jdbcType="VARCHAR" property="departmentCode" />
+		<result column="companyId" jdbcType="INTEGER" property="companyId" />
+		<result column="startMoney" jdbcType="DECIMAL" property="startMoney" />
+		<result column="receMoney" jdbcType="DECIMAL" property="receMoney" />
+		<result column="payMoney" jdbcType="DECIMAL" property="payMoney" />
+		<result column="endMoney" jdbcType="DECIMAL" property="endMoney" />
+		<result column="lastUpdateTime" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+		<result column="name" jdbcType="VARCHAR" property="companyName" />
+		<result column="advancePayment" jdbcType="DECIMAL" property="advancePayment" />
+	</resultMap>
+
+	<resultMap id="accountCollectDataStatement" type="com.ym.iadpush.manage.entity.AccountCollectDataStatement">
+		<result column="receMoney" property="receMoney" jdbcType="DECIMAL" />
+		<result column="payMoney" property="payMoney" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<select id="getAccountCollectDataStatement" resultMap="accountCollectDataStatement"  parameterType="map">
+		SELECT sum(o.receMoney) receMoney ,sum(o.payMoney) payMoney,sum(o.advancePayment) advancePayment  from  currentaccountcollect o
+		LEFT JOIN company_info c  on c.id=o.companyId
+		LEFT JOIN company_info cp on c.parentId=cp.id
+		where 1=1
+		
+		<if test="djcompanyName   and  djcompanyName!='' ">
+			and ( cp.name like "%"#{djcompanyName}"%"   or    c.name  like "%"#{djcompanyName}"%"   )
+		</if>
+
+		<if test="factory   and  factory!='' ">
+			and  ( c.type=3   and   c.name  like "%"#{factory}"%"  )
+		</if>
+		
+		<if test="djsaleId   and  djsaleId!='' ">
+			and  (  c.parentId =#{djsaleId,jdbcType=VARCHAR}  or o.companyId=#{djsaleId,jdbcType=VARCHAR}  ) 
+		</if>
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and o.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and o.departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="month!=null and month!='' ">
+			and o.month =#{month}
+		</if>
+		<if test="parentCompany!=null and parentCompany!='' ">
+			 and ( c.parentId =#{parentCompany,jdbcType=VARCHAR}  or o.companyId=#{parentCompany,jdbcType=VARCHAR} )
+		</if>
+		<if test="companyId!=null and companyId!='' ">
+			and o.companyId =#{companyId}
+		</if>
+		<if test="companyName!=null and companyName!='' ">
+			and c.name =#{companyName}
+		</if>
+	</select>
+	
+	<update id="updateCurrentaccountCollect">
+		update currentaccountcollect set
+		startMoney=#{currentCollect.startMoney,jdbcType=DECIMAL},
+		receMoney=#{currentCollect.receMoney,jdbcType=DECIMAL},
+		payMoney=#{currentCollect.payMoney,jdbcType=DECIMAL},
+		endMoney=#{currentCollect.endMoney,jdbcType=DECIMAL},
+		advancePayment=#{currentCollect.advancePayment,jdbcType=DECIMAL}
+		
+		where
+		companyId=#{currentCollect.companyId,jdbcType=INTEGER} and
+		month=#{currentCollect.month,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getLastCurrentAccountCollect" resultMap="BaseResultMap">
+		SELECT * from
+		currentaccountcollect where companyId=#{companyId,jdbcType=INTEGER}
+		order by id desc   limit 0,1
+	</select>
+	
+	<select id="getCurrentAccountCollect" resultMap="BaseResultMap">
+		SELECT * from
+		currentaccountcollect where companyId=#{companyId,jdbcType=INTEGER}
+		and month=#{month,jdbcType=VARCHAR}  limit 0,1
+	</select>
+
+	<insert id="saveCurrentAccountCollect"  parameterType="com.ym.iadpush.manage.entity.CurrentAccountCollect" keyProperty="id">
+		insert into
+		currentaccountcollect(advancePayment,startMoney,receMoney,payMoney,endMoney,companyId,month,departmentId,departmentCode)
+		values(#{advancePayment},#{startMoney},#{receMoney},#{payMoney},#{endMoney},#{companyId},#{month},#{departmentId},#{departmentCode})
+	</insert>
+
+	<select id="queryCurrentAccountCollect" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT o.*,c.name FROM currentaccountcollect o
+		LEFT JOIN company_info c on c.id=o.companyId
+		LEFT JOIN company_info cp on c.parentId=cp.id
+		
+		where 1=1
+		
+		<if test="djcompanyName   and  djcompanyName!='' ">
+			and ( cp.name like "%"#{djcompanyName}"%"   or    c.name  like "%"#{djcompanyName}"%"   )
+		</if>
+		
+		<if test="factory   and  factory!='' ">
+			and  ( c.type=3   and   c.name  like "%"#{factory}"%"  )
+		</if>
+		
+		<if test="djsaleId   and  djsaleId!='' ">
+			and  (  c.parentId =#{djsaleId,jdbcType=VARCHAR}  or o.companyId=#{djsaleId,jdbcType=VARCHAR}  ) 
+		</if>
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and o.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and o.departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="month!=null and month!='' ">
+			and o.month =#{month}
+		</if>
+		<if test="parentCompany!=null and parentCompany!='' ">
+			 and ( c.parentId =#{parentCompany,jdbcType=VARCHAR}  or o.companyId=#{parentCompany,jdbcType=VARCHAR} )
+		</if>
+		<if test="companyId!=null and companyId!='' ">
+			and o.companyId =#{companyId}
+		</if>
+		<if test="companyName!=null and companyName!='' ">
+			and c.name like ""#{companyName}"%"
+		</if>
+		order by o.id
+		limit #{currPage},#{pageSize}
+	</select>
+
+	<select id="queryCurrentAccountCollectCount" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT count(1) FROM currentaccountcollect o
+		LEFT JOIN company_info c on c.id=o.companyId
+		LEFT JOIN company_info cp on c.parentId=cp.id
+		
+		where 1=1
+		
+		<if test="djcompanyName   and  djcompanyName!='' ">
+			and ( cp.name like "%"#{djcompanyName}"%"   or    c.name  like "%"#{djcompanyName}"%"   )
+		</if>
+		
+		<if test="factory   and  factory!='' ">
+			and  ( c.type=3   and   c.name  like "%"#{factory}"%"  )
+		</if>
+				
+		<if test="djsaleId   and  djsaleId!='' ">
+			and  (  c.parentId =#{djsaleId,jdbcType=VARCHAR}  or o.companyId=#{djsaleId,jdbcType=VARCHAR}  ) 
+		</if>
+		
+		<if test="dqsaleCode!=null and dqsaleCode!='' ">
+			and o.departmentCode like ""#{dqsaleCode}"%"
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and o.departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="month!=null and month!='' ">
+			and o.month =#{month}
+		</if>
+		<if test="parentCompany!=null and parentCompany!='' ">
+			 and ( c.parentId =#{parentCompany,jdbcType=VARCHAR}  or o.companyId=#{parentCompany,jdbcType=VARCHAR} )
+		</if>
+		<if test="companyId!=null and companyId!='' ">
+			and o.companyId =#{companyId}
+		</if>
+		<if test="companyName!=null and companyName!='' ">
+			and c.name like ""#{companyName}"%"
+		</if>
+		order by o.id
+	</select>
+
+</mapper>

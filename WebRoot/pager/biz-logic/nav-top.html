@@ -1,0 +1,108 @@
+<#macro navbar active>
+<header class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+        </div>
+        
+          <!--[if IE 8 ]> <nav class="collapse navbar-collapse bs-navbar-collapse" style="margin:0 auto;"><![endif]-->
+       	  <!--[if !IE 8]><!--><nav class="collapse navbar-collapse bs-navbar-collapse" style="width:1220px;margin:0 auto;"><!--<![endif]-->
+       
+        
+            <ul class="nav navbar-nav">
+            	<#list menus as l>
+            		<li class="dropdown">
+	                  <#if l.parentId == 0>
+		                  <#if l.isParent==true>
+		                  		<a href="${l.url}" class="dropdown-toggle" data-toggle="dropdown">
+	                  		 		<span  <#if l.icon?exists>class="${l.icon}"</#if> >${l.menuName} </span>
+	                  				<b class="caret"></b>
+	                  			</a>
+		                  </#if>
+		                  
+			              <#if l.isParent==false>
+		                  		<a href="${l.url}" class="avtive">
+		                  		 	<span <#if l.icon?exists>class="${l.icon}"</#if>>${l.menuName}</span>
+		                  		 </a>
+		                  </#if>
+	                  		
+	                  </#if>
+	                  
+	                  <#if l.isParent == true>
+	                  	<ul class="dropdown-menu">
+	                    	<#list l.childrens as s>
+		                  			<li><a href="${s.url}">${s.menuName}</a></li>
+	                  		</#list>
+	                 	</ul>
+	                  </#if>
+	                </li>
+            	</#list>
+            </ul>
+            <ul class="nav navbar-nav "  style='display:none' >
+            	<li class="dropdown">
+					<a href="javascript:void(0)" title="暂无最新公告" class="avtive tip_font">
+						 最新公告
+						<font>0</font>
+					</a>
+				</li>
+            </ul>
+            <ul class="nav navbar-nav" style="float: right;">
+	        	<li><a title="返回网站前台" href="#">欢迎您:${user.username}</a></li>
+	        	<li>
+	        		<a style="cursor:pointer;" href="logout.html">安全退出</a>
+	        	</li>
+       		</ul>
+        </nav>
+    </div>
+
+
+
+
+<!-- Fixed navbar -->
+</header>
+<!-- show news  start -->
+<#if user.news??>
+<script type="text/javascript">
+	$(function(){
+		param.op=false;
+	$('#myModal_news').modal({
+		show:true,
+		backdrop:'static'
+	});});
+</script>
+</#if>
+
+	<input type="hidden" value="${(user.news.id)!}" name="news_m_noticeid"/>
+	<input type="hidden" value="${(user.news.title)!}" name="news_m_title"/>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal_news" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" style="width:1000px;">
+	    <div class="modal-content">
+	      <div class="modal-header">
+		      <button type="button" class="close colseNotice" data-dismiss="modal" aria-hidden="true">&times;</button>
+		      <h1 class=" text-center" style="color:red;">最新公告</h1>
+	      </div>
+	      <h3 class=" text-center news_m_title" >${(user.news.title)!}</h3>
+	      <div class="modal-body news_m_body" id="news_m_body">
+	        	${(user.news.context)!}
+	        	<br/>
+	        	<div class="news_m_foot">
+		        	xxx商贸<br/>
+		        	${(user.news.date)!}
+	        	</div><br/><br/>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default colseNotice" data-dismiss="modal">关闭</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+<!-- show news  end  -->
+</#macro>

@@ -1,0 +1,56 @@
+.col-md-7{
+	width:100%;
+}
+.col-md-2{
+	line-height:30px;
+}
+.col-md-1{
+	line-height:30px;
+}
+.line-frame{
+	overflow: hidden;
+	padding: 15px 0px;
+}
+.line-frame input{
+	font-size:14px;
+} 
+.cfgval_text{
+	display:none;
+}
+.tip{
+	float:left;
+	color:red;
+	line-height:30px;
+}
+.version_check {
+	display: inline-table;
+	margin:0px;
+	padding: 0px;
+	padding-top:7px;
+}
+.version_check li{
+	width: 122px;
+	float:left;
+	list-style: none;
+}
+.version_check li input{
+	margin-right:5px;
+	_display:inline;
+}
+.button button{
+	margin:15px 0px 0px 10px;
+}
+label{
+	font-weight: normal;
+}
+.file{
+	position: absolute;
+	margin: -5px 0px 0px 0px;
+	padding: 0px;
+	width: 82px;
+	height: 38px;
+	font-size: 14px;
+	opacity: 0; 
+	cursor: pointer;
+	z-index: 2147483583;
+}

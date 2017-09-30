@@ -1,0 +1,255 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|修改用户</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+<link href="${base}/assets/biz-logic/css/cloud-zoom.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${base}/assets/biz-logic/js/cloud-zoom.1.0.2.min.js"></script>
+<script type="text/javascript" src="${base}/assets/common/ajaxfileupload.js"></script>
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+.progress-striped .bar {
+background-color: #149bdf;}
+</style>
+<script type="text/javascript">
+
+function ajaxfileupload(id){
+	  $.ajaxFileUpload ({ 
+	    url:'${base}/fileUpload.html', //你处理上传文件的服务端 
+	    secureuri:false, //与页面处理代码中file相对应的ID值
+	    fileElementId:id, 
+	    dataType: 'json', //返回数据类型:text，xml，json，html,scritp,jsonp五种
+	    data:{'moduleid' : '${result.userId}', 'filemodule' : "user",deleteIds:"-1",path:'/newiadpush/user'},
+	    success: function (result) { 
+	    	$("input[name='certification']").val("upload");
+        	var html = "<a href=\"${base}/download.html?id="+result.fileId+"\" class=\"cloud-zoom\" id=\"zoom1\" rel=\"adjustX:10, adjustY:-4\" style=\"position: relative; display: block;\">";
+        	html += "<img style=\"width: 240px;height: 320px;\" onerror=\"this.src='${base}/assets/biz-logic/images/onlinenone.jpg'\" src='${base}/download.html?id="+result.fileId+"'/>";
+        	html += "</a>";
+        	$("#idcard_img_show").html(html);
+        	$("#bimge").css("background-image","url(${base}/download.html?id="+result.fileId+")");
+	    },
+	    error:function(){
+	      alert("系统异常请联系管理员");
+	    }
+	  })
+}
+</script>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="panel panel-default">
+		<div class="panel-heading">
+           		<h3 class="panel-title">修改用户</h3>
+           	</div>
+           	<div class="panel-body text-center">
+				<div class="tab-content">
+				  <div class="tab-pane active" id="daily" style="height:auto !important;">
+				  
+				 <form id="updUserForm" name="updUserForm" class="form form-inline" method="post">
+				     <input type="hidden" id="userId" name="userId" value="${result.userId}"/>
+					 <table class="table table-bordered" style="width:860px;">
+					 	<tr>
+					 		<td align="right">用户名</td>
+					 		<td align="left">
+					 			${result.username}
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="18%" align="right">昵称</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="nick" name="nick" style="width:300px;" value="${result.nick!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">邮箱</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="email" name="email" style="width:300px;" value="${result.email!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">QQ</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="qq" name="qq" style="width:300px;" value="${result.qq!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">电话</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="phone" name="phone" style="width:300px;" value="${result.phone!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">角色</td>
+					 		<td align="left">
+					 			<select id="roleId" name="roleId" class="form-control" style="width:300px;">
+			            			<#list roles as r>
+			            			<#if r.roleId == result.roleId>
+			            				<option value="${r.roleId}" selected="selected">${r.roleName!''}</option>
+			            			<#else>
+			            				<option value="${r.roleId}" >${r.roleName!''}</option>
+			            			</#if>
+		            			    </#list>
+		            		    </select>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">省</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="province" name="province" style="width:300px;" value="${result.province!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">市</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="city" name="city" style="width:300px;" value="${result.city!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">所在地</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="address" name="address" style="width:300px;" value="${result.address!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">银行名称</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="bankName" name="bankName" style="width:300px;" value="${result.bankName!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">开户行地址</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="bankAddress" name="bankAddress" style="width:300px;" value="${result.bankAddress!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">银行卡姓名</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="bankUserName" name="bankUserName" style="width:300px;" value="${result.bankUserName!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">银行卡号</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="bankNo" name="bankNo" style="width:300px;" value="${result.bankNo!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">身份证号</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="certificate" name="certificate" style="width:300px;" value="${result.certificate!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">会员等级</td>
+					 		<td align="left">
+					 			<select id="type" name="member_levelId" class="form-control" style="width:300px;">
+			            			<option>请选择</option>
+					 				<#list memberLevel as s>
+						 				<#if result.member_levelId?? && s.id == result.member_levelId>
+						 					<option value="${s.id}" selected="selected">${s.desc}</option>
+						 				<#else>
+						 					<option value="${s.id}" >${s.desc}</option>
+						 				</#if>
+		            			    </#list>
+		            		    </select>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">状态</td>
+					 		<td align="left">
+					 		    <#if result.status?? && result.status == 1>
+					 		    	<input type="radio" name="status" checked="checked" value="1"/>激活
+					 		    	<input type="radio" name="status" value="0"/>暂停
+					 		    <#elseif result.status?? && result.status == 0>
+					 		        <input type="radio" name="status" value="1"/>激活
+					 		    	<input type="radio" name="status" checked="checked" value="0"/>暂停
+					 		    </#if>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">是否认证</td>
+					 		<td align="left">
+					 			<select id="certification" name="certification" class="form-control" style="width:300px;">
+			            			<#if result.certification?? && result.certification == '0'>
+					 			    	<option value="0" selected="selected">未上传</option>
+					 			    	<option value="1">待审核</option>
+					 			    	<option value="2">已认证</option>
+					 			    <#elseif result.certification?? && result.certification == '1'>
+					 			    	<option value="0">未上传</option>
+					 			    	<option value="1" selected="selected">待审核</option>
+					 			    	<option value="2">已认证</option>
+					 			    <#elseif result.certification?? && result.certification == '2'>
+					 			    	<option value="0">未上传</option>
+					 			    	<option value="1">待审核</option>
+					 			    	<option value="2" selected="selected">已认证</option>
+					 			    </#if>
+		            		    </select>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">
+					 			营业执照扫描件
+					 		</td>
+					 		<td>
+					 			<input type="file" id="idcard_img" name="file" class=" form-control input-sm" style="width:300px;float:left;"  onchange="ajaxfileupload('idcard_img')"  accept="image/*">
+								<span style="float: left;">*需要上传证件的正反面，并提交扫描件电子版原件，图片格式为jpg jpeg png,限4M以内。<input type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" value="查看示例"></span>
+								<br/><br/><br/><br/>
+								<div id="wrap" style="z-index:9;position:relative;">
+								<div  id="idcard_img_show" style="width: 240px; height: 330px; line-height: 150px;" class="fileupload-preview thumbnail">
+									<a href="${base}/download.html?moduleid=${result.userId}&filemodule=user" class="cloud-zoom" id="zoom1" rel="adjustX:10, adjustY:-4" style="position: relative; display: block;">
+										<img src="${base}/download.html?moduleid=${result.userId}&filemodule=user" onerror="this.src='${base}/assets/biz-logic/images/onlinenone.jpg'" alt="" style="display: block;width: 240px; height: 320px;">
+									</a>
+								</div>
+								<div class="mousetrap" id="bimge" style="background-image: url(${base}/download.html?moduleid=${result.userId}&filemodule=user); z-index: 999; position: absolute; cursor: move;background-repeat:no-repeat;"></div>
+							</div>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td></td>
+					 		<td>
+					 			<button type="button" class="btn btn-info btn-sm col-md-1" name="userSave" >保存</button>
+					 		</td>
+					 	</tr>
+					 </table>
+					 
+		            <!-- 操作消息记录 -->
+		            <div class="row" id="messageDiv" align="left" style="color:red">
+		            </div>
+		            
+		            </form>
+				  </div>
+				</div>
+				</div>
+           	</div>
+	</div>
+	<!-- 示例图 -->
+	<div class="modal fade" id="myModal" tabindex="-1" style="z-index: 99999999" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 600px;height: 400px;">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title" id="myModalLabel">示例图片</h4>
+	      </div>
+	      <div class="modal-body">
+	        <img src="${base}/assets/biz-logic/images/idcard.jpg" style="width: 500px;height: 400px;"></img>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.IadpushEarnMapper" >
+  <resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.IadpushEarn" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="qid" property="qid" jdbcType="INTEGER" />
+    <result column="appid" property="appid" jdbcType="INTEGER" />
+    <result column="edate" property="edate" jdbcType="DATE" />
+    <result column="earn_money" property="earnMoney" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="hour" property="hour" jdbcType="SMALLINT" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="icount" property="icount" jdbcType="INTEGER" />
+    <result column="icountkou" property="icountkou" jdbcType="INTEGER" />
+    <result column="acount" property="acount" jdbcType="INTEGER" />
+    <result column="acountkou" property="acountkou" jdbcType="INTEGER" />
+    <result column="icountkou_act" property="icountkouAct" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, uid, qid, appid, edate, earn_money, status, create_time, hour, type, icount, 
+    icountkou, acount, acountkou, icountkou_act
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ym.iadpush.manage.entity.IadpushEarnExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from earn
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from earn
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from earn
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ym.iadpush.manage.entity.IadpushEarnExample" >
+    delete from earn
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ym.iadpush.manage.entity.IadpushEarn" >
+    insert into earn (id, uid, qid, 
+      appid, edate, earn_money, 
+      status, create_time, hour, 
+      type, icount, icountkou, 
+      acount, acountkou, icountkou_act
+      )
+    values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, #{qid,jdbcType=INTEGER}, 
+      #{appid,jdbcType=INTEGER}, #{edate,jdbcType=DATE}, #{earnMoney,jdbcType=DECIMAL}, 
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{hour,jdbcType=SMALLINT}, 
+      #{type,jdbcType=INTEGER}, #{icount,jdbcType=INTEGER}, #{icountkou,jdbcType=INTEGER}, 
+      #{acount,jdbcType=INTEGER}, #{acountkou,jdbcType=INTEGER}, #{icountkouAct,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ym.iadpush.manage.entity.IadpushEarn" >
+    insert into earn
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="qid != null" >
+        qid,
+      </if>
+      <if test="appid != null" >
+        appid,
+      </if>
+      <if test="edate != null" >
+        edate,
+      </if>
+      <if test="earnMoney != null" >
+        earn_money,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="hour != null" >
+        hour,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="icount != null" >
+        icount,
+      </if>
+      <if test="icountkou != null" >
+        icountkou,
+      </if>
+      <if test="acount != null" >
+        acount,
+      </if>
+      <if test="acountkou != null" >
+        acountkou,
+      </if>
+      <if test="icountkouAct != null" >
+        icountkou_act,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="qid != null" >
+        #{qid,jdbcType=INTEGER},
+      </if>
+      <if test="appid != null" >
+        #{appid,jdbcType=INTEGER},
+      </if>
+      <if test="edate != null" >
+        #{edate,jdbcType=DATE},
+      </if>
+      <if test="earnMoney != null" >
+        #{earnMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hour != null" >
+        #{hour,jdbcType=SMALLINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="icount != null" >
+        #{icount,jdbcType=INTEGER},
+      </if>
+      <if test="icountkou != null" >
+        #{icountkou,jdbcType=INTEGER},
+      </if>
+      <if test="acount != null" >
+        #{acount,jdbcType=INTEGER},
+      </if>
+      <if test="acountkou != null" >
+        #{acountkou,jdbcType=INTEGER},
+      </if>
+      <if test="icountkouAct != null" >
+        #{icountkouAct,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ym.iadpush.manage.entity.IadpushEarnExample" resultType="java.lang.Integer" >
+    select count(*) from earn
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update earn
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.uid != null" >
+        uid = #{record.uid,jdbcType=INTEGER},
+      </if>
+      <if test="record.qid != null" >
+        qid = #{record.qid,jdbcType=INTEGER},
+      </if>
+      <if test="record.appid != null" >
+        appid = #{record.appid,jdbcType=INTEGER},
+      </if>
+      <if test="record.edate != null" >
+        edate = #{record.edate,jdbcType=DATE},
+      </if>
+      <if test="record.earnMoney != null" >
+        earn_money = #{record.earnMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.hour != null" >
+        hour = #{record.hour,jdbcType=SMALLINT},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.icount != null" >
+        icount = #{record.icount,jdbcType=INTEGER},
+      </if>
+      <if test="record.icountkou != null" >
+        icountkou = #{record.icountkou,jdbcType=INTEGER},
+      </if>
+      <if test="record.acount != null" >
+        acount = #{record.acount,jdbcType=INTEGER},
+      </if>
+      <if test="record.acountkou != null" >
+        acountkou = #{record.acountkou,jdbcType=INTEGER},
+      </if>
+      <if test="record.icountkouAct != null" >
+        icountkou_act = #{record.icountkouAct,jdbcType=DECIMAL},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update earn
+    set id = #{record.id,jdbcType=INTEGER},
+      uid = #{record.uid,jdbcType=INTEGER},
+      qid = #{record.qid,jdbcType=INTEGER},
+      appid = #{record.appid,jdbcType=INTEGER},
+      edate = #{record.edate,jdbcType=DATE},
+      earn_money = #{record.earnMoney,jdbcType=DECIMAL},
+      status = #{record.status,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      hour = #{record.hour,jdbcType=SMALLINT},
+      type = #{record.type,jdbcType=INTEGER},
+      icount = #{record.icount,jdbcType=INTEGER},
+      icountkou = #{record.icountkou,jdbcType=INTEGER},
+      acount = #{record.acount,jdbcType=INTEGER},
+      acountkou = #{record.acountkou,jdbcType=INTEGER},
+      icountkou_act = #{record.icountkouAct,jdbcType=DECIMAL}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ym.iadpush.manage.entity.IadpushEarn" >
+    update earn
+    <set >
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="qid != null" >
+        qid = #{qid,jdbcType=INTEGER},
+      </if>
+      <if test="appid != null" >
+        appid = #{appid,jdbcType=INTEGER},
+      </if>
+      <if test="edate != null" >
+        edate = #{edate,jdbcType=DATE},
+      </if>
+      <if test="earnMoney != null" >
+        earn_money = #{earnMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hour != null" >
+        hour = #{hour,jdbcType=SMALLINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="icount != null" >
+        icount = #{icount,jdbcType=INTEGER},
+      </if>
+      <if test="icountkou != null" >
+        icountkou = #{icountkou,jdbcType=INTEGER},
+      </if>
+      <if test="acount != null" >
+        acount = #{acount,jdbcType=INTEGER},
+      </if>
+      <if test="acountkou != null" >
+        acountkou = #{acountkou,jdbcType=INTEGER},
+      </if>
+      <if test="icountkouAct != null" >
+        icountkou_act = #{icountkouAct,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ym.iadpush.manage.entity.IadpushEarn" >
+    update earn
+    set uid = #{uid,jdbcType=INTEGER},
+      qid = #{qid,jdbcType=INTEGER},
+      appid = #{appid,jdbcType=INTEGER},
+      edate = #{edate,jdbcType=DATE},
+      earn_money = #{earnMoney,jdbcType=DECIMAL},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      hour = #{hour,jdbcType=SMALLINT},
+      type = #{type,jdbcType=INTEGER},
+      icount = #{icount,jdbcType=INTEGER},
+      icountkou = #{icountkou,jdbcType=INTEGER},
+      acount = #{acount,jdbcType=INTEGER},
+      acountkou = #{acountkou,jdbcType=INTEGER},
+      icountkou_act = #{icountkouAct,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="sumEarnByDate" resultType="java.lang.Double" parameterType="map" >
+  	select sum(earn_money) money from earn
+  	<where>
+        <if test="startDate != null">AND   <![CDATA[edate >= #{startDate,jdbcType=DATE}]]> </if>
+        <if test="endDate != null">AND <![CDATA[edate <= #{endDate,jdbcType=DATE}]]></if>
+        <if test="serviceId != null">And uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+    </where>
+  </select>
+  <select id="selectByParams"  parameterType="map" resultMap="BaseResultMap">
+  	select * from earn where edate=#{date} and hour=#{hour} and appid = #{appid} 
+  </select>
+  <update id="updateEarnByParams" parameterType="map">
+  	update earn SET icount = icount+#{amount},icountkou=icountkou+#{amount},acount=acount+#{amount},acountkou=acountkou+#{amount},earn_money = earn_money+#{price} 
+	WHERE  `hour`=#{hour}
+	and edate = #{date}
+	AND appid = #{appid}
+	AND uid = #{uid}
+  </update>
+</mapper>

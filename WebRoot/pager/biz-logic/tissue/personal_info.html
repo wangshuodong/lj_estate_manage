@@ -1,0 +1,187 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|个人信息</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+<link rel="stylesheet" href="${base}/assets/uploadify/uploadify.css" />
+<script type="text/javascript" src="${base}/assets/uploadify/jquery.uploadify.min.js"></script>
+<link href="${base}/assets/biz-logic/css/cloud-zoom.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${base}/assets/biz-logic/js/cloud-zoom.1.0.2.min.js"></script>
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+.progress-striped .bar {
+background-color: #149bdf;}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#idcard_img").uploadify({
+			 	formData      : {'moduleid' : '${user.userId}', 'filemodule' : "user",deleteIds:"-1",path:'/newiadpush/user'},
+			 	fileObjName : 'file',
+			 	buttonText:"上传",
+			 	queueID:"defaultPro",
+		        height        : 30,
+		        swf           : '${base}/assets/uploadify/uploadify.swf',
+		        uploader      : '${base}/fileUpload.html',
+		        width         : 80,
+		        queueSizeLimit : 1,
+		        fileTypeExts : '*.jpg;*.bmp;*.png;*.gif,*.jpeg',
+		        onUploadProgress : function(file, bytesUploaded, bytesTotal, totalBytesUploaded, totalBytesTotal) {
+		            $('#bar1').css("width",((bytesUploaded/bytesTotal)*100)+"%");
+		        },
+		        onUploadSuccess:function(file,result){
+		        	$("input[name='certification']").val("upload");
+		        	result = eval("("+result+")");
+		        	var html = "<a href=\"${base}/download.html?id="+result.fileId+"\" class=\"cloud-zoom\" id=\"zoom1\" rel=\"adjustX:10, adjustY:-4\" style=\"position: relative; display: block;\">";
+		        	html += "<img style=\"width: 240px;height: 320px;\" onerror=\"this.src='${base}/assets/biz-logic/images/onlinenone.jpg'\" src='${base}/download.html?id="+result.fileId+"'/>";
+		        	html += "</a>";
+		        	$("#idcard_img_show").html(html);
+		        	$("#bimge").css("background-image","url(${base}/download.html?id="+result.fileId+")");
+		        		//表示已经上传了扫描件，用于验证提交账户信息验证
+		        }
+		});
+		
+})
+</script>
+</head>
+<body style="background-color: white;">
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+				<div class="page-header alert alert-info">
+					<h5>用户管理&gt;&gt; <small>&nbsp;&nbsp;个人信息</small></h5>
+				</div>
+           	<div class="panel-body text-center">
+				<div class="tab-content">
+				  <div class="tab-pane active" id="daily" style="height:auto !important;">
+				  
+				 <form id="personalForm" class="form form-inline" name="personalForm" method="post">
+				 	<input type="hidden" name="certification">
+					 <table class="table table-bordered" style="width:860px;">
+					 	<tr>
+					 		<td width="18%" align="right">用户ID</td>
+					 		<td align="left">
+					 			${sysUser.userId}
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">用户名</td>
+					 		<td align="left">
+					 			${sysUser.username}
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">是否认证</td>
+					 		<td align="left">
+					 			<#if sysUser.certification == '0'>未上传
+					 			<#elseif sysUser.certification == '1'>未审核
+					 			<#elseif sysUser.certification == '2'>已认证</#if>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">邮箱</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="email" name="email" style="width:300px;" value="${sysUser.email!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">QQ</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="qq" name="qq" style="width:300px;" value="${sysUser.qq!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">电话</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="phone" name="phone" style="width:300px;" value="${sysUser.phone!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">身份证号</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="certificate" name="certificate" style="width:300px;" value="${sysUser.certificate!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">原密码</td>
+					 		<td align="left">
+					 			<input type="password" class="form-control input-sm" id="oldPassword" name="oldPassword" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">新密码</td>
+					 		<td align="left">
+					 			<input type="password" class="form-control input-sm" id="newPassword" name="newPassword" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">确认密码</td>
+					 		<td align="left">
+					 			<input type="password" class="form-control input-sm" id="confirmPassword" name="confirmPassword" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">
+					 			营业执照扫描件
+					 		</td>
+					 		<td>
+					 			<input type="file" id="idcard_img" name="file">
+								<span style="float: left;">*需要上传证件的正反面，并提交扫描件电子版原件，图片格式为jpg jpeg png,限4M以内。<input type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" value="查看示例"></span>
+								<div class="progress progress-striped active" style="width: 450px">
+									<div class="bar" id="bar1" style="width: 0%;height: 20px;"></div>
+								</div>
+								<div id="wrap" style="z-index:9999;position:relative;">
+								<div  id="idcard_img_show" style="width: 240px; height: 330px; line-height: 150px;" class="fileupload-preview thumbnail">
+									<a href="${base}/download.html?moduleid=${user.userId}&filemodule=user" class="cloud-zoom" id="zoom1" rel="adjustX:10, adjustY:-4" style="position: relative; display: block;">
+										<img src="${base}/download.html?moduleid=${user.userId}&filemodule=user" onerror="this.src='${base}/assets/biz-logic/images/onlinenone.jpg'" alt="" style="display: block;width: 240px; height: 320px;">
+									</a>
+								</div>
+								<div class="mousetrap" id="bimge" style="background-image: url(${base}/download.html?moduleid=${user.userId}&filemodule=user); z-index: 999; position: absolute; cursor: move;background-repeat:no-repeat;"></div>
+							</div>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td></td>
+					 		<td>
+					 			<button type="button" class="btn btn-info btn-sm col-md-1" name="userSave" >保存</button>
+					 		</td>
+					 	</tr>
+					 </table>
+					 
+		            <!-- 操作消息记录 -->
+		            <div class="row" id="messageDiv" align="left" style="color:red">
+		            </div>
+		            
+		            </form>
+				  </div>
+				</div>
+				</div>
+           	</div>
+	<!-- 示例图 -->
+	<div class="modal fade" id="myModal" tabindex="-1" style="z-index: 99999999" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 600px;height: 400px;">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title" id="myModalLabel">示例图片</h4>
+	      </div>
+	      <div class="modal-body">
+	        <img src="${base}/assets/biz-logic/images/idcard.jpg" style="width: 500px;height: 400px;"></img>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div>
+	
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

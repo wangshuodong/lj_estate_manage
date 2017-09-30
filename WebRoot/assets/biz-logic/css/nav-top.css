@@ -1,0 +1,23 @@
+.tip_font{
+	position: relative;
+}
+.tip_font font{
+	background:url(../../biz-logic/images/news_notice.png);
+	width:20px;
+	height:20px;
+	position: absolute;
+	top:2px;
+	right:3px;
+	color:#fff;
+	text-align:center;
+	font-weight:bold;
+	font-size:15px;
+}
+.news_m_foot{
+	font-size:15px;
+	line-height:27px;
+	float:right;
+}
+#news_m_body{
+	padding-top:0px;	
+}

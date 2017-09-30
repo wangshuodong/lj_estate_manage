@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.SaleUserMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.SaleUser">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="phone"  jdbcType="VARCHAR" property="phone"/>
+	</resultMap>
+	
+	
+	<insert id="insertSaleUser" keyProperty="id">
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+	          SELECT LAST_INSERT_ID()
+	    </selectKey>
+		insert  into  saleUser (name,phone)
+		values(#{name},#{phone})
+	</insert>
+	
+	<select id="getALlSaleUser"
+		resultMap="BaseResultMap">
+		SELECT  *  from saleUser
+	</select>
+</mapper>

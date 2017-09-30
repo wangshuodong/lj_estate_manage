@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.OrderItemMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.OrderItem">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="orderId" jdbcType="INTEGER" property="orderId" />
+		<result column="number" jdbcType="INTEGER" property="number" />
+		<result column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		
+
+	</resultMap>
+	
+	<insert id="inserOrderItem" parameterType="com.ym.iadpush.manage.entity.OrderItem"
+		keyProperty="id">
+		insert into
+		order_item(adate,number,uid,createTime,orderId,money)
+		values(#{addate},#{number},#{uid},#{createTime},#{orderId},#{money})
+	</insert>
+</mapper>

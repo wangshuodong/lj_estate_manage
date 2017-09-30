@@ -1,0 +1,199 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|房屋管理</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+a {cursor: pointer}
+td {font-size:10px;}
+</style>
+<script type="text/javascript" src="${base}/assets/common/jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js"></script>
+<link rel="stylesheet" href="${base}/assets/common/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" type="text/css"></link>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="page-header alert alert-info">
+			<h5>物业管理>> <small>房屋管理</small></h5>
+		</div>
+		<form action="product_list.do" id="submitForm" method="post">
+		<input type="hidden" name="currPage" id="currPage" value="1">
+           <div class="row">
+            	<div class="col-md-1 text-left" style="line-height:30px;"><span>小区</span></div>
+            	<div class="col-md-2">
+            		<select id="housingId" name="housingId" class="form-control" style="width:120px;" onchange="queryBuilding()">
+					 				<option value="" >请选择</option>
+					 				<#list housings as d>
+		            				<option value="${d.id}" >${d.name}</option>
+		            			    </#list>
+					 	</select>
+            	</div>
+            	<div class="col-md-1 text-left" style="line-height:30px;"><span>楼栋</span></div>
+            	<div class="col-md-2">
+            		<select id="buildingId" name="buildingId" class="form-control" style="width:120px;" onchange="quyerLocation()">
+					 				<option value="" >请选择</option>
+					 			</select>
+            	</div>
+            	<div class="col-md-1 text-left" style="line-height:30px;"><span>单元</span></div>
+            	<div class="col-md-2">
+            			<select id="locationId" name="locationId" class="form-control" style="width:100px;">
+					 			<option value="" >请选择</option>
+					 	</select>
+            	</div>
+            	<div class="col-md-1 text-left" style="line-height:30px;"><span>入住状态</span></div>
+	            	<div class="col-md-2">
+	            				<select id="entryStatus" name="entryStatus" class="form-control" style="width:120px;">
+		            				<option value="" >全部</option>
+		            			    <option value="1" >已入住</option>
+		            			    <option value="0" >未入住</option>
+					 			</select>
+	            </div>
+
+           </div>
+           <div class="row">    
+            	<div class="col-md-2">
+						 <button type="button" class="btn btn-default" onclick="sumbitForm('none')">查询&nbsp;&nbsp;</button>
+				</div>
+            	<div class="col-md-2">
+	            	<button type="button" class="btn btn-default" onclick="jumpToAdd()">手动添加房屋&nbsp;&nbsp;</button>
+            	</div>
+            	<div class="col-md-2">
+            		 <button type="button" class="btn btn-default" onclick="roomInfoUploadExcel()">批量导入房屋&nbsp;&nbsp;</button>
+            	</div>
+            	<div class="col-md-2" >
+            		<button type="button" class="btn btn-default" id="billSycy" onclick="roomInfoBachUpload()">同步到支付宝&nbsp;&nbsp;</button>
+	            </div>
+	            <div class="col-md-2">
+	            	<button type="button" class="btn btn-default" onclick="deleteRoomInfo()">批量删除房屋&nbsp;&nbsp;</button>&nbsp;&nbsp;
+	            </div>
+	            
+            	<div class="col-md-3" style="float: left;">
+					<div style="float: right;" class="btn-group"> 
+            			
+				  </div>
+				</div>
+           </div>
+           
+		</form>
+		
+		<div style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;" class="alert" >
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover  alert-warning">
+					<thead>
+				  	  <tr>
+				  	    <th scope="col" width="10%" class="text-center" nowrap="nowrap">ID</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">小区名称</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">物业系统编号</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">支付宝房间号</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">房号</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">地址</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">备注</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">操作</th>
+				  	  </tr>
+				  	</thead>
+				  	
+				  	<tbody id="d_body">
+				  	
+					</tbody>
+				</table>
+				<div class="row">
+		            <div class="col-md-12">
+		                <div class=" pull-left" style="margin-top: 26px;" id="totalCount"></div>
+		                <div class=" pull-right">
+		                    <ul id='pagination'></ul>
+		                </div>
+		            </div>
+		        </div>
+			</div>
+		</div>
+	</div>
+	
+<!-- 提示-->
+<div class="modal fade" id="infowindow" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <button type="button" class="close closeTipModal" data-dismiss="modal"  aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">温馨提醒</h4>
+      </div>
+      <div class="modal-body" style="width: 200px;height: 100px;" id="modal-body">
+      		
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default closeTipModal" data-dismiss="modal" >关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<script type="text/javascript">
+
+function queryBuilding(){
+		var formObj = $("#submitForm");
+		var housingId = formObj.find("select[name='housingId']").val();
+		$("#buildingId").empty();
+		$("#locationId").empty();
+		
+		$("<option value=''>全部</option>").appendTo("#buildingId");
+		$.ajax({
+			url : "getBuidingsById.html",
+			type : "post",
+			dataType : "json",
+			data : {
+				id : housingId
+			},
+			success : function(data) {
+				if(data.list == null || data.list.length==0){
+					
+				}else{
+					$.each(data.list,function(i,p){
+						var buildingId=p.id;
+						var buildingName=p.name;
+						$("<option value="+buildingId+">"+buildingName+"</option>").appendTo("#buildingId"); 
+						
+					})
+			}
+		}
+	});
+}
+
+function quyerLocation(){
+		var formObj = $("#submitForm");
+		var buildingId = formObj.find("select[name='buildingId']").val();
+		$("#locationId").empty();
+		$("<option value=''>全部</option>").appendTo("#locationId");
+		
+		$.ajax({
+			url : "getLocationsByBuildingId.html",
+			type : "post",
+			dataType : "json",
+			data : {
+				id : buildingId
+			},
+			success : function(data) {
+				if(data.list == null || data.list.length==0){
+					
+				}else{
+					$.each(data.list,function(i,p){
+						var id=p.id;
+						var name=p.name;	
+						$("<option value="+id+">"+name+"</option>").appendTo("#locationId"); 
+					})
+			}
+		}
+	});
+}
+
+</script>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

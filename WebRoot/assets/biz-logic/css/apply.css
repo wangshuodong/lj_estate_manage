@@ -1,0 +1,21 @@
+.tip{
+	padding:10px 0px 30px 0px;
+}
+.tip span{
+	color:#999;
+}
+.mb-input-checked{
+}
+.mb-input-checked input{
+	width:30px;
+	height:30px;
+	_display:inline;
+	margin-left:10px;
+	margint-top:10px;
+	cursor:pointer;
+}
+.mb-input-checked div{
+	float:left;
+	padding-top: 9px;
+}
+td,th{text-align:center;}

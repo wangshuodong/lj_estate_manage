@@ -1,0 +1,95 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|小区管理</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+a {cursor: pointer}
+td {font-size:10px;}
+</style>
+<script type="text/javascript" src="${base}/assets/common/jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js"></script>
+<link rel="stylesheet" href="${base}/assets/common/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" type="text/css"></link>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="page-header alert alert-info">
+			<h5>小区管理>> <small>小区维护(物业)</small></h5>
+		</div>
+		<form action="product_list.do" id="submitForm" method="post">
+		<input type="hidden" name="currPage" id="currPage" value="1">
+           <div class="row">
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>小区名称</span></div>
+            	<div class="col-md-2">
+            		<input type="text" class="form-control input-sm" name="name"/>
+            	</div>
+            	<div class="col-md-3" style="float: left;">
+					<div style="float: right;" class="btn-group">
+						 <button type="button" class="btn btn-default" onclick="sumbitForm('none')">查询&nbsp;&nbsp;</button>
+            			<button type="button" class="btn btn-default" onclick="jumpToAdd()">添加&nbsp;&nbsp;</button>
+				  </div>
+				</div>
+           </div>
+		</form>
+		
+		<div style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;" class="alert" >
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover  alert-warning">
+					<thead>
+				  	  <tr>
+				  	    <th scope="col" width="10%" class="text-center" nowrap="nowrap">物业名称</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">小区名称</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">支付宝编号</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">详细地址</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">联系电话</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">token</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">操作</th>
+				  		<th scope="col" width="10%" class="text-center" nowrap="nowrap">删除账单</th>
+				  	  </tr>
+				  	</thead>
+				  	
+				  	<tbody id="d_body">
+				  	
+					</tbody>
+				</table>
+				<div class="row">
+		            <div class="col-md-12">
+		                <div class=" pull-left" style="margin-top: 26px;" id="totalCount"></div>
+		                <div class=" pull-right">
+		                    <ul id='pagination'></ul>
+		                </div>
+		            </div>
+		        </div>
+			</div>
+		</div>
+	</div>
+	
+<!-- 提示-->
+<div class="modal fade" id="infowindow" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <button type="button" class="close closeTipModal" data-dismiss="modal"  aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">温馨提醒</h4>
+      </div>
+      <div class="modal-body" style="width: 200px;height: 100px;" id="modal-body">
+      		
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default closeTipModal" data-dismiss="modal" >关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

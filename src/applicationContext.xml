@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="
+           http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context   
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <!-- 配置扫描包（多个包之间用逗号分割；注意：修改base为对应的项目名称） -->
+    <context:component-scan base-package="com.ym.iadpush.*.services,com.ym.common">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Component" />
+    </context:component-scan>
+
+    <!-- 加载配置文件 -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:prop-cas.properties</value>
+                <value>classpath:prop-jdbc.properties</value>
+                <!-- <value>classpath:prop-pool.properties</value> -->
+                <!-- <value>classpath:prop-email.properties</value> -->
+            </list>
+        </property>
+    </bean>
+	
+    <!-- spring线程池（特殊情况可使用该线程池，注意：同时需要加载prop-pool.properties配置文件） -->
+    <!-- <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="${thread.pool.corePoolSize}" />
+        <property name="maxPoolSize" value="${thread.pool.maxPoolSize}" />
+        <property name="queueCapacity" value="${thread.pool.queueCapacity}" />
+        <property name="keepAliveSeconds" value="${thread.pool.keepAliveSeconds}" />
+    </bean> -->
+
+    <import resource="application-jdbc.xml" />
+    <import resource="application-shiro.xml" />
+    <import resource="application-freemarker.xml" />
+    <import resource="application-fileupload.xml" /> 
+    
+    <!-- 正式环境下，建议开启缓存 -->
+    <import resource="application-cache.xml"/>
+    
+    <!-- 需要发送邮件时引入该配置，注意：同时加载配置文件prop-email.properties -->
+    <!-- <import resource="application-mail.xml" /> -->
+    
+    <!-- 需要定时任务时，引入该配置文件 -->
+    <import resource="applicationContext-quartz.xml" /> 
+</beans>

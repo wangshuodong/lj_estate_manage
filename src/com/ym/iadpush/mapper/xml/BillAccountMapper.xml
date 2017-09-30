@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.BillAccountMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.BillAccount">
+		<result column="id" jdbcType="INTEGER" property="id" />
+	</resultMap>
+
+	<insert id="deleteBillAccountByParams" parameterType="map">
+		UPDATE billAccount SET deleteStatus = 1 where 1!=1
+		<if test="departmentId!=null and departmentId!='' ">
+			or departmentId = #{departmentId}
+		</if>
+	</insert>
+
+	<insert id="changeDepartment" parameterType="map">
+		UPDATE billAccount
+		SET departmentCode = #{departmentCode},departmentId = #{departmentId}
+		WHERE housingId= #{housingId}
+	</insert>
+
+	<resultMap id="billAccountDataStatement"
+		type="com.ym.iadpush.manage.entity.BillAccountDataStatement">
+		<result column="bill_entry_amount" property="bill_entry_amount"
+			jdbcType="DECIMAL" />
+	</resultMap>
+	<select id="getBillType" resultType="java.lang.String">
+		SELECT cost_type FROM
+		billAccount GROUP BY cost_type
+	</select>
+	<select id="getMaxBill_entry_id" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT * from billAccount where 1=1
+		and bill_entry_id
+		like ""#{date}"%" order by bill_entry_id desc limit 0,1
+	</select>
+
+	<select id="getBillAccountCollect" resultMap="billAccountDataStatement"
+		parameterType="map">
+		SELECT sum(b.bill_entry_amount) bill_entry_amount, d.name
+		departmentName,p.name proprietorName,r.address
+		roomAddress,r.out_room_id out_room_id FROM billAccount b
+		LEFT JOIN
+		department d on d.id=b.departmentId
+		LEFT JOIN proprietor p on
+		p.id=b.proprietorId
+		LEFT JOIN roominfo r on r.id=p.roomInfoId
+
+		where 1=1
+		and b.deleteStatus=0
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			and b.housingId in (select id from housing where saleId = #{saleUserId})
+		</if>
+		<if test="housingId!=null and housingId!='' ">
+			and r.housingId =#{housingId}
+		</if>
+		<if test="buildingId!=null and buildingId!='' ">
+			and r.buildingId =#{buildingId}
+		</if>
+		<if test="roomId!=null and roomId!='' ">
+			and r.id =#{roomId}
+		</if>
+		<if test="locationId!=null and locationId!='' ">
+			and r.locationId =#{locationId}
+		</if>
+		<if test="roomName!=null and roomName!='' ">
+			and r.room =#{roomName}
+		</if>
+
+		<if test="remark!=null and remark!='' ">
+			and b.remark like "%"#{remark}"%"
+		</if>
+
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and b.departmentCode like #{departmentCode}"%"
+		</if>
+
+		<if test="proprietorName!=null and proprietorName!='' ">
+			and p.name like "%"#{proprietorName}"%"
+		</if>
+		<if test="proprietorId!=null and proprietorId!='' ">
+			and p.id = #{proprietorId}
+		</if>
+		<if test="sendStatus!=null and sendStatus!='' ">
+			and b.sendStatus =#{sendStatus}
+		</if>
+
+		<if test="payStatus!=null and payStatus!='' ">
+			and b.payStatus =#{payStatus}
+		</if>
+		<if test="costType!=null and costType!='' ">
+			and b.cost_type =#{costType}
+		</if>
+
+		<if test="acct_period!=null and acct_period!='' ">
+			and b.acct_period =#{acct_period}
+		</if>
+
+		<if test="startDate!=null">
+			AND b.release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND b.release_day &lt;= #{endDate}
+		</if>
+		
+		<if test="payStatus!=null and payStatus !=0 ">
+			<if test="startPaymentDate!=null">
+				AND b.payDate &gt;= #{startPaymentDate}
+			</if>
+			<if test="endPaymentDate!=null">
+				AND b.payDate &lt;= #{endPaymentDate}
+			</if>
+		</if>
+	</select>
+
+	<insert id="updateBillAccount">
+		update billAccount set
+		sendStatus=#{billAccount.sendStatus,jdbcType=INTEGER},payStatus=#{billAccount.payStatus,jdbcType=INTEGER},
+		payUid=#{billAccount.payUid,jdbcType=INTEGER},payType=#{billAccount.payType,jdbcType=VARCHAR},
+		payDate=#{billAccount.payDate,jdbcType=VARCHAR},bill_entry_amount=#{billAccount.bill_entry_amount,jdbcType=DOUBLE},
+		deleteStatus=#{billAccount.deleteStatus,jdbcType=INTEGER},release_day=#{billAccount.release_day,jdbcType=VARCHAR},
+		deadline=#{billAccount.deadline,jdbcType=VARCHAR},accpetMoney=#{billAccount.accpetMoney,jdbcType=VARCHAR}
+		where
+		bill_entry_id=#{bill_entry_id,jdbcType=VARCHAR}
+
+	</insert>
+
+	<select id="getBillAccountByBill_entry_id" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT b.*, d.name departmentName,p.name
+		proprietorName,r.address
+		roomAddress,r.out_room_id out_room_id FROM
+		billAccount b
+		LEFT JOIN department d on d.id=b.departmentId
+		LEFT JOIN
+		proprietor p on p.id=b.proprietorId
+		LEFT JOIN roominfo r on
+		r.id=p.roomInfoId
+		where 1=1
+		and
+		b.bill_entry_id=#{bill_entry_id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getBillAccountById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		SELECT b.*, d.name departmentName,p.name
+		proprietorName,r.address
+		roomAddress,r.out_room_id out_room_id FROM
+		billAccount b
+		LEFT JOIN department d on d.id=b.departmentId
+		LEFT JOIN
+		proprietor p on p.id=b.proprietorId
+		LEFT JOIN roominfo r on
+		r.id=p.roomInfoId
+		where 1=1
+		and b.id=#{id,jdbcType=INTEGER}
+	</select>
+
+	<insert id="insertBillAccount" parameterType="com.ym.iadpush.manage.entity.BillAccount"
+		keyProperty="id">
+		insert into billAccount
+		(cost_type,bill_entry_amount,payDate,deadline,acct_period,release_day,month,departmentId,createUid,bill_entry_id,departmentCode,proprietorId,housingId)
+		values(#{cost_type},#{bill_entry_amount},#{payDate},#{deadline},#{acct_period},#{release_day},#{month},#{departmentId},#{createUid},#{bill_entry_id},#{departmentCode},#{proprietorId},#{housingId})
+	</insert>
+
+	<select id="getBillAccountsBySendStatus" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT b.*, d.name departmentName,p.name proprietorName,r.address
+		roomAddress,r.out_room_id out_room_id FROM billAccount b
+		LEFT JOIN
+		department d on d.id=b.departmentId
+		LEFT JOIN proprietor p on
+		p.id=b.proprietorId
+		LEFT JOIN roominfo r on r.id=p.roomInfoId
+		where 1=1
+		and b.deleteStatus=0 and b.payStatus=0
+
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and b.departmentCode like #{departmentCode}"%"
+		</if>
+
+
+		<if test="sendStatus!=null and sendStatus!='' ">
+			and b.sendStatus =#{sendStatus}
+		</if>
+
+		limit 0,199
+	</select>
+
+	<select id="getBillAccountsCount" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT count(1) FROM billAccount b
+		LEFT JOIN
+		department d on d.id=b.departmentId
+		LEFT JOIN proprietor p on
+		p.id=b.proprietorId
+		LEFT JOIN roominfo r on r.id=p.roomInfoId
+
+		where 1=1
+		and b.deleteStatus=0
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			and b.housingId in (select id from housing where saleId = #{saleUserId})
+		</if>
+		<if test="housingId!=null and housingId!='' ">
+			and b.housingId =#{housingId}
+		</if>
+		<if test="buildingId!=null and buildingId!='' ">
+			and r.buildingId =#{buildingId}
+		</if>
+		<if test="roomId!=null and roomId!='' ">
+			and r.id =#{roomId}
+		</if>
+		<if test="locationId!=null and locationId!='' ">
+			and r.locationId =#{locationId}
+		</if>
+
+		<if test="remark!=null and remark!='' ">
+			and b.remark like "%"#{remark}"%"
+		</if>
+
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and b.departmentCode like #{departmentCode}"%"
+		</if>
+
+		<if test="proprietorName!=null and proprietorName!='' ">
+			and p.name like "%"#{proprietorName}"%"
+		</if>
+		<if test="proprietorId!=null and proprietorId!='' ">
+			and p.id = #{proprietorId}
+		</if>
+		<if test="sendStatus!=null and sendStatus!='' ">
+			and b.sendStatus =#{sendStatus}
+		</if>
+
+		<if test="payStatus!=null and payStatus!='' ">
+			and b.payStatus =#{payStatus}
+		</if>
+		<if test="costType!=null and costType!='' ">
+			and b.cost_type =#{costType}
+		</if>
+		<if test="startDate!=null">
+			AND b.release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND b.release_day &lt;= #{endDate}
+		</if>
+		
+		<if test="payStatus!=null and payStatus !=0 ">
+			<if test="startPaymentDate!=null">
+				AND b.payDate &gt;= #{startPaymentDate}
+			</if>
+			<if test="endPaymentDate!=null">
+				AND b.payDate &lt;= #{endPaymentDate}
+			</if>
+		</if>
+		
+		
+		order by b.id desc
+
+	</select>
+
+	<select id="getBillAccounts" resultMap="BaseResultMap"
+		parameterType="map">
+
+		SELECT b.*, d.name departmentName,p.name proprietorName,r.address
+		roomAddress,r.out_room_id out_room_id FROM billAccount b
+		LEFT JOIN
+		department d on d.id=b.departmentId
+		LEFT JOIN proprietor p on
+		p.id=b.proprietorId
+		LEFT JOIN roominfo r on r.id=p.roomInfoId
+
+		where 1=1
+		and b.deleteStatus=0
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			and b.housingId in (select id from housing where saleId = #{saleUserId})
+		</if>
+		<if test="housingId!=null and housingId!='' ">
+			and b.housingId =#{housingId}
+		</if>
+		<if test="buildingId!=null and buildingId!='' ">
+			and r.buildingId =#{buildingId}
+		</if>
+		<if test="roomId!=null and roomId!='' ">
+			and r.id =#{roomId}
+		</if>
+		<if test="locationId!=null and locationId!='' ">
+			and r.locationId =#{locationId}
+		</if>
+		<if test="roomName!=null and roomName!='' ">
+			and r.room =#{roomName}
+		</if>
+
+		<if test="remark!=null and remark!='' ">
+			and b.remark like "%"#{remark}"%"
+		</if>
+
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and b.departmentCode like #{departmentCode}"%"
+		</if>
+
+		<if test="proprietorName!=null and proprietorName!='' ">
+			and p.name like "%"#{proprietorName}"%"
+		</if>
+		<if test="proprietorId!=null and proprietorId!='' ">
+			and p.id = #{proprietorId}
+		</if>
+		<if test="sendStatus!=null and sendStatus!='' ">
+			and b.sendStatus =#{sendStatus}
+		</if>
+
+		<if test="payStatus!=null and payStatus!='' ">
+			and b.payStatus =#{payStatus}
+		</if>
+		<if test="costType!=null and costType!='' ">
+			and b.cost_type =#{costType}
+		</if>
+
+		<if test="acct_period!=null and acct_period!='' ">
+			and b.acct_period =#{acct_period}
+		</if>
+
+		<if test="startDate!=null">
+			AND b.release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND b.release_day &lt;= #{endDate}
+		</if>
+		
+		<if test="payStatus!=null and payStatus !=0 ">
+			<if test="startPaymentDate!=null">
+				AND b.payDate &gt;= #{startPaymentDate}
+			</if>
+			<if test="endPaymentDate!=null">
+				AND b.payDate &lt;= #{endPaymentDate}
+			</if>
+		</if>
+		order by b.id desc
+
+		limit #{currPage},#{pageSize}
+	</select>
+
+</mapper>

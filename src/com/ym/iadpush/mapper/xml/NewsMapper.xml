@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.NewsMapper" >
+
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.News" >
+		<result column="date" property="date" jdbcType="DATE" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="context" property="context" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="isShow" property="isShow" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="ResultMap_max_count" type="com.ym.iadpush.manage.entity.News" >
+		<result column="maxid" property="maxid" jdbcType="INTEGER" />
+		<result column="count" property="count" jdbcType="INTEGER" />
+	</resultMap>
+  
+  	<!--  -->
+	<select id="getAllNews" resultMap="BaseResultMap" parameterType="map">
+		<choose>
+			<when test="checkCount!=null">
+				SELECT date,title,createTime,id,context,type from  news 
+				where id>(select max(noticeId) from record_notice where userId=#{userid}) 
+				and type=1 and isShow=1  and  <![CDATA[date >= #{startdate,jdbcType=DATE}]]> and <![CDATA[date <= #{enddate,jdbcType=DATE}]]> 
+				 ORDER BY id desc
+			</when>
+			<when test="index_news!=null">
+				( SELECT date, title, createTime, id, context, type FROM news WHERE  type = 1 
+				ORDER BY date DESC, createTime DESC LIMIT 0, 3 ) UNION ( 
+				SELECT date, title, createTime, id, context, type FROM news WHERE type = 2 
+				ORDER BY date DESC, createTime DESC LIMIT 0, 3 )  ORDER BY date desc  
+			</when>
+			<otherwise>
+				select date,title,createTime,id,context,type from news 
+				where  1=1
+				<include refid="news_where" /> 
+				order by date  DESC, createTime DESC
+				  limit #{currPage},#{pageSize}
+			</otherwise>
+		</choose>
+		
+	</select>
+	<select id="getAllCountNews" resultType="java.lang.Integer" parameterType="map">
+		select count(*) from news where 1=1
+		 <include refid="news_where" /> 
+	</select> 
+	
+	
+	<sql id="news_where">
+		<if test="type!=null">
+			 and type=#{type}
+		</if>
+		<if test="title!=null">
+			 and title like #{title_val} 
+		</if>
+		<if test="startdate != null">AND   <![CDATA[date >= #{startdate,jdbcType=DATE}]]></if>
+		<if test="enddate != null">AND <![CDATA[date <= #{enddate,jdbcType=DATE}]]></if>
+	</sql>
+	<update id="updateNews" parameterType="map">
+		update news set title=#{title},context=#{context},date=#{adddate},type=#{type} <if test="isShow!=null">,isShow=#{isShow}</if>where id=#{id}
+	</update>
+	<insert id="insertNews" parameterType="map">
+		insert into news(title,context,date,createTime,uid,type<if test="isShow!=null">,isShow</if>) values(#{title},#{context},#{adddate},#{nowtime},#{uid},#{type}
+		<if test="isShow!=null">,#{isShow}</if>)
+	</insert>
+	
+	<insert id="insertNotice" parameterType="map">
+		insert into record_notice(noticeId,userId,title,createtime) values(#{noticeid},#{userid},#{title},#{createtime})
+	</insert>
+	
+	<select id="selectNewsById" parameterType="map" resultMap="BaseResultMap">
+		select date,title,createTime,id,context,type,isShow from news where id=#{id}
+	</select>
+	<delete id="deleteNews" parameterType="map">
+		delete from news where id=#{id}
+	</delete>
+	<delete id="deleteNotice" parameterType="map">
+		delete from record_notice where noticeId=#{noticeid} and userId=#{userid}
+	</delete>
+	
+	<select id="getMaxIdOrCount" resultMap="ResultMap_max_count" parameterType="map" >
+		select max(id) maxid,count(*) count from news where 
+		type=1 and isShow=1 and <![CDATA[date >= #{startdate,jdbcType=DATE}]]>  
+		and <![CDATA[date <= #{enddate,jdbcType=DATE}]]>
+	</select>
+	<select id="getNoticeId" resultType="java.lang.Integer" parameterType="map" >
+		<choose>
+			<when test="isInsert!=null">
+				select noticeId from record_notice where noticeId=#{noticeid} and userId=#{userid} 
+			</when>
+			<otherwise>
+				SELECT
+					noticeId
+				FROM
+					record_notice
+				WHERE
+					noticeId = (select id from news where 
+					<choose>
+						<when test="flagOne!=null">
+							<![CDATA[ id=#{noticeid} ]]>
+						</when>
+						<otherwise>
+							<![CDATA[ id<#{noticeid} ]]>
+						</otherwise>
+					</choose>
+					
+					 
+		                  and type=1 and isShow=1 and <![CDATA[date >= #{startdate,jdbcType=DATE}]]> 
+		                  and <![CDATA[date <= #{enddate,jdbcType=DATE}]]> ORDER BY id desc limit 1)
+				AND userId = #{userid} limit 1
+			</otherwise>
+		</choose>
+		
+	</select>
+	<select id="getNewestNotice" resultMap="BaseResultMap"  parameterType="map">
+		SELECT date,title,createTime,id,context,type FROM news WHERE id = #{noticeid} limit 1
+	</select>
+	<select id="getNextMaxId" resultType="java.lang.Integer" parameterType="map">
+		select id from news where type=1 and isShow=1 and  <![CDATA[date >= #{startdate,jdbcType=DATE}]]>  
+		and <![CDATA[date <= #{enddate,jdbcType=DATE}]]>
+		 and <![CDATA[id<#{noticeid}]]> ORDER BY id desc limit 1
+	</select>
+	
+</mapper>

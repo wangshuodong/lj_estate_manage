@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.Product_propertyMapper" >
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Product_property" >
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="productId" property="productId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="material" property="material" jdbcType="VARCHAR" />
+		<result column="productDate" property="productDate" jdbcType="DATE" />
+		<result column="manufacture" property="manufacture" jdbcType="VARCHAR" />
+		<result column="endDate" property="endDate" jdbcType="DATE" />
+		<result column="unit" property="unit" jdbcType="VARCHAR" />
+		<result column="weight" property="weight" jdbcType="DECIMAL" />
+		<result column="standard" property="standard" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="lastUpdateTime" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="color" property="color" jdbcType="VARCHAR" />
+		<result column="thickness" property="thickness" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getProduct_propertyByProductId"   resultMap="BaseResultMap">
+		select * from Product_property  where productId=${productId}
+	</select>
+	
+	<select id="getProduct_propertys"   resultMap="BaseResultMap">
+		select * from Product_property  where 1=1 
+		<if test="productId != null">
+			and productId=${productId}
+		</if>
+	</select>
+	
+	<insert id="insertProduct_property" parameterType="com.ym.iadpush.manage.entity.Product_property" keyProperty="id">
+		insert into Product_property(productId,color,thickness,length) values(#{productId},#{color},#{thickness},#{length})
+	</insert>
+	
+</mapper>

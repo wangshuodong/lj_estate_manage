@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.KVReportMapper">
+
+	<sql id="conditionSql">
+		<where>
+			<if test="uid != null and uid != ''">b.username like concat('%',#{uid},'%')</if>
+			<if test="appkey != null and appkey != ''">and a.appkey = #{appkey}</if>
+			<if test="kv != null and kv != ''">and a.kv = #{kv}</if>
+			<if test="sv != null and sv != ''">and a.sv = #{sv}</if>
+			<if test="startDate != null and startDate != ''">and a.adate &gt;= #{startDate}</if>
+			<if test="endDate != null and endDate != ''">and a.adate &lt;= #{endDate}</if>
+		</where>
+	</sql>
+
+	<select id="queryKVReport" resultType="map" parameterType="map">
+		SELECT a.adate,
+		<if test="groupKv != null">a.kv,</if>
+		<if test="groupSv != null">a.sv,</if>
+		sum(a.icount) icount,SUM(a.acount) acount
+		from iadpush_vcount a left join sys_users b on a.uid=b.user_id
+		<include refid="conditionSql"/>
+		GROUP BY a.adate
+		<if test="groupKv != null">,a.kv</if>
+		<if test="groupSv != null">,a.sv</if>
+		ORDER BY a.adate desc
+		<if test="groupKv != null">,a.kv desc</if>
+		<if test="groupSv != null">,a.sv desc</if>
+		LIMIT ${currPage*pageSize},#{pageSize}
+	</select>
+	
+	<select id="countWithKVReport" resultType="java.lang.Integer" parameterType="map">
+		select count(1) from(
+		SELECT a.adate
+		from iadpush_vcount a left join sys_users b on a.uid=b.user_id
+		<include refid="conditionSql"/>
+		GROUP BY a.adate
+		<if test="groupKv != null">,a.kv</if>
+		<if test="groupSv != null">,a.sv</if>) a
+	</select>
+	
+	<select id="collectKVReport" resultType="map" parameterType="map">
+		SELECT SUM(a.icount) icount,SUM(a.acount) acount from iadpush_vcount a left join sys_users b on a.uid=b.user_id
+		<include refid="conditionSql"/>
+	</select>
+</mapper>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.dev.mapper.DevUsersMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.SysUsers">
+		<id column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="nick" property="nick" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="qq" property="qq" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="bankUserName" property="bankUserName" jdbcType="VARCHAR"/>
+	</resultMap>
+	<resultMap type="com.ym.iadpush.manage.entity.SysUsers" id="BaseUser">
+		<id column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="queryUsers" resultMap="BaseResultMap" parameterType="map">
+		select * from sys_users where user_id = #{id}
+	</select>
+	<select id="selectByUserName" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select * from sys_users where username = #{username,jdbcType=VARCHAR} limit
+		0,1
+	</select>
+	<update id="updateUserInfo" parameterType="map">
+		update sys_users
+		<set>
+			<if test="name != null">nick = #{name},</if>
+			<if test="bankUserName != null">bankUserName = #{bankUserName},</if>
+			<if test="phone != null">phone = #{phone},</if>
+			<if test="qq != null">qq = #{qq},</if>
+			<if test="idcard != null">certificate=#{idcard},</if>
+			<if test="bankName != null">bankName=#{bankName},</if>
+			<if test="province != null">province=#{province},</if>
+			<if test="city != null">city=#{city},</if>
+			<if test="bankAddress != null">bankAddress=#{bankAddress},</if>
+			<if test="bankNo != null">bankNo=#{bankNo},</if>
+			<if test="certificate != null">certificate=#{certificate},</if>
+			<if test="certification != null">certification=#{certification},</if>
+			<if test="password != null">password=#{password},</if>
+			<if test="updatetime != null">update_date=#{updatetime}</if>
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.ym.iadpush.manage.entity.SysUsers">
+		update sys_users
+		<set>
+			<if test="nick != null">
+				nick = #{nick,jdbcType=VARCHAR},
+			</if>
+			<if test="bankUserName != null">
+				bankUserName = #{bankUserName,jdbcType=VARCHAR},
+			</if>
+			<if test="username != null">
+				username = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="qq != null">
+				qq = #{qq,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="bankName != null">
+				bankName = #{bankName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAddress != null">
+				bankAddress = #{bankAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="bankNo != null">
+				bankNo = #{bankNo,jdbcType=VARCHAR},
+			</if>
+			<if test="certificate != null">
+				certificate = #{certificate,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="rate != null">
+				rate = #{rate,jdbcType=DOUBLE},
+			</if>
+			<if test="serviceId != null">
+				serviceId = #{serviceId,jdbcType=INTEGER},
+			</if>
+			<if test="serviceName != null">
+				serviceName = #{serviceName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+
+	<insert id="register" parameterType="com.ym.iadpush.manage.entity.SysUsers"
+		keyProperty="userId" useGeneratedKeys="true">
+		insert into sys_users (nick, username, password, email, status, update_date,
+		create_date,
+		rate,qq,phone,regeditTime,address,bankName,bankAddress,bankNo,certificate,certification,type,serviceId,serviceName,province,city,bankUserName,ptpwd)
+		values (#{nick,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+		#{status,jdbcType=INTEGER},
+		#{updateDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP},#{rate,javaType=DOUBLE},
+		#{qq,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{regeditTime,jdbcType=TIMESTAMP},
+		#{address,jdbcType=VARCHAR},#{bankName,jdbcType=VARCHAR},#{bankAddress,jdbcType=VARCHAR},
+		#{bankNo,jdbcType=VARCHAR},#{certificate,jdbcType=VARCHAR},#{certification,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},
+		#{serviceId,jdbcType=INTEGER},#{serviceName,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{bankUserName,jdbcType=VARCHAR},#{ptpwd,jdbcType=VARCHAR})
+	</insert>
+
+	<insert id="addToRole" parameterType="map">
+		insert into sys_user_role (user_id,role_id) values
+		(#{userId,jdbcType=INTEGER},#{roleId,jdbcType=INTEGER})
+	</insert>
+	
+	<select id="queryAllUsers" resultMap="BaseUser">
+		select user_id,username from sys_users
+	</select>
+	<update id="updatePtPwd" parameterType="map">
+		update sys_users set ptpwd = #{ptpwd} where user_id = #{uid}
+	</update>
+
+</mapper>

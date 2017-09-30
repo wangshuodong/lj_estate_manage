@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.dev.mapper.DevBalanceMapper">
+	<select id="countEarn" resultType="map" parameterType="map">
+        select ifnull(sum(a.earn_money),0) earnMoney,ifnull(sum(a.icountkou),0) icount,a.edate from earn a
+         where a.uid=#{uid,jdbcType=INTEGER}
+	         <if test="startDate != null and startDate != ''">and a.edate &gt;=#{startDate,jdbcType=VARCHAR}</if>
+	         <if test="endDate != null and endDate != ''">and a.edate &lt;=#{endDate,jdbcType=VARCHAR}</if>
+         group by a.edate desc
+         LIMIT #{begRow},#{pageSize}
+	</select>
+	
+	<select id="sumEarn" resultType="map" parameterType="map">
+      select round(ifnull(sum(a.earn_money),0),2) earnMoney,round(ifnull(sum(a.icountkou),0),2) icount,a.uid,a.edate from earn a
+	   where a.uid=#{uid,jdbcType=INTEGER}
+		   <if test="startDate != null and startDate != ''">and a.edate &gt;=#{startDate,jdbcType=VARCHAR}</if>
+	       <if test="endDate != null and endDate != ''">and a.edate &lt;=#{endDate,jdbcType=VARCHAR}</if>
+	</select>
+	
+	<select id="selectTotalRecord" resultType="java.lang.Integer" parameterType="map">
+	  select count(1) from(
+	  select 1 from earn a
+         where a.uid=#{uid,jdbcType=INTEGER}
+	         <if test="startDate != null and startDate != ''">and a.edate &gt;=#{startDate,jdbcType=VARCHAR}</if>
+	         <if test="endDate != null and endDate != ''">and a.edate &lt;=#{endDate,jdbcType=VARCHAR}</if>
+	     group by a.edate) a
+	</select>
+	
+	<select id="findDevBalances" resultType="com.ym.iadpush.manage.entity.Balance" parameterType="map">
+	  select a.sdate,a.edate,a.earn,a.bonus,a.earn_nofee earnNofee,a.status from balance a where uid=#{uid}
+	   <if test="status != null and status != ''">and a.status=#{status}</if>
+	   <if test="edate != null and edate != ''">and a.edate=#{edate}</if>
+	   order by a.edate
+	   LIMIT #{begRow},#{pageSize}
+	</select>
+	
+	<select id="SelectTotalDevBalances" resultType="java.lang.Integer" parameterType="map">
+	  select count(1) from balance a where uid=#{uid}
+	   <if test="status != null and status != ''">and a.status=#{status}</if>
+	   <if test="edate != null and edate != ''">and a.edate=#{edate}</if>
+	</select>
+</mapper>

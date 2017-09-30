@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.VersionManageMapper" >
+
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.VersionManage" >
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="appkey" property="appkey" jdbcType="VARCHAR" />
+		<result column="sv" property="sv" jdbcType="VARCHAR" />
+		<result column="kv" property="kv" jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
+	</resultMap>
+  
+  	<!--  -->
+	<select id="getAllVersionManage" resultMap="BaseResultMap" parameterType="map">
+		select m.id,m.appkey,s.sv,k.kv,m.create_time from  version_manage m
+		inner join version_kit k on m.versionid=k.id inner join version_sdk s on m.mid=s.mid limit #{currPage},#{pageSize}
+	</select>
+	<select id="getAllCountVersionManage" resultType="java.lang.Integer" >
+		select  count(*) from  version_manage m
+		inner join version_kit k on m.versionid=k.id inner join version_sdk s on m.mid=s.mid
+	</select>
+	<delete id="deleteVersionManageVersionid" parameterType="map">
+		delete from  version_manage where versionid=#{id} 
+    </delete>
+	<delete id="deleteVersionManage" parameterType="map">
+		delete from  version_manage where id=#{id} 
+	</delete>
+	<insert id="insertVersionManage" parameterType="map">
+		insert into version_manage(appkey,mid,versionid,create_time) VALUES(#{appkey},#{sdk_id},#{kit_id},now())
+	</insert>
+	<select id="selectVersionManageByAppkey" parameterType="map" resultMap="BaseResultMap">
+		select id,appkey from version_manage where appkey=#{appkey}
+	</select>
+</mapper>

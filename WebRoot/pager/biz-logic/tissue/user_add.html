@@ -1,0 +1,125 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|添加用户</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+</style>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="panel panel-default">
+		<div class="panel-heading">
+           	<h3 class="panel-title">添加用户</h3>
+        </div>
+        <div class="panel-body text-center">
+		    <div class="tab-content">
+		    <div class="tab-pane active" id="daily" style="height:auto !important;">
+				 <form id="addUserForm" class="form form-inline" name="addUserForm" method="post">
+					 <table class="table table-bordered" style="width:760px;">
+					 	<tr>
+					 		<td width="16%" align="right">用户名</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="username" name="username" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">昵称</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="nick" name="nick" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">邮箱</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="email" name="email" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">QQ</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="qq" name="qq" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">电话</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="phone" name="phone" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">所属角色</td>
+					 		<td align="left">
+					 			<select id="roleId" name="roleId" class="form-control" style="width:300px;">
+			            			<#list roles as r>
+		            				<option value="${r.roleId}" >${r.roleName}</option>
+		            			    </#list>
+		            		    </select>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">会员等级</td>
+					 		<td align="left">
+					 			<select id="type" name="member_levelId" class="form-control" style="width:300px;">
+			            			<option>请选择</option>
+					 				<#list memberLevel as s>
+						 					<option value="${s.id}" >${s.desc}</option>
+		            			    </#list>
+		            		    </select>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">所属组织机构</td>
+					 		<td align="left">
+					 			<select id="department" name="department" class="form-control" style="width:300px;">
+					 				<option>请选择</option>
+					 				<#list departments as d>
+		            				<option value="${d.id}" >${d.id}-${d.name}</option>
+		            			    </#list>
+					 			</select>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">状态</td>
+					 		<td align="left">
+					 			<label class="radio-inline">
+		            		    	<input type="radio" name="status" checked="checked" value="1"/>激活
+		            		    </label>
+		            		    <label class="radio-inline">
+		            		    	<input type="radio" name="status" value="0"/>暂停
+		            		    </label>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td></td>
+					 		<td>
+					 			<button type="button" class="btn btn-info btn-sm col-md-1" name="userSave" >保存</button>
+					 		</td>
+					 	</tr>
+					 </table>
+					 
+		            <!-- 操作消息记录 -->
+		            <div class="row" id="messageDiv" align="left" style="color:red">
+			            
+		            </div>
+		            
+		            </form>
+				  </div>
+				</div>
+			  </div>
+           </div>
+	</div>
+	
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

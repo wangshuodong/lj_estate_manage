@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.BalanceMapper" >
+  <select id="findUserBlances" resultType='com.ym.iadpush.manage.entity.UserBalance' parameterType="map">
+    select u.user_id userId,u.username username,u.qq qq,u.phone phone,u.bankname bankname,u.serviceName,
+           u.province,u.city,IFNULL(u.bankUserName,"") bankUserName,u.bankAddress,u.bankNo bankNo,u.certificate certificate,u.certification,
+           DATE_FORMAT(b.pay_date,'%Y-%m-%d') payDate,b.bonus bonus,b.id balanceId,b.sdate sdate,b.edate edate,
+           b.earn earn,b.earn_nofee earnNoFee,b.STATUS status,b.remark remark,c.count count,d.username payUsername,
+           DATE_FORMAT(b.pay_time,'%Y-%m-%d %H:%i:%s') payTime
+    FROM   balance b
+    LEFT JOIN sys_users u ON b.uid = u.user_id
+    left join sys_users d on b.pay_uid = d.user_id
+    LEFT JOIN (SELECT COUNT(*) count,uid FROM balance where status = 1 GROUP BY uid) c ON c.uid = u.user_id
+    <where>
+    	<if test="userId!=null">
+    		and u.user_id = #{userId}
+    	</if>
+        <if test="serviceId != null">
+        	and u.serviceId = #{serviceId,jdbcType=INTEGER}
+        </if>
+    	<if test="status != null and status != ''">
+    		and b.status = #{status,jdbcType=INTEGER}
+    	</if>
+    	<if test="uid != null and uid != ''">
+    		and u.username = #{uid}
+    	</if>
+    	<if test="certification != null and certification != ''">
+    		and u.certification = #{certification,jdbcType=VARCHAR}
+    	</if>
+    	<if test="startDate != null and startDate != ''">
+    		and b.pay_date &gt;= #{startDate,jdbcType=VARCHAR}
+    	</if>
+    	<if test="endDate != null and endDate != ''">
+    		and b.pay_date &lt;= #{endDate,jdbcType=VARCHAR}
+    	</if>
+    	<if test="edate != null and edate != ''">
+    		and b.edate &lt;= #{edate,jdbcType=VARCHAR}
+    	</if>
+    </where>
+    
+    order by count asc,edate desc,username DESC
+    <if test="begRow != null and pageSize != null">
+    	LIMIT #{begRow},#{pageSize}
+    </if>
+    
+  </select>
+  
+  <select id="selectTotalRecord" resultType="java.lang.Integer" parameterType="map">
+    select count(1)
+    FROM   balance b
+    LEFT JOIN sys_users u ON b.uid = u.user_id
+    LEFT JOIN (SELECT COUNT(*) count,uid FROM balance GROUP BY uid) c ON c.uid = u.user_id
+    <where>
+    	<if test="userId!=null">
+    		and u.user_id = #{userId}
+    	</if>
+        <if test="serviceId != null">
+        	and u.serviceId = #{serviceId,jdbcType=INTEGER}
+        </if>
+    	<if test="status != null and status != ''">
+    		and b.status = #{status,jdbcType=INTEGER}
+    	</if>
+    	<if test="uid != null and uid != ''">
+    		and u.username = #{uid}
+    	</if>
+    	<if test="certification != null and certification != ''">
+    		and u.certification = #{certification,jdbcType=VARCHAR}
+    	</if>
+    	<if test="startDate != null and startDate != ''">
+    		and b.pay_date &gt;= #{startDate,jdbcType=VARCHAR}
+    	</if>
+    	<if test="endDate != null and endDate != ''">
+    		and b.pay_date &lt;= #{endDate,jdbcType=VARCHAR}
+    	</if>
+    	<if test="edate != null and edate != ''">
+    		and b.edate &lt;= #{edate,jdbcType=VARCHAR}
+    	</if>
+    </where>
+  </select>
+  
+  <select id="collectUserBlances" resultType="com.ym.iadpush.manage.entity.BalanceCollect" parameterType="map">
+    SELECT ROUND(sum(IFNULL(b.bonus, 0)), 2) bonus, ROUND(sum(IFNULL(b.earn, 0)), 2) earn,
+           ROUND( sum(IFNULL(b.earn_nofee, 0)), 2 ) earnNofee
+      FROM balance b left join sys_users u on b.uid = u.user_id 
+     <where>
+    	<if test="userId!=null">
+    		and u.user_id = #{userId}
+    	</if>
+        <if test="serviceId != null">
+        	and u.serviceId = #{serviceId,jdbcType=INTEGER}
+        </if>
+    	<if test="status != null and status != ''">
+    		and b.status = #{status,jdbcType=INTEGER}
+    	</if>
+    	<if test="uid != null and uid != ''">
+    		and u.username = #{uid}
+    	</if>
+    	<if test="certification != null and certification != ''">
+    		and u.certification = #{certification,jdbcType=VARCHAR}
+    	</if>
+    	<if test="startDate != null and startDate != ''">
+    		and b.pay_date &gt;= #{startDate,jdbcType=VARCHAR}
+    	</if>
+    	<if test="endDate != null and endDate != ''">
+    		and b.pay_date &lt;= #{endDate,jdbcType=VARCHAR}
+    	</if>
+    	<if test="edate != null and edate != ''">
+    		and b.edate &lt;= #{edate,jdbcType=VARCHAR}
+    	</if>
+    </where>
+  </select>
+  
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into balance(uid,earn,bonus,earn_nofee,sdate,edate,settle_uid,status,settle_time) values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.uid},#{item.earn},#{item.bonus},#{item.earnNofee},#{item.sdate},#{item.edate},#{item.operuser},#{item.status},#{item.addtime})
+    </foreach>
+  </insert>
+  
+  <update id="updateStatus" parameterType="map">
+    update balance set status = #{status},pay_uid=#{payUid},pay_date=#{payDate,jdbcType=TIMESTAMP},remark=#{remark},
+           pay_time=#{payTime,jdbcType=TIMESTAMP}
+     where id=#{balanceId}
+  </update>
+  
+  <update id="updateStatusByBatch" parameterType="map">
+  	update balance set status = #{status},pay_uid=#{pay_uid},pay_date=#{payDate,jdbcType=TIMESTAMP},remark=#{note},
+           pay_time=#{payTime,jdbcType=TIMESTAMP}
+     where id in(${balanceIds})  and status = 0
+  </update>
+</mapper>

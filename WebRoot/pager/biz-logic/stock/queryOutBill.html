@@ -1,0 +1,120 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>重庆京莱米商贸公司|库存中心</title> 
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<link rel="stylesheet" type="text/css" href="${base}/assets/biz-logic/css/apply.css"/>
+
+
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>库存中心&gt;&gt; <small>&nbsp;&nbsp;出库单目录</small></h5>
+		</div>
+		<div class="row">
+			<form action="${base}/apply_list.html" id="submitForm" method="post">
+				<div class="col-md-7" style="float: left;width:100%;">
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">单据号</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="code">
+					</div>
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">日期1</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="startdate" data-format="yyyy-MM-dd" id="startdate" >
+					</div>
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">日期2</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="enddate" data-format="yyyy-MM-dd" id="enddate" >
+					</div>
+					
+					<div class="col-md-2 text-right">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-search" onclick="sumbitForm('search')">查询</button>
+							
+						</div>
+					</div>
+				</div>
+				<div class="col-md-7" style="float: left;width:100%;">
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">订单号</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="orderCode">
+					</div>
+						<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">产品</div>
+						<div class="col-md-2">
+								<select id="product" name="product" class="form-control" >
+									<option value="" >全部</option>
+					 				<#list products as p>
+		            				<option value="${p.id}" >${p.name}</option>
+		            			    </#list>
+					 			</select>
+					 	</div>
+					 	<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">仓库</div>
+							<div class="col-md-2">
+								<select id="warehouse" name="warehouse" class="form-control" >
+									<option value="" >全部</option>
+					 				<#list warehouses as w>
+		            				<option value="${w.id}" >${w.name}</option>
+		            			    </#list>
+					 			</select>
+							</div>
+						<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;"></div>
+							<div class="col-md-2">
+								
+							</div>
+				</div>
+				<div class="col-md-7" style="float: left;width:100%;">
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">外部单据号</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="outsideCode">
+					</div>
+					
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">客户</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="companyName">
+					</div>
+				</div>
+				
+
+				<input type="hidden" name="currPage" value="1" id="currPage">
+				<input type="hidden" name="departmentCode"  value="${(departmentCode)!}"  id="departmentCode">
+			</form>
+		</div>
+		<div class="alert" style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;">
+			<table class="table table-bordered table-hover alert-warning">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>单据号</th>
+						<th>外部单据号</th>
+						<th>订单号</th>
+						<th>日期</th>
+						<th>仓库</th>
+						<th>产品</th>
+						<th>客户</th>
+						<th>计量单位</th>
+						<th>数量</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="d_body">
+				</tbody>
+			</table>
+			<div class="row">
+				<div class="col-md-9">
+					<span id="totalCount"></span>
+				</div>
+				<div class="col-md-9">
+					<ul id="pagination" style="margin: 0;float: right;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+</@compress>

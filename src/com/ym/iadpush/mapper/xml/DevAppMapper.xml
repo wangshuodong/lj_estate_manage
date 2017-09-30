@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.dev.mapper.DevAppMapper" >
+<resultMap type="com.ym.iadpush.dev.entity.DevAppStatement" id="BaseResultMap">
+	<result column="icount" property="icount" jdbcType="VARCHAR"/>
+	<result column="appname" property="appName" jdbcType="VARCHAR"/>
+	<result column="earn" property="earn"/>
+</resultMap>
+<resultMap type="com.ym.iadpush.dev.entity.DevAppStatement" id="SumDevStatement_ResultMap">
+	<result column="icount" property="icount" jdbcType="VARCHAR"/>
+	<result column="earn" property="earn"/>
+</resultMap>
+<resultMap type="com.ym.iadpush.dev.entity.DevAppStatementDetail" id="AppStatement_Detail">
+	<result column="appName" property="appName"/>
+	<result column="edate" property="edate"/>
+	<result column="icount" property="icount"/>
+	<result column="earn" property="earn"/>
+</resultMap>
+<resultMap type="com.ym.iadpush.dev.entity.DevAppStatementDetail" id="SumDevStatementDetail_ResultMap">
+	<result column="icount" property="icount"/>
+	<result column="earn" property="earn"/>
+</resultMap>
+<resultMap type="com.ym.iadpush.manage.entity.App" id="baseAppResult">
+	<result column="id" property="aid"/>
+	<result column="name" property="appname"/>
+</resultMap>
+
+<resultMap type="com.ym.iadpush.manage.entity.App" id="appResult">
+	<result column="id" property="aid"/>
+	<result column="name" property="appname"/>
+	<result column="uid" property="uid"/>
+	<result column="status" property="status"/>
+	<result column="qid" property="qid"/>
+</resultMap>
+
+<sql id="queryDevAppStatement_sql">
+	FROM (select * from app 
+	<where>
+		<if test="uid != null">AND uid = #{uid,jdbcType=INTEGER}</if>
+		<if test="appid != null">AND id = #{appid,jdbcType=INTEGER}</if>
+		<if test="appName != null">AND name like CONCAT("%","${appName}","%")</if>
+	</where>
+	) a LEFT JOIN (SELECT SUM(earn_money) earn, SUM(icountkou) icount,appid FROM earn
+	<where>
+		<if test="uid != null">AND uid = #{uid,jdbcType=INTEGER}</if>
+		<if test="appid != null">AND appid = #{appid,jdbcType=INTEGER}</if>
+		<if test="startDate != null">AND <![CDATA[edate >= #{startDate,jdbcType=DATE}]]></if>
+		<if test="endDate != null">AND <![CDATA[edate <= #{endDate,jdbcType=DATE}]]></if>
+	</where>
+	
+	 GROUP BY appid) e ON a.id = e.appid
+</sql>
+<sql id="queryDevAppStatement_detail_sql">
+	FROM   (SELECT SUM(earn_money) earn, SUM(icountkou) icount,appid,edate FROM earn
+	<where>
+		<if test="uid != null">AND uid = #{uid,jdbcType=INTEGER}</if>
+		<if test="appid != null">AND appid = #{appid,jdbcType=INTEGER}</if>
+		<if test="startDate != null">AND <![CDATA[edate >= #{startDate,jdbcType=DATE}]]></if>
+		<if test="endDate != null">AND <![CDATA[edate <= #{endDate,jdbcType=DATE}]]></if>
+	</where>
+	
+	 GROUP BY appid,edate) e LEFT JOIN 
+	 (select * from app 
+	<where>
+		<if test="uid != null">AND uid = #{uid,jdbcType=INTEGER}</if>
+		<if test="appid != null">AND id = #{appid,jdbcType=INTEGER}</if>
+		<if test="appName != null">AND name like CONCAT("%","${appName}","%")</if>
+	</where>
+	) a
+	  ON a.id = e.appid
+	  <where>
+		<if test="uid != null">AND a.uid = #{uid,jdbcType=INTEGER}</if>
+		<if test="appid != null">AND a.id = #{appid,jdbcType=INTEGER}</if>
+		<if test="appName != null">AND a.name like CONCAT("%","${appName}","%")</if>
+	</where>
+</sql>
+
+<select id="queryDevAppStatement" resultMap="BaseResultMap">
+	SELECT e.*,a.`name` appname <include refid="queryDevAppStatement_sql"/>
+	limit ${pageNo*pageSize},#{pageSize}
+</select>
+<select id="countDevAppStatement" resultType="java.lang.Integer">
+	select count(1) <include refid="queryDevAppStatement_sql"/>
+</select>
+<select id="sumDevAppStatement" resultMap="SumDevStatement_ResultMap">
+	select sum(e.icount) icount,sum(e.earn) earn <include refid="queryDevAppStatement_sql"/>
+</select>
+
+<select id="queryDevAppStatementDetail" resultMap="AppStatement_Detail" parameterType="map">
+	SELECT e.*,IFNULL(a.`name`,CONCAT("未知APPID:",appid)) appname <include refid="queryDevAppStatement_detail_sql"/>
+	order by e.edate desc limit ${pageNo*pageSize},#{pageSize}
+</select>
+<select id="countDevAppStatementDetail" resultType="java.lang.Integer">
+	select count(1) <include refid="queryDevAppStatement_detail_sql"/>
+</select>
+<select id="sumDevAppStatementDetail" resultMap="SumDevStatementDetail_ResultMap">
+	select sum(e.icount) icount,sum(e.earn) earn <include refid="queryDevAppStatement_detail_sql"/>
+</select>
+<select id="queryAllApp" resultMap="baseAppResult">
+	select id,name from app
+</select>
+<select id="queryByUsers" resultMap="appResult" parameterType="map">
+	select id,name,status,uid,qid from app where uid in(${uids})
+</select>
+<select id="queryByApps" resultMap="appResult" parameterType="map">
+	select id,name,status,uid,qid from app where status = '1,1,1'
+	<if test="appids != null ">
+		and id in(${appids})
+	</if>
+</select>
+<update id="updateEarn" parameterType="map">
+	update earn SET icount = icount+#{amount},icountkou=icountkou+#{amount},acount=acount+#{amount},acountkou=acountkou+#{amount},earn_money = earn_money+#{price} 
+	<include refid="common_sql_updateEarn"/>
+</update>
+<sql id="common_sql_updateEarn">
+	WHERE  `hour` in(${hours}) 
+	and edate BETWEEN #{startdate} AND #{enddate}
+	<if test="appids != null">
+	AND appid in(${appids}) 
+	</if>
+	<if test="uids != null">
+	AND uid in(${uids})
+	</if>
+</sql>
+<update id="updateCpacount" parameterType="map">
+	update iadpush_cpacount SET icount = icount+#{amount},icountkou=icountkou+#{amount},acount=acount+#{amount},acountkou=acountkou+#{amount},compensationIcount=#{amount},compensationAcount=#{amount}
+	WHERE  `hour` in(${hours}) and adate BETWEEN #{startdate} AND #{enddate}
+	<if test="appids != null">
+	AND appid in(${appids}) 
+	</if>
+	<if test="uids != null">
+	AND uid in(${uids})
+	</if>
+</update>
+<update id="updateDevReport" parameterType="map">
+	update developer_report SET icount = icount+#{real_amount},acount=acount+#{real_amount},icountkou=icountkou+#{real_amount},acountkou=acountkou+#{real_amount},earn = earn+#{real_earn}
+	WHERE   addate BETWEEN #{startdate} AND #{enddate}
+	<if test="appids != null">
+	AND appid in(${appids}) 
+	</if>
+	<if test="uids != null">
+	AND uid in(${uids})
+	</if>
+</update>
+
+<select id="queryNotInAppOfEarn" resultMap="appResult" parameterType="map">
+SELECT id,name,status,uid,qid FROM app WHERE id NOT IN(SELECT appid FROM earn WHERE  edate = #{today}  AND `hour` =(${thehour}) and status = '1,1,1'
+
+		<if test="uids != null "> AND uid IN(${uids}) </if>
+		<if test="appids != null "> AND appid IN(${appids}) </if>
+
+ )
+ 
+ 	<if test="uids != null "> AND uid IN(${uids}) </if>
+	<if test="appids != null "> AND id IN(${appids}) </if>
+</select>
+<select id="queryById" resultMap="appResult" parameterType="map">
+	select id,name,status,uid,qid from app where id=#{id}
+</select>
+<update id="updateDevReportByParams" parameterType="map">
+	update developer_report SET icount = icount+#{amount},acount=acount+#{amount},icountkou=icountkou+#{amount},acountkou=acountkou+#{amount},earn = earn+#{price}
+	<include refid="common_sql_updateDevReport"/>
+</update>
+<sql id="common_sql_updateDevReport">
+	WHERE   addate =#{date}
+	AND appid =#{appid}
+	AND uid =#{uid}
+</sql>
+<update id="updateCpacountByParams" parameterType="map">
+	update iadpush_cpacount SET icount = icount+#{amount},icountkou=icountkou+#{amount},acount=acount+#{amount},acountkou=acountkou+#{amount},compensationIcount=#{amount},compensationAcount=#{amount}
+	<include refid="common_sql_updateCpacountByParams"/>
+</update>
+<sql id="common_sql_updateCpacountByParams">
+	WHERE  `hour` = #{hour} and adate= #{date}
+	AND appid = #{appid}
+	AND uid = #{uid}
+</sql>
+
+<select id="queryUpdatedApp" parameterType="map" resultMap="appResult">
+	select appid id,uid from earn <include refid="common_sql_updateEarn"/> 
+</select>
+<select id="queryFormEarnByApp" parameterType="java.lang.Integer" resultMap="appResult">
+	select appid id from earn where appid = #{appid} limit 0,1
+</select>
+<select id="queryFormEarnByParams" parameterType="map" resultMap="appResult">
+	select appid id from earn where edate = #{date} and appid = #{appid} and hour = #{hour} and uid=#{uid} limit 0,1
+</select>
+<select id="queryFormCpacount" parameterType="map" resultMap="appResult">
+	select appid id from iadpush_cpacount <include refid="common_sql_updateCpacountByParams"/> limit 0,1
+</select>
+<select id="queryFormDeveloper" parameterType="map" resultMap="appResult">
+	select appid id from developer_report <include refid="common_sql_updateDevReport"/> limit 0,1
+</select>
+</mapper>

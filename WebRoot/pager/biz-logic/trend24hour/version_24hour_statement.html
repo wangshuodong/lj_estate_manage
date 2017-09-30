@@ -1,0 +1,132 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title></title> <#include "/pager/common/quote.html" /> <#include
+"/common/bootstrapBase.html" />
+
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+
+<style type="text/css">
+ul.nav.nav-tabs a {
+	cursor: pointer
+}
+
+div.tab-content a {
+	cursor: pointer
+}
+</style>
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>
+				24小时走量图<small>>>版本统计24小时</small>
+			</h5>
+		</div>
+		<form action="" id="sumbitForm">
+			<table>
+				<tr>
+					<td colspan="10"><span style="color: red">提示：查询日期默认为当前日期</span>
+					</td>
+				</tr>
+				<tr>
+					<td>日期</td>
+					<td><input type="text" class="form-control input-sm"
+						name="startdate" data-format="yyyy-MM-dd"></td>
+					<td>SV/KV</td>
+					<td><select name="vtype" class="form-control input-sm">
+							<option selected="selected" value="kv">kv</option>
+							<option value="sv">sv</option>
+					</select>
+					</td>
+					<td>新增/活跃</td>
+					<td><select name="count" class="form-control input-sm">
+							<option selected="selected" value="icount">新增量</option>
+							<option value="acount">活跃量</option>
+					</select>
+					</td>
+					<td><input type="button" value="查询" onclick="query()"
+						class="btn btn-default"></td>
+				</tr>
+			</table>
+		</form>
+		<div class="row">
+			<div class="col-md-12">
+				<div id="container"
+					style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+	var today = formatDate(new Date(), "YYYY-MM-DD");
+	$("input[name='startdate']").val(today);
+	function query() {
+		var d = $("#sumbitForm").serialize();
+		$.ajax({
+			url : "${base}/version_24hour_statement.html",
+			type : "post",
+			data : d,
+			dataType : "json",
+			success : function(data) {
+
+				$('#container').highcharts(
+						{
+							chart : {
+								plotBackgroundColor : null,
+								plotBorderWidth : null,
+								plotShadow : false
+							},
+							title : {
+								text : '版本24小时饼图(' + data.vtype + ')'
+							},
+							tooltip : {
+								formatter : function() {
+									return '<b>' + this.point.name + '</b>: '
+											+ this.percentage.toFixed(2)
+											+ ' %  ' + this.y.toFixed(0) + ' ';
+								}
+
+							},
+							plotOptions : {
+								pie : {
+									allowPointSelect : true,
+									cursor : 'pointer',
+									dataLabels : {
+										enabled : true,
+										color : '#000000',
+										connectorColor : '#000000',
+										formatter : function() {
+											return '<b>'
+													+ this.point.name
+													+ '</b>: '
+													+ this.percentage
+															.toFixed(2)
+													+ ' %  '
+													+ this.y.toFixed(0) + '';
+										}
+
+									},
+									showInLegend : true
+								}
+							},
+							series : [ {
+								type : 'pie',
+								name : '版本统计',
+								data : data.list
+							} ]
+						});
+			},
+			error : function(data) {
+			}
+		})
+	}
+	query();
+</script>
+</html>
+
+</@compress>

@@ -1,0 +1,161 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|用户列表</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+a {cursor: pointer}
+td {font-size:10px;}
+</style>
+<script type="text/javascript" src="${base}/assets/common/jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js"></script>
+<link rel="stylesheet" href="${base}/assets/common/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" type="text/css"></link>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="page-header alert alert-info">
+			<h5>用户管理>> <small>用户列表</small></h5>
+		</div>
+		<form action="queryUser.html" id="queryUserForm" method="post">
+           <div class="row">
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>用户</span></div>
+            	<div class="col-md-2">
+            		<input type="text" class="form-control input-sm"  id="userName" />
+            	</div>
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>开始日期</span></div>
+            	<div class="col-md-2">
+            		<input type="text" class="form-control input-sm" name="startDate" id="startDate" data-format="yyyy-MM-dd">
+            	</div>
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>截止日期</span></div>
+            	<div class="col-md-2">
+            		<input type="text"class="form-control input-sm" name="endDate" id="endDate" data-format="yyyy-MM-dd">
+            	</div>
+            	
+           </div>
+            <div class="row">
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>门店/经销商</span></div>
+            	<div class="col-md-2">
+            		<input type="text" class="form-control input-sm"  id="companyName"  name="companyName"/>
+            	</div>
+            	
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>组织机构</span></div>
+            	<div class="col-md-2">
+            		<input type="text" class="form-control input-sm"  id="departmentName"  name="departmentName"/>
+            	</div>
+            	
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>角色</span></div>
+            	<div class="col-md-2">
+            		<select id="roleId" class="form-control">
+						<option value="">请选择</option>
+						<#if roles?? && roles?size gt 0>
+						<#list roles as r>
+							<option value="${r.roleId}">${r.roleName}</option>
+						</#list>
+						</#if>
+					</select>
+            	</div>
+            	
+            	<div class="col-md-3" style="float: left;">
+					<div style="float: right;" class="btn-group">
+						 <button type="button" class="btn btn-default" name="queryBtn">查询&nbsp;&nbsp;</button>
+            			<button type="button" class="btn btn-default" name="userAdd">添加&nbsp;&nbsp;</button>
+				  </div>
+				</div>
+           </div>
+		</form>
+		
+		<div style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;" class="alert" >
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover  alert-warning">
+					<thead>
+				  	  <tr>
+				  	    <th scope="col" class="text-center" nowrap="nowrap">ID</th>
+				  		<th scope="col" class="text-center" nowrap="nowrap">用户名</th>
+				  		<th scope="col" class="text-center" nowrap="nowrap">口令</th>
+				  		<th scope="col" class="text-center" nowrap="nowrap">门店/经销商</th>
+				  		<th scope="col" width="6%" class="text-center" nowrap="nowrap">QQ</th>
+				  		<th scope="col" width="6%" class="text-center" nowrap="nowrap">电话</th>
+				  		<th scope="col" width="6%" class="text-center" nowrap="nowrap">邮箱</th>
+				  		<th scope="col" width="5%" class="text-center" nowrap="nowrap">是否认证</th>
+				  		<th scope="col" width="5%" class="text-center" nowrap="nowrap">状态</th>
+				  		<th scope="col" width="18%" class="text-center" nowrap="nowrap">注册时间</th>
+				  		<th scope="col" width="11%" class="text-center" nowrap="nowrap">角色</th>
+				  		<th scope="col" width="11%" class="text-center" nowrap="nowrap">组织机构</th>
+				  		<th scope="col" class="text-center" nowrap="nowrap">会员等级</th>
+				  		<th scope="col" width="22%" class="text-center" nowrap="nowrap">操作</th>
+				  	  </tr>
+				  	</thead>
+				  	
+				  	<tbody id="daily_tbody">
+				  	
+					</tbody>
+				</table>
+				<div class="row">
+		            <div class="col-md-12">
+		                <div class=" pull-left" style="margin-top: 26px;">共有记录<span id="d_totalRecord">0</span>条 当前第<span id="d_pageNo">1</span>页/ 总<span id="d_totalPage">1</span>页</div>
+		                <div class=" pull-right">
+		                    <ul id='d_paginationId'></ul>
+		                </div>
+		            </div>
+		        </div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="showModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        	<img id="imageinfo" style="width: 550px;height: 400px;" alt="" src="">
+        	<input type="hidden" id="tempUserId">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="downUserImg()">下载</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<script type="text/javascript">
+function findAllUserName(){
+	var input=$("#userName");
+	var spanLabel=$("<span>")
+	input.after(spanLabel);
+	if(input.length==0)return;
+	$.ajax({
+　　　　	url: 'query_all_user.html',
+		type:"GET",
+　　　　	error: function (xmlHttpRequest, error) {
+　　　　	},
+    	dataType:'json',
+    	success:function(data) {
+　　　　		var users=data.result;
+　　　　		var dataArray=new Array();
+　　　　		for ( var i = 0; i < data.totalRecord; i++) {
+				if(users[i] != null){
+					dataArray.push({label:users[i].username,value:users[i].username});
+				}
+　　　　			
+			}
+　　　　		input.autocomplete({source:dataArray, autoFocus: true});
+		}
+　　　});
+}
+findAllUserName();
+</script>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.EnterBillMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.EnterBill">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="warehouseId" jdbcType="INTEGER" property="warehouseId" />
+		<result column="productId" jdbcType="INTEGER" property="productId" />
+		<result column="stockMonth" jdbcType="INTEGER" property="stockMonth" />
+		<result column="stockDetail" jdbcType="INTEGER" property="stockDetail" />
+		<result column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="number" jdbcType="INTEGER" property="number" />
+		<result column="price" jdbcType="DECIMAL" property="price" />
+		<result column="money" jdbcType="DECIMAL" property="money" />
+		<result column="outsideCode" jdbcType="VARCHAR" property="outsideCode" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="checked" jdbcType="INTEGER" property="checked" />
+		<result column="auditingPeople" jdbcType="INTEGER" property="auditingPeople" />
+		<result column="auditingDate" jdbcType="DATE" property="auditingDate" />
+		<result column="auditingTime" jdbcType="TIMESTAMP" property="auditingTime"  />
+	</resultMap>
+	
+	<resultMap id="enterBillStatement" type="com.ym.iadpush.manage.entity.EnterBillStatement">
+		<result column="number" property="number" jdbcType="DECIMAL" />
+		<result column="money" property="money" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<insert id="auditingEnterBill">
+		update enteringbill set 
+		checked=#{enterBill.checked,jdbcType=INTEGER},auditingPeople=#{enterBill.auditingPeople,jdbcType=INTEGER},auditingDate=#{enterBill.auditingDate,jdbcType=DATE}
+		,auditingTime=#{enterBill.auditingTime,jdbcType=TIMESTAMP},stockMonth=#{enterBill.stockMonth,jdbcType=INTEGER},stockDetail=#{enterBill.stockDetail,jdbcType=INTEGER}
+		where id=#{id,jdbcType=INTEGER}
+	</insert>
+	
+	<insert id="updateEnterBill">
+		update enteringbill set  remark=#{enterBill.remark}
+		where id=#{id,jdbcType=INTEGER}
+	</insert>
+	
+	<select id="getAllNoauditingEnterBills" resultMap="BaseResultMap"
+		parameterType="map">
+		select  e.*,w.name warehouseName,p.name productName,c.name companyName,c.id companyId,p.unit unit,su.username  auditingUsername   from enteringbill  e
+		left join warehouse w on w.id=e.warehouseId
+		left join company_info c on c.id=e.companyId
+		left join product p on p.id=e.productId
+		left join sys_users su on su.user_id=e.auditingPeople
+		
+		where 1=1  and checked=0
+		
+		<if test="remark!=null and remark!='' ">
+			 and e.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and e.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and e.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and e.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and e.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and e.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and e.productId =#{product}
+		</if>
+		
+		order by id desc 
+	</select>
+	
+	<select id="getAllEnterBillsCollect" resultMap="enterBillStatement"  parameterType="map">
+		select  sum(number)  number,sum(money) money   from enteringbill  e
+		left join warehouse w on w.id=e.warehouseId
+		left join company_info c on c.id=e.companyId
+		left join product p on p.id=e.productId
+		
+		where 1=1  
+		
+		<if test="remark!=null and remark!='' ">
+			 and e.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="companyId!=null and companyId!='' ">
+			and w.companyId =#{companyId}
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and e.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and e.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and e.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and e.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and e.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and e.productId =#{product}
+		</if>
+		
+	</select>
+	
+	<select id="getAllEnterBillsCount" parameterType="map" 	resultType="java.lang.Integer">
+		select  count(1)  from enteringbill  e
+		left join warehouse w on w.id=e.warehouseId
+		left join company_info c on c.id=e.companyId
+		left join product p on p.id=e.productId
+		
+		where 1=1   
+		
+		<if test="remark!=null and remark!='' ">
+			 and e.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="companyId!=null and companyId!='' ">
+			and w.companyId =#{companyId}
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and e.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and e.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and e.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and e.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and e.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and e.productId =#{product}
+		</if>
+
+	</select>
+	
+	
+	<select id="getAllEnterBills" resultMap="BaseResultMap"
+		parameterType="map">
+		select  e.*,w.name warehouseName,p.name productName,c.name companyName,c.id companyId,p.unit unit,su.username auditingUsername    from enteringbill  e
+		left join warehouse w on w.id=e.warehouseId
+		left join company_info c on c.id=e.companyId
+		left join product p on p.id=e.productId
+		left join sys_users su on su.user_id=e.auditingPeople
+		
+		where 1=1   
+		
+		<if test="remark!=null and remark!='' ">
+			 and e.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="companyId!=null and companyId!='' ">
+			and w.companyId =#{companyId}
+		</if>
+		
+		<if test="code!=null and code!='' ">
+			 and e.code like "%"#{code}"%" 
+		</if>
+		
+		<if test="outsideCode!=null and outsideCode!='' ">
+			 and e.outsideCode like "%"#{outsideCode}"%" 
+		</if>
+		
+		<if test="startDate != null and startDate!=''">
+			and e.addate >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate!=''">
+			and e.addate <![CDATA[<= #{endDate}]]>
+		</if>
+		
+		<if test="warehouse!=null and warehouse!='' ">
+			and e.warehouseId =#{warehouse}
+		</if>
+		
+		<if test="product!=null and product!='' ">
+			and e.productId =#{product}
+		</if>
+		
+		order by id desc 
+		limit #{currPage},#{pageSize}
+	</select>
+	
+	<select id="getEnterBillById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select  e.*,w.name warehouseName,p.name productName,c.name companyName,c.id companyId,p.unit unit,su.username  auditingUsername   from enteringbill  e
+		left join warehouse w on w.id=e.warehouseId
+		left join company_info c on c.id=e.companyId
+		left join product p on p.id=e.productId
+		left join sys_users su on su.user_id=e.auditingPeople
+		where 1=1 
+		and e.id=#{id,jdbcType=INTEGER}
+	</select>
+	
+	<insert id="insertEnterBill" parameterType="com.ym.iadpush.manage.entity.EnterBill"
+		keyProperty="id">
+		insert  into  enteringbill (departmentCode,companyId,departmentId,uid,addate,createTime,code,outsideCode,warehouseId,productId,number,price,money,remark,stockMonth,stockDetail )
+		values(#{departmentCode},#{companyId},#{departmentId},#{uid},#{addate},#{createTime},#{code},#{outsideCode},#{warehouseId},#{productId},#{number},#{price},#{money},#{remark},#{stockMonth},#{stockDetail} )
+	</insert>
+	
+	<select id="getMaxEnterBillCode" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT  *  from enteringbill   where 1=1
+		and  code like ""#{date}"%"     order by code desc  limit 0,1
+	</select>
+	
+</mapper>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.ProprietorMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Proprietor">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime"  jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="warehouseId" jdbcType="INTEGER" property="warehouseId" />
+		<result column="productId" jdbcType="INTEGER" property="productId" />
+	</resultMap>
+	
+	<insert id="changeDepartment" parameterType="map">
+		UPDATE proprietor SET departmentCode = #{departmentCode},departmentId = #{departmentId} WHERE housingId= #{housingId}
+	</insert>
+	
+	<resultMap id="enterBillStatement" type="com.ym.iadpush.manage.entity.EnterBillStatement">
+		<result column="number" property="number" jdbcType="DECIMAL" />
+		<result column="money" property="money" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<insert id="deleteProprietorByParams" parameterType="map">
+		update Proprietor set deleteStatus = 1 where 1!=1
+		<if test="housingId!=null and housingId!='' ">
+			 or housingId = #{housingId}
+		</if>	
+		<if test="buildingId!=null and buildingId!='' ">
+			 or buildingId = #{buildingId}
+		</if>
+		<if test="locationId!=null and locationId!='' ">
+			 or locationId = #{locationId}
+		</if>
+		<if test="roomId!=null and roomId!='' ">
+			 or roomInfoId = #{roomId}
+		</if>
+		<if test="departmentId!=null and departmentId!='' ">
+			or departmentId = #{departmentId}
+		</if>
+	</insert>
+	
+	<insert id="deleteProprietorById" parameterType="java.lang.Integer">
+		update proprietor set deleteStatus = 1 where id=#{id}
+	</insert>
+	
+	<select id="getProprietorsCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(1)   FROM  proprietor  p
+		LEFT JOIN department d on d.id=p.departmentId
+		LEFT JOIN roominfo r on r.id=p.roomInfoId
+		LEFT JOIN housing h on h.id=r.housingId
+		LEFT JOIN building b on b.id=r.buildingId
+		LEFT JOIN location l on l.id=r.locationId
+
+		where 1=1  
+		and p.deleteStatus = 0
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			 and h.saleId = #{saleUserId}
+		</if>
+		<if test="housingId!=null and housingId!='' ">
+			 and  r.housingId =#{housingId}
+		</if>
+		<if test="buildingId!=null and buildingId!='' ">
+			 and  r.buildingId =#{buildingId}
+		</if>
+		
+		<if test="locationId!=null and locationId!='' ">
+			 and  r.locationId =#{locationId}
+		</if>
+		
+		<if test="remark!=null and remark!='' ">
+			 and p.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and p.departmentCode like ""#{departmentCode}"%"
+		</if>
+		
+		<if test="name!=null and name!='' ">
+			 and p.name like "%"#{name}"%" 
+		</if>
+		
+		order by p.id desc 
+	</select>
+	
+	<insert id="saveProprietor">
+		update  proprietor  set 
+		name=#{proprietor.name,jdbcType=INTEGER},phone=#{proprietor.phone,jdbcType=VARCHAR},
+		card=#{proprietor.card,jdbcType=VARCHAR},entryDate=#{proprietor.entryDate}
+		where id=#{id,jdbcType=INTEGER}
+	</insert>
+	
+	<select id="getProprietorByOut_room_id" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		
+		SELECT p.*, h.id housingId,b.id buildingId ,l.id locationId,d.name departmentName,h.name housingName,b.name buildingName,l.name locationName ,r.address roomInfoAddress,r.room,r.out_room_id,r.room_id   FROM  proprietor  p
+		LEFT JOIN department d on d.id=p.departmentId
+		LEFT JOIN roominfo r on r.id=p.roomInfoId
+		LEFT JOIN housing h on h.id=r.housingId
+		LEFT JOIN building b on b.id=r.buildingId
+		LEFT JOIN location l on l.id=r.locationId
+		 
+		where  r.out_room_id=#{out_room_id}
+		
+		limit 0,1 
+		
+	</select>
+	
+	
+	<select id="getProprietorById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		
+		SELECT p.*, h.id housingId,b.id buildingId ,l.id locationId,d.name departmentName,h.name housingName,b.name buildingName,l.name locationName ,r.address roomInfoAddress,r.room,r.out_room_id,r.room_id   FROM  proprietor  p
+		LEFT JOIN department d on d.id=p.departmentId
+		LEFT JOIN roominfo r on r.id=p.roomInfoId
+		LEFT JOIN housing h on h.id=r.housingId
+		LEFT JOIN building b on b.id=r.buildingId
+		LEFT JOIN location l on l.id=r.locationId
+		 
+		where  p.id=#{id,jdbcType=INTEGER}
+	</select>
+	
+	
+	<insert id="insertProprietor" parameterType="com.ym.iadpush.manage.entity.Proprietor"
+		keyProperty="id">
+		insert  into  proprietor (entryDate,entryStatus,phone,card,departmentId,createUid,name,departmentCode,roomInfoId,housingId)
+		values(#{entryDate},#{entryStatus},#{phone},#{card},#{departmentId},#{createUid},#{name},#{departmentCode},#{roomInfoId},#{housingId})
+	</insert>
+	
+	<select id="getProprietors" resultMap="BaseResultMap" parameterType="map">
+		SELECT p.*, h.id housingId,b.id buildingId ,l.id locationId,d.name departmentName,
+		h.name housingName,b.name buildingName,l.name locationName ,r.address roomInfoAddress,
+		r.room,r.out_room_id,r.room_id   
+		
+		FROM  proprietor  p
+		LEFT JOIN department d on d.id=p.departmentId
+		LEFT JOIN roominfo r on r.id=p.roomInfoId
+		LEFT JOIN housing h on h.id=r.housingId
+		LEFT JOIN building b on b.id=r.buildingId
+		LEFT JOIN location l on l.id=r.locationId
+
+		where 1=1  
+		and p.deleteStatus = 0
+		<if test="housingId!=null and housingId!='' ">
+			 and  r.housingId =#{housingId}
+		</if>
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			 and h.saleId = #{saleUserId}
+		</if>
+		<if test="roomId!=null and roomId!='' ">
+			 and  p.roomInfoId =#{roomId}
+		</if>
+		<if test="buildingId!=null and buildingId!='' ">
+			 and  r.buildingId =#{buildingId}
+		</if>
+		
+		<if test="locationId!=null and locationId!='' ">
+			 and  r.locationId =#{locationId}
+		</if>
+		
+		<if test="remark!=null and remark!='' ">
+			 and p.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and p.departmentCode like ""#{departmentCode}"%"
+		</if>
+		
+		<if test="name!=null and name!='' ">
+			 and p.name like "%"#{name}"%" 
+		</if>
+		
+		limit #{currPage},#{pageSize} 
+	</select>
+	
+</mapper>

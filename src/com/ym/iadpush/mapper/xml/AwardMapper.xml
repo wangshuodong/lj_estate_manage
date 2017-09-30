@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.AwardMapper">
+  <select id="findUnSettleBonus" resultType="map" parameterType="java.lang.String">
+    select uid, sum(taxBonus) bonus from award where status = 0 and addDate &lt;= #{date,jdbcType=VARCHAR} group by uid
+  </select>
+  
+  <update id="updateStatusByDate" >
+    update award set status=#{status,jdbcType=INTEGER} where uid=#{uid,jdbcType=INTEGER} and addDate &lt;=#{edate,jdbcType=VARCHAR}
+  </update>
+</mapper>

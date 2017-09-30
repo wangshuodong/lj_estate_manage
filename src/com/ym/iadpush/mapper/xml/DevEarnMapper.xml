@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.dev.mapper.DevEarnMapper" >
+  <resultMap id="DevEarn_ResultMap" type="com.ym.iadpush.dev.entity.DevEarn" >
+    	<result column="settledEarn" property="settledEarn" jdbcType="DOUBLE"/>
+    	<result column="unsettledEarn" property="unsettledEarn" jdbcType="DOUBLE"/>
+    	<result column="settledAward" property="settledAward" jdbcType="DOUBLE"/>
+    	<result column="unsettledAward" property="unsettledAward" jdbcType="DOUBLE"/>
+  </resultMap>
+ 
+ <select id="selectDevEarn" resultType="java.lang.Double" parameterType="map">
+ 	SELECT SUM(earn_money) earn FROM earn 
+ 	<where>
+ 		<if test="uid != null ">AND uid = #{uid,jdbcType=INTEGER} </if>
+ 		<if test="status != null"> AND `status`=#{status} </if>
+ 		<if test="startDate != null">AND <![CDATA[edate >= #{startDate,jdbcType=DATE}]]> </if>
+ 		<if test="endDate != null">AND <![CDATA[edate <= #{endDate,jdbcType=DATE}]]> </if>
+ 	</where>
+ </select>
+ <select id="selectDevAward" resultType="java.lang.Double" parameterType="map">
+ 	SELECT SUM(bonus) bonus FROM award  
+ 	<where>
+ 		<if test="uid != null ">AND uid = #{uid,jdbcType=INTEGER}</if>
+ 		<if test="status != null"> AND `status`=#{status} </if>
+ 	</where>
+ </select>
+</mapper>

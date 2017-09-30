@@ -1,0 +1,184 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|业主入住</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+<link href="${base}/assets/biz-logic/css/cloud-zoom.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${base}/assets/biz-logic/js/cloud-zoom.1.0.2.min.js"></script>
+<script type="text/javascript" src="${base}/assets/common/ajaxfileupload.js"></script>
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+.progress-striped .bar {
+background-color: #149bdf;}
+</style>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="panel panel-default">
+		<div class="panel-heading">
+           		<h3 class="panel-title">业主入住</h3>
+           	</div>
+           	<div class="panel-body text-center">
+				<div class="tab-content">
+				  <div class="tab-pane active" id="daily" style="height:auto !important;">
+				  
+				 <form id="submitForm" action="${base}" class="form form-inline" method="post">
+				 <input type="hidden" name="id" value="${result.id}">
+					 <table class="table table-bordered" style="width:860px;">
+					 	<tr>
+					 		<td align="right">小区</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" name="code" value="${result.housingName!''}" style="width:300px;">
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">楼栋</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" name="code" value="${result.buildingName!''}" style="width:300px;">
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">房屋地址</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" name="productName" value="${result.address!''}" style="width:300px;">
+					 		</td>
+					 	</tr>
+					 	
+					 	<tr>
+					 		<td width="18%" align="right">业主姓名</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="name" name="name" value="" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">身份证号</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="card" name="card" value=""  style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">入住时间</td>
+					 		<td align="left">			 			
+					 			<input type="text" class="form-control input-sm" value="${entryDate!''}" id="entryDate" data-format="yyyy-MM-dd" name="entryDate" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">电话</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="phone" name="phone" value="" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">备注</td>
+					 		<td align="left">
+					 			<textarea class="form-control" rows="10" cols="20" name="remark">${result.remark!''}</textarea>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td></td>
+					 		<td>
+					 			<button type="button" onclick="ajaxSubmit()" class="btn btn-info btn-sm col-md-1">保存</button>
+					 		</td>
+					 	</tr>
+					 </table>
+					 
+		            <!-- 操作消息记录 -->
+		            <div class="row" id="messageDiv" align="left" style="color:red">
+		            	
+		            </div>
+		            
+		            </form>
+				  </div>
+				</div>
+				</div>
+           	</div>
+	</div>
+<!-- 提示-->
+<div class="modal fade" id="infowindow" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <button type="button" class="close closeTipModal" data-dismiss="modal"  aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">温馨提醒</h4>
+      </div>
+      <div class="modal-body" style="width: 200px;height: 100px;" id="modal-body">
+      		
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default closeTipModal" data-dismiss="modal" >关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+	<script type="text/javascript">
+	$(function() {
+	$("input[name='entryDate']").datetimepicker({
+		language:'zh-CN',
+        todayBtn:1,
+		autoclose:1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0,
+		format:'yyyy-mm-dd',
+		initialDate:new Date()
+	}).on('changeDate',function(ev){
+		var entryDate = $("input[name='entryDate']:visible").val();
+		$("input[name='entryDate']:visible").datetimepicker('setStartDate', entryDate);
+	});
+	
+	$("input[name='endDate']").datetimepicker({
+		language:'zh-CN',
+        todayBtn:1,
+		autoclose:1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0,
+		format:'yyyy-mm-dd',
+		initialDate:new Date()
+	});
+});
+		function ajaxSubmit(){
+			var d = $("#submitForm").serialize();
+			$.ajax({
+				 url:"saveProprietorEntry.do",
+				type:"post",
+			dataType:"json",
+				data:d,
+			beforeSend:function(){
+				$("#loading").modal('show');
+			},
+			complete:function(){
+				$("#loading").modal('hide');
+			},
+			success:function(data){
+						if(data.status == true){
+							$(".closeTipModal").click(function(){
+								location.href="roomInfo.html";
+							});	
+							
+							$("#modal-body").html(data.msg);
+							$("#infowindow").modal('show');
+						}
+						else{
+							$("#modal-body").html(data.msg);
+							$("#infowindow").modal('show');
+						}
+				}
+			})
+		}
+	</script>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

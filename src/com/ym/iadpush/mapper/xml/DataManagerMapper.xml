@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.DataManagerMapper">
+	<resultMap id="DataStatement" type="com.ym.iadpush.manage.entity.DataStatement">
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="acount" property="acount" jdbcType="INTEGER" />
+		<result column="money" property="earn" jdbcType="DECIMAL" />
+		<result column="date" property="date" jdbcType="DATE" />
+	</resultMap>
+	<resultMap id="SumDataStatement" type="com.ym.iadpush.manage.entity.DataStatement">
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="acount" property="acount" jdbcType="INTEGER" />
+		<result column="money" property="earn" jdbcType="DECIMAL" />
+	</resultMap>
+	<resultMap type="com.ym.iadpush.manage.mapper.DevStatementMapper"
+		id="devStatement">
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="username" property="userName" jdbcType="VARCHAR" />
+		<result column="rate" property="rate" jdbcType="DOUBLE" />
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="acount" property="acount" jdbcType="INTEGER" />
+		<result column="earn" property="earn" jdbcType="DOUBLE" />
+	</resultMap>
+	<resultMap type="com.ym.iadpush.manage.entity.DataReport" id="DataReport_Result">
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="appid" property="appid" jdbcType="INTEGER" />
+		<result column="qid" property="qid" jdbcType="INTEGER" />
+		<result column="appName" property="appName" jdbcType="VARCHAR" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="erate" property="erate" jdbcType="VARCHAR" />
+		<result column="irate" property="irate" jdbcType="VARCHAR" />
+		<result column="arate" property="arate" jdbcType="VARCHAR" />
+		<result column="earn1" property="earn1" jdbcType="VARCHAR" />
+		<result column="earn2" property="earn2" jdbcType="VARCHAR" />
+		<result column="icount1" property="icount1" jdbcType="VARCHAR" />
+		<result column="icount2" property="icount2" jdbcType="VARCHAR" />
+		<result column="acount1" property="acount1" jdbcType="VARCHAR" />
+		<result column="acount2" property="acount2" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="DataReport_Result_Common_Sql">
+		SELECT
+				IFNULL(IFNULL(ROUND((e1.earn - e2.earn)*100/ e2.earn, 2),e2.earn)
+					,-1
+				) erate,
+				IFNULL(IFNULL(ROUND((e1.icount - e2.icount)*100/ e2.icount, 2),e2.icount)
+					,-1
+				) irate,
+				IFNULL(IFNULL(ROUND((e1.acount - e2.acount)*100/ e2.acount, 2),e2.acount)
+					,-1
+				) arate,
+				IFNULL(e1.earn,0) earn1,
+				IFNULL(e2.earn,0) earn2,
+				IFNULL(e1.icount,0) icount1,
+				IFNULL(e2.icount,0) icount2,
+				IFNULL(e1.acount,0) acount1,
+				IFNULL(e2.acount,0) acount2,
+				e1.uid uid,
+				e1.appid appid,
+				e1.qid qid,
+				su.username userName,
+				ap.`name` appName
+		FROM
+		(
+			SELECT
+			SUM(earn_money) earn,
+			SUM(icount) icount,
+			SUM(acount) acount,
+			appid,
+			qid,
+			uid
+			FROM
+			earn
+			WHERE
+			edate = #{endDate}
+			<if test="hour != null">
+				AND hour = ${hour}
+			</if>
+			<if test="uid != null">
+				AND uid = ${uid}
+			</if>
+			<if test="appid != null">
+				AND appid = ${appid}
+			</if>
+			<if test="qid != null">
+				AND qid = ${qid}
+			</if>
+			GROUP BY
+			appid
+		) e1
+		LEFT JOIN (
+			SELECT
+			SUM(earn_money) earn,
+			SUM(icount) icount,
+			SUM(acount) acount,
+			appid,
+			uid
+			FROM
+			earn
+			WHERE
+			edate = #{startDate}
+			<if test="hour != null">
+				AND hour = ${hour}
+			</if>
+			GROUP BY appid
+		) e2 ON e1.appid = e2.appid
+		LEFT JOIN sys_users su ON
+			su.user_id = e1.uid
+		LEFT JOIN app ap ON e1.appid = ap.id
+		HAVING 1=1
+			<if test=" greaterOrLess == 'greater'">
+				 <![CDATA[${colum} >= #{rate}]]>
+			</if>
+			<if test=" greaterOrLess == 'less'">
+				<![CDATA[${colum} <= #{rate}]]>
+			</if>
+			<if test="isall == 'last'">
+				AND ${colum} LIKE '-1%'
+			</if>
+			<if test="isall == 'nolast'">
+				AND ${colum} NOT LIKE '-1'
+			</if>
+	</sql>
+	<select id="dataReportSelect" resultMap="DataReport_Result" parameterType="map">
+		
+		<include refid="DataReport_Result_Common_Sql"/>
+		ORDER BY ${colum} ${sortType}
+		limit ${currPage*pageSize},#{pageSize}
+	</select>
+	<select id="dataReportSelectCount" resultType="java.lang.Integer" parameterType="map">
+		select count(1) from( <include refid="DataReport_Result_Common_Sql"/> ) a
+	</select>
+
+	<!-- 数据报表查询SQL -->
+	<sql id="Cpacount_Where_Clause">
+		<where>
+			<if test="startDate != null">AND   <![CDATA[adate >= #{startDate,jdbcType=DATE}]]>
+			</if>
+			<if test="endDate != null">AND <![CDATA[adate <= #{endDate,jdbcType=DATE}]]></if>
+			<if test="serviceId != null">And uid in (select user_id from sys_users where serviceId
+				= #{serviceId})</if>
+		</where>
+	</sql>
+	<sql id="Earn_Where_Clause">
+		<where>
+			<if test="startDate != null">AND   <![CDATA[edate >= #{startDate,jdbcType=DATE}]]>
+			</if>
+			<if test="endDate != null">AND <![CDATA[edate <= #{endDate,jdbcType=DATE}]]></if>
+			<if test="serviceId != null">And uid in (select user_id from sys_users where serviceId
+				= #{serviceId})</if>
+		</where>
+	</sql>
+	<sql id="DataStatement_Query">
+		SELECT e.earn_money money,ic.acount acount,ic.icount
+		icount,IFNULL(e.edate, ic.adate) date FROM
+		(SELECT SUM(icount)
+		icount,SUM(acount) acount,adate FROM iadpush_cpacount
+		<if test="_parameter != null">
+			<include refid="Cpacount_Where_Clause" />
+		</if>
+		GROUP BY adate) ic
+		LEFT JOIN (SELECT SUM(earn_money) earn_money,edate
+		FROM earn
+		<if test="_parameter != null">
+			<include refid="Earn_Where_Clause" />
+		</if>
+		GROUP BY edate) e ON ic.adate = e.edate
+
+		UNION
+
+		SELECT
+		e.earn_money money,
+		ic.acount acount,
+		ic.icount icount,
+		IFNULL(e.edate, ic.adate) addate
+		FROM
+		(SELECT SUM(icount) icount,SUM(acount) acount,adate FROM
+		iadpush_cpacount
+
+		<if test="_parameter != null">
+			<include refid="Cpacount_Where_Clause" />
+		</if>
+
+		GROUP BY adate) ic
+		RIGHT JOIN (SELECT SUM(earn_money) earn_money,edate
+		FROM earn
+		<if test="_parameter != null">
+			<include refid="Earn_Where_Clause" />
+		</if>
+		GROUP BY edate) e ON ic.adate = e.edate
+	</sql>
+
+	<select id="queryDataStatement" resultMap="DataStatement"
+		parameterType="map">
+		select * from (
+		<include refid="DataStatement_Query" />
+		) a order by date desc
+		limit ${currPage*pageSize},#{pageSize}
+	</select>
+	<select id="countDataStatement" resultType="java.lang.Integer"
+		parameterType="map">
+		select count(1) from (
+		<include refid="DataStatement_Query" />
+		) a
+	</select>
+	<select id="sumDataStatement" resultMap="SumDataStatement"
+		parameterType="map">
+		select sum(a.money) money,sum(a.acount) acount,sum(a.icount) icount
+		from (
+		<include refid="DataStatement_Query" />
+		) a
+	</select>
+</mapper>

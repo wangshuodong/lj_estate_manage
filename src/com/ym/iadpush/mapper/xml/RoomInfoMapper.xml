@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.RoomInfoMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.RoomInfo">
+		<result column="id" jdbcType="INTEGER" property="id" />
+		<result column="addate" jdbcType="DATE" property="addate" />
+		<result column="createTime"  jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="warehouseId" jdbcType="INTEGER" property="warehouseId" />
+		<result column="productId" jdbcType="INTEGER" property="productId" />
+	</resultMap>
+	
+	<insert id="deleteRoomByParams" parameterType="map">
+		update roominfo set deleteStatus = 1 where 1!=1
+		<if test="housingId!=null and housingId!='' ">
+			 or housingId = #{housingId}
+		</if>	
+		<if test="buildingId!=null and buildingId!='' ">
+			 or buildingId = #{buildingId}
+		</if>
+		<if test="locationId!=null and locationId!='' ">
+			 or locationId = #{locationId}
+		</if>
+		<if test="departmentId!=null and departmentId!='' ">
+			or departmentId = #{departmentId}
+		</if>
+	</insert>
+	
+	<insert id="deleteRoom" parameterType="java.lang.Integer">
+		update roominfo set deleteStatus = 1 where id=#{id}
+	</insert>
+	
+	<insert id="changeDepartment" parameterType="map">
+		UPDATE roominfo SET departmentCode = #{departmentCode},departmentId = #{departmentId} WHERE housingId= #{housingId}
+	</insert>
+
+	<resultMap id="enterBillStatement" type="com.ym.iadpush.manage.entity.EnterBillStatement">
+		<result column="number" property="number" jdbcType="DECIMAL" />
+		<result column="money" property="money" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<select id="getRoomInfosCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(1)   FROM  roominfo  r
+		LEFT JOIN department d on d.id=r.departmentId
+		LEFT JOIN housing h on h.id=r.housingId
+		LEFT JOIN building b on b.id=r.buildingId
+		LEFT JOIN location l on l.id=r.locationId
+		where 1=1   and  r.deleteStatus=0 
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			 and h.saleId = #{saleUserId}
+		</if>
+		<if test="housingId!=null and housingId!='' ">
+			 and  r.housingId =#{housingId}
+		</if>
+		<if test="buildingId!=null and buildingId!='' ">
+			 and  r.buildingId =#{buildingId}
+		</if>
+		
+		<if test="locationId!=null and locationId!='' ">
+			 and  r.locationId =#{locationId}
+		</if>
+		
+		<if test="entryStatus!=null and entryStatus!='' ">
+			 and  r.entryStatus =#{entryStatus}
+		</if>
+		
+		<if test="sendStatus!=null and sendStatus!='' ">
+			 and  r.sendStatus =#{sendStatus}
+		</if>
+		
+		<if test="remark!=null and remark!='' ">
+			 and r.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and r.departmentCode like ""#{departmentCode}"%"
+		</if>
+		
+		<if test="name!=null and name!='' ">
+			 and r.name like "%"#{name}"%" 
+		</if>
+		
+		order by r.id desc
+		
+	</select>
+	
+	<insert id="insertRoomInfo" keyProperty="id">
+		insert  into  roominfo (out_room_id,address,locationId,departmentId,createUid,room,departmentCode,housingId,buildingId)
+		values(#{out_room_id},#{address},#{locationId},#{departmentId},#{createUid},#{room},#{departmentCode},#{housingId},#{buildingId})
+	</insert>
+	
+	<insert id="updateRoomInfo">
+		update  roominfo  set 
+		room_id=#{room_id,jdbcType=VARCHAR}
+		where out_room_id=#{out_room_id,jdbcType=VARCHAR}
+	</insert>
+	
+	<insert id="saveRoomInfo">
+		update  roominfo  set 
+		entryStatus=#{roomInfo.entryStatus,jdbcType=INTEGER},room_id=#{roomInfo.room_id,jdbcType=VARCHAR},
+		sendStatus=#{roomInfo.sendStatus,jdbcType=INTEGER},deleteStatus=#{roomInfo.deleteStatus,jdbcType=INTEGER}
+		where id=#{id,jdbcType=INTEGER}
+	</insert>
+	
+	<select id="getMaxOut_room_id" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT  *  from roominfo   where 1=1
+		and  out_room_id like ""#{date}"%"     order by out_room_id  desc  limit 0,1
+	</select>
+	
+	<select id="getRoomInfoByOut_room_id" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		
+		SELECT r.*, d.name departmentName,h.name housingName,b.name buildingName,l.name locationName  FROM  roominfo  r
+		LEFT JOIN department d on d.id=r.departmentId
+		LEFT JOIN housing h on h.id=r.housingId
+		LEFT JOIN building b on b.id=r.buildingId
+		LEFT JOIN location l on l.id=r.locationId
+		where 1=1  
+		 
+		and r.out_room_id=#{out_room_id,jdbcType=VARCHAR}   limit 0,1 
+	</select>
+	
+	<select id="getRoomInfoById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		SELECT r.*, d.name departmentName,h.name housingName,b.name buildingName,l.name locationName  FROM  roominfo  r
+		LEFT JOIN department d on d.id=r.departmentId
+		LEFT JOIN housing h on h.id=r.housingId
+		LEFT JOIN building b on b.id=r.buildingId
+		LEFT JOIN location l on l.id=r.locationId
+		where 1=1  
+		 
+		and r.id=#{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getRoomInfos" resultMap="BaseResultMap" parameterType="map">
+		SELECT r.*, d.name departmentName,h.name housingName,b.name buildingName,l.name locationName  FROM  roominfo  r
+		LEFT JOIN department d on d.id=r.departmentId
+		LEFT JOIN housing h on h.id=r.housingId
+		LEFT JOIN building b on b.id=r.buildingId
+		LEFT JOIN location l on l.id=r.locationId
+		where 1=1   and  r.deleteStatus=0
+		<if test="departmentId!=null and departmentId!='' ">
+			 and r.departmentId = #{departmentId}
+		</if> 
+		<if test="saleUserId!=null and saleUserId!=0 ">
+			 and h.saleId = #{saleUserId}
+		</if>
+		<if test="entryStatus!=null and entryStatus!='' ">
+			 and  r.entryStatus =#{entryStatus}
+		</if>
+		
+		<if test="sendStatus!=null and sendStatus!='' ">
+			 and  r.sendStatus =#{sendStatus}
+		</if>
+		
+		<if test="housingId!=null and housingId!='' ">
+			 and  r.housingId =#{housingId}
+		</if>
+		
+		<if test="buildingId!=null and buildingId!='' ">
+			 and  r.buildingId =#{buildingId}
+		</if>
+		
+		<if test="locationId!=null and locationId!='' ">
+			 and  r.locationId =#{locationId}
+		</if>
+		
+		<if test="remark!=null and remark!='' ">
+			 and r.remark like "%"#{remark}"%" 
+		</if>
+		
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and r.departmentCode like ""#{departmentCode}"%"
+		</if>
+		
+		<if test="name!=null and name!='' ">
+			  and  r.room =#{name}
+		</if>
+		<if test="currPage!=null and currPage!='' or currPage>=0 ">
+				limit #{currPage},#{pageSize}
+		</if>
+		<if test="currPage==null and currPage=='' ">
+			 limit #{pageSize} 
+		</if>
+		  
+	</select>
+	
+</mapper>

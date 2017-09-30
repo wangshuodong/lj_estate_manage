@@ -1,0 +1,103 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>陆甲物业在线缴费系统|用户关联权限</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+</style>
+<link href="${base}/assets/common/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="${base}/assets/common/jquery-ui-1.10.4/js/jquery-ui-1.10.4.custom.min.js"></script>
+
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="page-header alert alert-info">
+			<h5>用户管理>> <small>用户关联权限</small></h5>
+		</div>
+		<form id="authorityRoleForm" method="post">
+		  <div class="row">
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>用户名</span></div>
+            	<div class="col-md-2">
+            		<input type="text" class="form-control input-sm" id="userName" />
+            	</div>
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>角色名称</span></div>
+            	<div class="col-md-2">
+            		<input type="text" class="form-control input-sm" id="rolename" />
+            	</div>
+            	<div class="col-md-1 text-right" style="line-height:30px;"><span>菜单名称</span></div>
+            	<div class="col-md-2">
+            		<input type="text" class="form-control input-sm" id="menuname" />
+            	</div>
+            	<div>
+            		<button type="button" class="btn btn-info btn-sm" style="width:80px;" name="queryBtn">查询</button>
+            	</div>
+           </div>
+		</form>
+		
+		<div style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;" class="alert" >
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover  alert-warning">
+					<thead>
+				  	  <tr>
+				  		<th scope="col" width="25%" class="text-center" nowrap="nowrap">用户名</th>
+				  		<th scope="col" width="25%" class="text-center" nowrap="nowrap">角色名称</th>
+				  		<th scope="col" width="25%" class="text-center" nowrap="nowrap">菜单名称</th>
+				  		<th scope="col" width="25%" class="text-center" nowrap="nowrap">上级菜单</th>
+				  	  </tr>
+				  	</thead>
+				  	
+				  	<tbody id="daily_tbody">
+				  	
+					</tbody>
+				</table>
+				<div class="row">
+		            <div class="col-md-12">
+		                <div class=" pull-left" style="margin-top: 26px;">共有记录<span id="d_totalRecord">0</span>条 当前第<span id="d_pageNo">1</span>页/ 总<span id="d_totalPage">1</span>页</div>
+		                <div class=" pull-right">
+		                    <ul id='d_paginationId'></ul>
+		                </div>
+		            </div>
+		        </div>
+			</div>
+		</div>
+	</div>
+    <#include "../footer.html">
+                <script type="text/javascript">
+function findAllUserName(){
+	var input=$("#userName");
+	var spanLabel=$("<span>")
+	input.after(spanLabel);
+	if(input.length==0)return;
+	$.ajax({
+　　　　	url: 'query_all_user.html',
+		type:"GET",
+　　　　	error: function (xmlHttpRequest, error) {
+　　　　	},
+    	dataType:'json',
+    	success:function(data) {
+　　　　		var users=data.result;
+　　　　		var dataArray=new Array();
+　　　　		for ( var i = 0; i < data.totalRecord; i++) {
+				if(users[i] != null){
+					dataArray.push({label:users[i].username,value:users[i].username});
+				}
+　　　　			
+			}
+　　　　		input.autocomplete({source:dataArray, autoFocus: true});
+		}
+　　　});
+}
+findAllUserName();
+</script>
+</body>
+</html>
+</@compress>

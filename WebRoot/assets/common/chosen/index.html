@@ -1,0 +1,32 @@
+<!doctype html> 
+<html> 
+<head>
+ 
+  <link rel="stylesheet" href="chosen/chosen.css" />
+</head>
+<body>
+  <form>
+
+    <div class="side-by-side clearfix">
+      <div>
+        <select data-placeholder="Your Favorite Types of Bear" style="width:350px;" multiple class="chzn-select" id="test_me" name="test_me_form" tabindex="8">
+          <option value=""></option>
+          <option value="1">American Black Bear</option>
+          <option value="2">Asiatic Black Bear</option>
+          <option value="3">Brown Bear</option>
+          <option value="4">Giant Panda</option>
+          <option value="5" selected>Sloth Bear</option>
+          <option value="6" disabled>Sun Bear</option>
+          <option value="7" selected>Polar Bear</option>
+          <option disabled>Spectacled Bear</option>
+        </select>
+      </div>
+    </div>
+
+  <script src="chosen/jquery-1.6.4.js" type="text/javascript"></script>
+  <script src="chosen/chosen.jquery.js" type="text/javascript"></script>
+  <script type="text/javascript">
+  $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+  </script>
+  </form>
+</body>

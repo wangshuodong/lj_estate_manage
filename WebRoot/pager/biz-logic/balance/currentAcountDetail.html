@@ -1,0 +1,108 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>重庆京莱米商贸公司|往来明细账</title> 
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<link rel="stylesheet" type="text/css" href="${base}/assets/biz-logic/css/apply.css"/>
+
+
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>财务中心&gt;&gt; <small>&nbsp;&nbsp;往来明细帐</small></h5>
+		</div>
+		<div class="row">
+			<form action="${base}/apply_list.html" id="submitForm" method="post">
+				<div class="col-md-7" style="float: left;width:100%;">
+					
+					
+					<div id="dqsaleDiv">
+							<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">总统筹</div>
+							<div class="col-md-2">
+							<select id="dqsale" name="dqsale" class="form-control" style="width:160px;">
+			            		
+						 	</select>
+						 	</div>
+					 </div>
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">日期1</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="startdate" data-format="yyyy-MM-dd">
+					</div>
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">日期2</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="enddate" data-format="yyyy-MM-dd">
+					</div>
+				</div>
+				<div class="col-md-7" style="float: left;width:100%;">
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">门店</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="companyName">
+					</div>
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">经销商</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="djsale">
+					</div>
+
+					
+				</div>
+				<div class="col-md-7" style="float: left;width:100%;">
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">月份</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="month">
+					</div>
+					<div id="divFactory">
+						<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">代工厂</div>
+						<div class="col-md-2">
+							<input type="text" class="form-control input-sm" name="factory">
+						</div>
+					</div>
+					<div class="col-md-2 text-right">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-search" onclick="sumbitForm('search')">查询</button>
+							
+						</div>
+					</div>
+				</div>
+				
+				
+				<input type="hidden" name="currPage" value="1" id="currPage">
+				
+
+			</form>
+		</div>
+		<div class="alert" style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;">
+			<table class="table table-bordered table-hover alert-warning">
+				<thead>
+					<tr>
+						<th>月份</th>
+						<th>日期</th>
+						<th>客户</th>
+						<th>期初应收款</th>
+						<th>订单金额</th>
+						<th>订单实收金额</th>
+						<th>预收款</th>
+						<th>期末应收款</th>
+					</tr>
+				</thead>
+				<tbody id="d_body">
+				</tbody>
+			</table>
+			<div class="row">
+				<div class="col-md-10">
+					<span id="totalCount"></span>
+				</div>
+				<div class="col-md-10">
+					<ul id="pagination" style="margin: 0;float: right;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+</@compress>

@@ -1,0 +1,102 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title></title> 
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<script src="${base}/assets/biz-logic/js/applymanager/dev_apply.js"></script>
+<link rel="stylesheet" type="text/css" href="${base}/assets/biz-logic/css/apply.css"/>
+
+
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>应用管理&gt;&gt; <small>应用报表(今日)</small></h5>
+		</div>
+		<div class="row">
+			<form action="${base}/apply_list.html" id="submitForm" method="post">
+				<div class="col-md-7" style="float: left;width:100%;">
+					<div class="col-md-1 text-right" style="line-height:30px;">
+						APPKEY
+					</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="appkey">
+					</div>
+					<div class="col-md-1 text-right" style="line-height:30px;">应用名称</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="appname">
+					</div>
+					<div class="col-md-3">
+						<button type="button" class="btn btn-default btn-search" onclick="sumbitForm('search')">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;
+					</div>
+					<div class="col-md-3 text-right">
+						<a href="dev_apply_au.html" class="btn btn-default">添加</a>
+					</div>
+				</div>
+				<input type="hidden" name="currPage" value="1" id="currPage">
+				
+				<!-- Modal -->
+				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close close-up" data-dismiss="modal" aria-hidden="true">&times;</button>
+				        <h4 class="modal-title" id="myModalLabel">修改状态</h4>
+				      </div>
+				      <div class="modal-body" id="model-body-devapply">
+				        	<div class="tip">提示：<span>勾选为正常状态，反之为暂停， 暂停状态不再给该应用推送广告,也不再产生收入。</span></div>
+				        	<div class="mb-input-checked">
+				        		<div>修改的应用ID：<span></span> 启动/暂停（勾中为启动）：</div>
+				        		<input type="checkbox" checked name="status" value="1,1,1" id="status" />
+				        		<input type="hidden"  value="" id="appidval">
+				        	</div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default close-up" data-dismiss="modal" >关闭</button>
+				        <button type="button" class="btn btn-primary" id="btn-updatestatus" >提交</button>
+				      </div>
+				    </div><!-- /.modal-content -->
+				  </div><!-- /.modal-dialog -->
+				</div>
+				<!-- /.modal -->
+
+			</form>
+		</div>
+		<div class="alert" style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;">
+			<table class="table table-bordered table-hover alert-warning">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>APPKEY</th>
+						<th>渠道</th>
+						<th>应用名称</th>
+						<th>今日SDK安装量</th>
+						<th>今日活跃</th>
+						<th>今日收入</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="d_body">
+				</tbody>
+			</table>
+			<div class="row">
+				<div class="col-md-4">
+					<span id="totalCount"></span>
+				</div>
+				<div class="col-md-8">
+					<ul id="pagination" style="margin: 0;float: right;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+</body>
+</html>
+
+</@compress>

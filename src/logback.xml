@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <!-- 控制台输出日志 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} |-%-5level &lt;%logger&gt; - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 文件输出日志 (文件大小策略进行文件输出，超过指定大小对文件备份) -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>../logs/base-project.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <FileNamePattern>../logs/base-project.log.%i.bak</FileNamePattern>
+            <MinIndex>1</MinIndex>
+            <MaxIndex>12</MaxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} |-%-5level &lt;%logger&gt; - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.ibatis" level="DEBUG" />
+    <logger name="org.mybatis" level="INFO" />
+    <logger name="net.sf.ehcache" level="INFO" />
+    <logger name="freemarker.cache" level="INFO" />
+    <logger name="org.apache.shiro" level="INFO" />
+    <logger name="org.springframework" level="INFO" />
+    <logger name="org.quartz.core.JobRunShell" level="INFO" />
+    <logger name="com.ym.common.freemarker.MVCFreeMarckerView" level="INFO" />
+    <logger name="com.ym.common.exception.MySimpleMappingExceptionResolver" level="ERROR" />
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

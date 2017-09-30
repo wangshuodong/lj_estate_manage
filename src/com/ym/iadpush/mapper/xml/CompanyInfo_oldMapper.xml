@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.CompanyInfo_oldMapper">
+  <resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.CompanyInfo_old">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="bycode" jdbcType="VARCHAR" property="bycode" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="departmentId" jdbcType="INTEGER" property="departmentId" />
+    <result column="productId" jdbcType="INTEGER" property="parentId" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="name" jdbcType="VARCHAR" property="name" />
+	<result column="phone" jdbcType="VARCHAR" property="phone" />
+	<result column="address" jdbcType="VARCHAR" property="address" />
+	<result column="contract_people" jdbcType="VARCHAR" property="contract_people" />
+	<result column="departmentCode" jdbcType="VARCHAR" property="departmentCode" />
+	<result column="username" jdbcType="VARCHAR" property="username" />
+	<result column="role_name" jdbcType="VARCHAR" property="role_name" />
+	<result column="departmentName" jdbcType="VARCHAR" property="departmentName" />
+	<result column="province" jdbcType="VARCHAR" property="province" />
+	<result column="city" jdbcType="VARCHAR" property="city" />
+	<result column="county" jdbcType="VARCHAR" property="county" />
+	<result column="towns" jdbcType="VARCHAR" property="towns" />
+	<result column="mobilePhone" jdbcType="VARCHAR" property="mobilePhone" />
+	<result column="salesman" jdbcType="VARCHAR" property="salesman" />
+	<result column="parentCompanyName" jdbcType="VARCHAR" property="parentCompanyName" />
+	<result column="parentCompanyId" jdbcType="INTEGER" property="parentCompanyId" />
+	<result column="susername" jdbcType="VARCHAR" property="susername" />
+  </resultMap>
+  
+	<insert id="insertCompanyInfo_old"   parameterType="com.ym.iadpush.manage.entity.CompanyInfo_old"  keyProperty="id">
+		insert into company_info_old(old_companyId,name,phone,address,contract_people,departmentCode,departmentId,type,bycode,province,city,county,towns,mobilePhone,parentId,salesman,username,createUid)
+		values(#{old_companyId},#{name},#{phone},#{address},#{contract_people},#{departmentCode},#{departmentId},#{type},#{bycode},#{province},#{city},#{county},#{towns},#{mobilePhone},#{parentId},#{salesman},#{username},#{createUid})
+	</insert>
+
+</mapper>

@@ -1,0 +1,23 @@
+.navbar-header .navbar-toggle{
+	display:none;
+}
+.container{
+	height:50px;
+}
+.collapse{
+	display:block;
+	min-width:1220px;
+	width:auto;
+}
+.dropdown,.navbar-nav,.navbar-nav li{
+	float:left;
+}
+.nav-newnotice{
+	padding-left:20px;
+}
+.container{
+	width:1220px;
+}
+.bs-footer{
+	display:none;
+}

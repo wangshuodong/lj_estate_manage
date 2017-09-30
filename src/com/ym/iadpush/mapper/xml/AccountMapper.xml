@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.AccountMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.Account">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="bank" property="bank" jdbcType="VARCHAR" />
+		<result column="bankNo" property="bankNo" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="bankName" property="bankName" jdbcType="VARCHAR" />
+		<result column="bankAddress" property="bankAddress" jdbcType="VARCHAR" />
+		<result column="contract_phone" property="contract_phone"
+			jdbcType="VARCHAR" />
+		<result column="contract_people" property="contract_people"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="query_Where_Sql">
+		<where>
+			<if test="name != null ">
+				And name like concat('%',
+				#{productName,jdbcType=VARCHAR}, '%')
+			</if>
+		</where>
+	</sql>
+
+	<select id="query" parameterType="map" resultMap="BaseResultMap">
+		select * from account
+		<include refid="query_Where_Sql" />
+		limit ${pageSize*currPage},${pageSize}
+	</select>
+
+	<select id="countByQuery" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from account
+		<include refid="query_Where_Sql" />
+	</select>
+
+	<insert id="insert" parameterType="com.ym.iadpush.manage.entity.Account">
+		insert into
+		account(bank,bankNo,name,bankName,bankAddress,contract_phone,contract_people)
+		values(#{bank},#{bankNo},#{name},#{bankName},#{bankAddress},#{contract_phone},#{contract_people})
+	</insert>
+
+	<update id="update" parameterType="com.ym.iadpush.manage.entity.Account">
+		update account set
+		bank=#{bank},bankNo=#{bankNo},name=#{name},bankName=#{bankName},contract_phone=#{contract_phone},contract_people=#{contract_people},bankAddress=#{bankAddress}
+		where id=#{id}
+	</update>
+
+	<delete id="delById">
+		delete from account where id = #{aid}
+	</delete>
+
+	<select id="findById" resultType="com.ym.iadpush.manage.entity.Account">
+		select * from account where
+		id=#{aid}
+	</select>
+	<select id="queryAll" resultMap="BaseResultMap">
+		select * from account
+	</select>
+	<select id="getCountAccountData" resultType="java.util.HashMap"
+		parameterType="map">
+		SELECT
+		(
+		SELECT
+		IFNULL(SUM(accpetMoney),0)
+		FROM
+		billAccount
+		WHERE
+		deleteStatus =
+		0
+		AND payStatus = 1
+		AND payType = '微信'
+		<if test="startDate!=null">
+			AND release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND release_day &lt;= #{endDate}
+		</if>
+		<if test="startPaymentDate!=null">
+			AND payDate &gt;= #{startPaymentDate}
+		</if>
+		<if test="endPaymentDate!=null">
+			AND payDate &lt;= #{endPaymentDate}
+		</if>
+		<if test="saleUserId!=null and saleUserId !=''">
+			and housingId in (
+				SELECT id from housing where saleId = #{saleUserId}
+			)
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="housingId!=null   and  housingId!=''">
+			and housingId = #{housingId}
+		</if>
+		) AS 'weixin',
+		(
+		SELECT
+		IFNULL(SUM(accpetMoney),0)
+		FROM
+		billAccount
+		WHERE
+		deleteStatus = 0
+		AND payStatus = 1
+		AND payType = '支付宝'
+		<if test="month!=null">
+			AND month = #{month}
+		</if>
+		<if test="startDate!=null">
+			AND release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND release_day &lt;= #{endDate}
+		</if>
+		<if test="startPaymentDate!=null">
+			AND payDate &gt;= #{startPaymentDate}
+		</if>
+		<if test="endPaymentDate!=null">
+			AND payDate &lt;= #{endPaymentDate}
+		</if>
+		<if test="saleUserId!=null and saleUserId !=''">
+			and housingId in (
+				SELECT id from housing where saleId = #{saleUserId}
+			)
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="housingId!=null and housingId!=''">
+			and housingId = #{housingId}
+		</if>
+		) AS 'alipay',
+		(
+		SELECT
+		IFNULL(SUM(accpetMoney),0)
+		FROM
+		billAccount
+		WHERE
+		deleteStatus = 0
+		AND
+		payStatus = 1
+		AND payType = '现金'
+		<if test="startDate!=null">
+			AND release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND release_day &lt;= #{endDate}
+		</if>
+		<if test="startPaymentDate!=null">
+			AND payDate &gt;= #{startPaymentDate}
+		</if>
+		<if test="endPaymentDate!=null">
+			AND payDate &lt;= #{endPaymentDate}
+		</if>
+		<if test="saleUserId!=null and saleUserId !=''">
+			and housingId in (
+				SELECT id from housing where saleId = #{saleUserId}
+			)
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="housingId!=null and housingId!=''">
+			and housingId = #{housingId}
+		</if>
+		) AS 'xianjin',
+		(
+		SELECT
+		IFNULL(SUM(bill_entry_amount),0)
+		FROM
+		billAccount
+		WHERE
+		deleteStatus = 0
+		AND
+		payStatus = 0
+		<if test="startDate!=null">
+			AND release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND release_day &lt;= #{endDate}
+		</if>
+		<if test="saleUserId!=null and saleUserId !=''">
+			and housingId in (
+				SELECT id from housing where saleId = #{saleUserId}
+			)
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="housingId!=null and housingId!=''">
+			and housingId = #{housingId}
+		</if>
+		) AS 'noPayMoney',
+		(
+		SELECT
+		count(*)
+		FROM
+		billAccount
+		WHERE
+		deleteStatus = 0
+		AND payStatus = 1
+		<if test="startDate!=null">
+			AND release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND release_day &lt;= #{endDate}
+		</if>
+		<if test="startPaymentDate!=null">
+			AND payDate &gt;= #{startPaymentDate}
+		</if>
+		<if test="endPaymentDate!=null">
+			AND payDate &lt;= #{endPaymentDate}
+		</if>
+		<if test="saleUserId!=null and saleUserId !=''">
+			and housingId in (
+				SELECT id from housing where saleId = #{saleUserId}
+			)
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="housingId!=null and housingId!=''">
+			and housingId = #{housingId}
+		</if>
+		) AS 'payConut',
+		(
+		SELECT
+		count(*)
+		FROM
+		billAccount
+		WHERE
+		deleteStatus = 0
+		AND payStatus = 0
+		<if test="startDate!=null">
+			AND release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND release_day &lt;= #{endDate}
+		</if>
+		<if test="saleUserId!=null and saleUserId !=''">
+			and housingId in (
+				SELECT id from housing where saleId = #{saleUserId}
+			)
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="housingId!=null and housingId!=''">
+			and housingId = #{housingId}
+		</if>
+		) AS 'noPayCount',
+		(
+		SELECT
+		count(*)
+		FROM
+		billAccount
+		WHERE
+		deleteStatus = 0
+		AND sendStatus = 0
+		<if test="startDate!=null">
+			AND release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND release_day &lt;= #{endDate}
+		</if>
+	
+		<if test="saleUserId!=null and saleUserId !=''">
+			and housingId in (
+				SELECT id from housing where saleId = #{saleUserId}
+			)
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="housingId!=null and housingId!=''">
+			and housingId = #{housingId}
+		</if>
+		) AS 'noSend',
+		(
+		SELECT
+		count(*)
+		FROM
+		billAccount
+		WHERE
+		deleteStatus = 0
+		AND sendStatus = 1
+		<if test="startDate!=null">
+			AND release_day &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null">
+			AND release_day &lt;= #{endDate}
+		</if>
+	
+		<if test="saleUserId!=null and saleUserId !=''">
+			and housingId in (
+				SELECT id from housing where saleId = #{saleUserId}
+			)
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and departmentCode like ""#{departmentCode}"%"
+		</if>
+		<if test="housingId!=null and housingId!=''">
+			and housingId = #{housingId}
+		</if>
+		) AS 'send'
+	</select>
+</mapper>

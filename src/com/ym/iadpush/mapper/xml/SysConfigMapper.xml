@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.SysConfigMapper" >
+  <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+	<select id="selectByKey" resultType="java.lang.String" parameterType="java.lang.String">
+	  select a.value from sys_config a where a.key=#{key,jdbcType=VARCHAR}
+	</select>
+	<resultMap id="BaseSysConfigResultMap" type="com.ym.iadpush.manage.entity.SysConfig" >
+		<result column="value" property="cfgVal" jdbcType="VARCHAR" />
+		<result column="id" property="sysid" jdbcType="INTEGER"/>
+		<result column="ex" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	  
+	<select id="getAllSysConfig" resultMap="BaseSysConfigResultMap">
+		select s.value,s.id,s.ex from sys_config s
+	</select>
+	
+	<update id="updateSysConfig" parameterType="map">
+		update sys_config set value=#{val} where id=#{id}
+	</update>
+	
+	<select id="getValuesByName" parameterType="java.lang.String" resultType="java.lang.String">
+		select value from sys_config where `key` = #{name}
+	</select>
+  
+  
+</mapper>

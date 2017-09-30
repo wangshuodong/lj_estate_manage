@@ -1,0 +1,93 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title></title> 
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<script src="${base}/assets/biz-logic/js/sysconfig/sysconfig.js"></script>
+<link rel="stylesheet" type="text/css" href="${base}/assets/biz-logic/css/sysconfig.css"/>
+
+<style type="text/css">
+ul.nav.nav-tabs a {
+	cursor: pointer
+}
+
+div.tab-content a {
+	cursor: pointer
+}
+</style>
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>系统管理&gt;&gt; <small>${param}</small></h5>
+		</div>
+			
+		<div class="alert" style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;">
+			<div class="row">
+				<form action="${base}/apply_list.html" id="submitForm" method="post">
+					<#if param=='财务设置'>
+						<div class="line-frame">
+						<div class="col-md-2 text-right" >
+							结算密码 
+						</div>
+						<div class="col-md-3 keyvalue-1">
+							<input type="password" class="form-control input-sm cfgval_pwd"  name="cfgval">
+							<input type="text" class="form-control input-sm cfgval_text" >
+							<input type="hidden"  name="cfgid">
+						</div>
+						<div class="col-md-3">
+							<button type="button" class="btn btn-default btn-sm">显示</button>
+						</div>
+						</div>
+						<div class="line-frame">
+							<div class="col-md-2 text-right" >结算金额范围</div>
+							<div class="col-md-3 keyvalue-2">
+								<input type="text" class="form-control input-sm" name="cfgval">
+								<input type="hidden"  name="cfgid">
+							</div>
+						</div>
+						<#else>
+						<div class="line-frame">
+							<div class="col-md-2 text-right" >整体分成比例</div>
+							<div class="col-md-3 keyvalue-3">
+								<input type="text" class="form-control input-sm" id="checkfen" name="cfgval">
+								<input type="hidden"  name="cfgid">
+							</div>
+						</div>
+						<div class="line-frame">
+							<div class="col-md-2 text-right" >imei单价</div>
+							<div class="col-md-3 keyvalue-4">
+								<input type="text" class="form-control input-sm" name="cfgval">
+								<input type="hidden"  name="cfgid">
+							</div>
+						</div>
+						<div class="line-frame">
+							<div class="col-md-2 text-right" style="padding-right:10px;" >达到扣量新增个数</div>
+							<div class="col-md-3 keyvalue-5">
+								<input type="text" class="form-control input-sm" name="cfgval">
+								<input type="hidden"  name="cfgid">
+							</div>
+						</div>
+					</#if>
+					
+					
+					<div class="line-frame">
+						<div class="col-md-2 text-right" ></div>
+						<div class="col-md-3">
+							<button type="button" class="btn btn-info btn-sm" onclick="submitForm()">确认修改</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+
+</@compress>

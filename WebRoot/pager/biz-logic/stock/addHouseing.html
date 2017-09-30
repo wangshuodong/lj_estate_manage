@@ -1,0 +1,201 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>物业在线缴费系统|小区收录</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+<link href="${base}/assets/biz-logic/css/cloud-zoom.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${base}/assets/biz-logic/js/cloud-zoom.1.0.2.min.js"></script>
+<script type="text/javascript" src="${base}/assets/common/ajaxfileupload.js"></script>
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+.progress-striped .bar {
+background-color: #149bdf;}
+</style>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+		<div class="page-header alert alert-info">
+			<h5>小区管理&gt;&gt; &nbsp;&nbsp;小区收录</h5>
+		</div>
+           	<div class="panel-body text-center">
+				<div class="tab-content">
+				  <div class="tab-pane active" id="daily" style="height:auto !important;">
+				  
+				 <form id="submitForm" action="${base}" class="form form-inline" method="post">
+					 <table class="table table-bordered" style="width:860px;">
+					 	<tr>
+					 		<td align="right">小区名称</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" name="name" id="name" style="width:300px;">
+									<span style="color:red;">* 世纪花园</span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">物业</td>
+					 		<td align="left">
+					 			<select id="department" name="department" class="form-control" style="width:300px;">
+					 				<#list departments as d>
+		            				<option value="${d.id}" >${d.name}</option>
+		            			    </#list>
+					 	</select>
+					 		</td>
+					 	</tr>
+						<tr>
+					 		<td align="right">详细地址</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="address" name="address" style="width:300px;"/><span style="color:red;">*重庆市大渡口区柏华街36号</span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">地址</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="community_address" name="community_address" style="width:300px;"/><span style="color:red;">*柏华街36号</span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">省份编码</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" value="500000" id="province_code" name="province_code" style="width:300px;"/><span style="color:red;">*</span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">地级市编码</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" value="500100" id="city_code" name="city_code" style="width:300px;"/><span style="color:red;">*</span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">区县编码</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" value="500104"  id="district_code" name="district_code" style="width:300px;"/><span style="color:red;">*</span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">区所在的经纬度</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" value="[106.481391|29.465131]" id="community_locations" name="community_locations" style="width:300px;"/><span style="color:red;">*[106.481391|29.465131]</span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">联系人</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="contractPeople" name="contractPeople" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">联系电话</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="phone" name="phone" style="width:300px;"/><span style="color:red;">*13888888888</span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">支付账号</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="payAccount" name="payAccount" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">商户PID</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="pid"  name="pid" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 	<tr>
+					 		<td align="right">token</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="token"  name="token" style="width:300px;"/><span style="color:red;">*201706BB780c8de557e44fc393a96c660dcebE53</span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td></td>
+					 		<td>
+					 			<button type="button" class="btn btn-info btn-lg" id="submitBTN_news">保&nbsp;&nbsp;存</button>
+					 		</td>
+					 	</tr>
+					 </table>
+					 
+		            <!-- 操作消息记录 -->
+		            <div class="row" id="messageDiv" align="left" style="color:red">
+		            </div>
+		            
+		            </form>
+				  </div>
+				</div>
+				</div>
+           	</div>
+	</div>
+	<!-- 缓冲 -->
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <!--   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+        <h4 class="modal-title" id="myModalLabel">数据提交中，请等待</h4>
+      </div>
+      <div class="modal-body" style="width: 600px;height: 520px;">
+      		<img alt="" src="${base}/assets/biz-logic/images/loading_circle.gif" style="margin-top: 220px;margin-left: 250px;">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<!-- 提示-->
+<div class="modal fade" id="infowindow" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <button type="button" class="close closeTipModal" data-dismiss="modal"  aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">温馨提醒</h4>
+      </div>
+      <div class="modal-body" style="width: 200px;height: 100px;" id="modal-body">
+      		
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default closeTipModal" data-dismiss="modal" >关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<script type="text/javascript">
+$(function() {
+	$("input[name='productDate']").datetimepicker({
+		language:'zh-CN',
+        todayBtn:1,
+		autoclose:1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0,
+		format:'yyyy-mm-dd',
+		initialDate:new Date()
+	}).on('changeDate',function(ev){
+		var startdate = $("input[name='startDate']:visible").val();
+		$("input[name='endDate']:visible").datetimepicker('setStartDate', startdate);
+	});
+	
+	$("input[name='endDate']").datetimepicker({
+		language:'zh-CN',
+        todayBtn:1,
+		autoclose:1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0,
+		format:'yyyy-mm-dd',
+		initialDate:new Date()
+	});
+});
+</script>
+<#include "../footer.html">
+</body>
+</html>
+</@compress>

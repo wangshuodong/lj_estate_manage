@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.AppStatementMapper">
+	<resultMap id="AppStatement" type="com.ym.iadpush.manage.entity.AppStatement">
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="acount" property="acount" jdbcType="INTEGER" />
+		<result column="money" property="earn" jdbcType="DECIMAL" />
+		<result column="date" property="date" jdbcType="DATE" />
+	</resultMap>
+	<resultMap id="SumAppStatement" type="com.ym.iadpush.manage.entity.AppStatement">
+		<result column="icount" property="icount" jdbcType="INTEGER" />
+		<result column="acount" property="acount" jdbcType="INTEGER" />
+		<result column="money" property="earn" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<!-- 数据报表查询SQL -->
+
+	<sql id="AppStatement_Query">
+		SELECT SUM(dr.acount) acount,SUM(dr.icount) icount,SUM(dr.earn) money,dr.addate date from (select * from developer_report <include refid="Report_Where_Clause"/>) dr LEFT JOIN sys_users su ON dr.uid = su.user_id
+		left join app a on a.id = dr.appid
+		<where>
+			<if test="username != null"> AND su.username LIKE concat('%', #{username,jdbcType=VARCHAR}, '%')  </if>
+			<if test="servicename != null"> AND su.serviceName LIKE concat('%', #{servicename,jdbcType=VARCHAR}, '%')  </if>
+			<if test="appid != null"> AND dr.appid=#{appid,jdbcType=INTEGER}  </if>
+			<if test="serviceId != null">And dr.uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+			<if test="uid != null">AND dr.uid = #{uid}</if>
+			<if test="qid != null ">AND a.qid = #{qid}</if>
+		</where>
+		GROUP BY addate
+	</sql>
+	<sql id="Report_Where_Clause">
+		<where>
+			<if test="startDate != null">AND   <![CDATA[addate >= #{startDate,jdbcType=DATE}]]>
+			</if>
+			<if test="endDate != null">AND <![CDATA[addate <= #{endDate,jdbcType=DATE}]]></if>
+			<if test="serviceId != null">And uid in (select user_id from sys_users where serviceId = #{serviceId})</if>
+		</where>
+	</sql>
+	
+	<select id="queryAppStatement" resultMap="AppStatement"
+		parameterType="map">
+		select * from (
+		<include refid="AppStatement_Query" />) a order by date desc
+		limit ${currPage*pageSize},#{pageSize}
+	</select>
+	<select id="countAppStatement" resultType="java.lang.Integer" parameterType="map">
+		select count(1) from ( <include refid="AppStatement_Query" />) a
+	</select>
+	<select id="sumAppStatement" resultMap="SumAppStatement" parameterType="map">
+		select sum(a.money) money,sum(a.acount) acount,sum(a.icount) icount from (<include refid="AppStatement_Query" />) a
+	</select>
+</mapper>

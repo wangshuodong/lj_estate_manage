@@ -1,0 +1,306 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title></title> <#include "/pager/common/quote.html" /> <#include
+"/common/bootstrapBase.html" />
+
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+<link rel="stylesheet" href="${base}/assets/uploadify/uploadify.css" />
+<script type="text/javascript" src="${base}/assets/uploadify/jquery.uploadify.min.js"></script>
+<style type="text/css">
+ul.nav.nav-tabs a {
+	cursor: pointer
+}
+
+div.tab-content a {
+	cursor: pointer
+}
+.main_content {
+padding: 64px 30px 30px;
+background: #fff;
+border-left: 1px solid transparent;
+}
+.heading {
+border-bottom: 1px solid #dcdcdc;
+margin-bottom: 18px;
+padding-bottom: 5px;
+}
+#mine {
+border: solid 1px #f7f7f7;
+border-radius: 4px;
+overflow: hidden;
+margin: 20px;
+}
+.bor1 {
+border: solid 3px #f7f7f7;
+border-radius: 4px;
+margin: 2px;
+overflow: hidden;
+}
+.center {
+margin: 0 auto;
+font-family: '宋体';
+margin-top: 20px;
+font-size: 13px;
+color: #3f3f40;
+margin-bottom: 20px;
+overflow: hidden;
+}
+.form-horizontal .control-group {
+margin-bottom: 14px;
+}
+.form-horizontal .control-label {
+float: left;
+width: 160px;
+padding-top: 5px;
+text-align: right;
+}
+.label-info, .badge-info {
+background: #058DC7;
+}
+label, input, button, select, textarea, select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input, .btn {
+font-size: 13px;
+}
+.bor1{ border:solid 3px #f7f7f7; border-radius:4px; margin:2px; overflow:hidden}
+.progress-striped .bar {
+background-color: #149bdf;
+</style>
+<link href="${base}/assets/biz-logic/css/cloud-zoom.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${base}/assets/biz-logic/js/cloud-zoom.1.0.2.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$("#idcard_img").uploadify({
+			 	formData      : {'moduleid' : '${user.userId}', 'filemodule' : "user",deleteIds:"-1",path:'/newiadpush/user'},
+			 	fileObjName : 'file',
+			 	buttonText:"上传",
+			 	queueID:"defaultPro",
+		        height        : 30,
+		        swf           : '${base}/assets/uploadify/uploadify.swf',
+		        uploader      : '${base}/fileUpload.html',
+		        width         : 80,
+		        queueSizeLimit : 1,
+		        fileTypeExts : '*.jpg;*.bmp;*.png;*.gif,*.jpeg',
+		        onUploadProgress : function(file, bytesUploaded, bytesTotal, totalBytesUploaded, totalBytesTotal) {
+		            $('#bar1').css("width",((bytesUploaded/bytesTotal)*100)+"%");
+		        },
+		        onUploadSuccess:function(file,result){
+		        	$("input[name='certification']").val("upload");
+		        	result = eval("("+result+")");
+		        	var html = "<a href=\"${base}/download.html?id="+result.fileId+"\" class=\"cloud-zoom\" id=\"zoom1\" rel=\"adjustX:10, adjustY:-4\" style=\"position: relative; display: block;\">";
+		        	html += "<img style=\"width: 240px;height: 320px;\" onerror=\"this.src='${base}/assets/biz-logic/images/onlinenone.jpg'\" src='${base}/download.html?id="+result.fileId+"'/>";
+		        	html += "</a>";
+		        	$("#idcard_img_show").html(html);
+		        	$("#bimge").css("background-image","url(${base}/download.html?id="+result.fileId+")");
+		        		//表示已经上传了扫描件，用于验证提交账户信息验证
+		        }
+		});
+		
+})
+</script>
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container" id="contentwrapper">
+		<div class="main_content">
+		<#if message??>
+		<div class="alert alert-success alert-dismissable">
+		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		  <strong>${message}</strong>
+		</div>
+		</#if>
+			<h3 class="heading">账户信息&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h3>
+			<div align="center">
+     		<div id="mine">
+     		<div class="bor1">
+    		<div class="center" align="left">
+      		<form id="userinfo" action="${base}/update_dev_account_info.html" method="post" class="form-horizontal" > 
+<!--      		<div class="form-horizontal userinfo "> -->
+     				<input type="hidden" name="certification">
+     				<div class="form-group">
+						<label class="control-label">公告：</label>
+						<div class="col-sm-4">
+							<label style="margin-top: 6px;font-size: 12;font-weight: normal;">
+
+								1、上传的扫描件需要图像和文字清晰可见。<br>
+								
+								2、如果公司注册，上传营业执照扫描件即可。<br>
+								
+								3、正反面文件在一张A4纸上一次上传。
+								</label>
+						</div>
+					</div>
+					<hr>
+					<div class="form-group">
+						<label class="control-label">开户银行<span style="color: red; margin-left: 10px">*</span></label>
+						<div class="col-sm-4">
+						<#if userinfo.bankName?? && userinfo.bankName != "" && userinfo.bankName != "请选择">
+							<label class="label label-info">${userinfo.bankName}</label>
+						<#else>
+							<select  class="form-control" name="bankName" id="banklist">
+							
+							</select>
+						</#if>
+ 							
+						</div>
+						<div class="col-sm-4">
+							* 格式为:XX省，XX市/县，XX支行/分行
+							
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label">省<span style="color: red; margin-left: 10px">*</span></label>
+						<div class="col-sm-4">
+						<#if userinfo.province?? && userinfo.province != "">
+							<label class="label label-info">${userinfo.province}</label>
+						<#else>
+							<input type="text"  class="form-control" name="province" value="<#if userinfo.province??>${userinfo.province}</#if>">
+						</#if>
+							
+						</div>
+						
+					</div>
+					<div class="form-group">
+						<label class="control-label">市<span style="color: red; margin-left: 10px">*</span></label>
+						<div class="col-sm-4">
+						<#if userinfo.city?? && userinfo.city != "">
+							<label class="label label-info">${userinfo.city}</label>
+						<#else>
+							<input type="text"  class="form-control" name="city" value="<#if userinfo.city??>${userinfo.city}</#if>">						
+						</#if>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label">支行<span style="color: red; margin-left: 10px">*</span></label>
+						<div class="col-sm-4">
+							
+						<#if userinfo.bankAddress?? && userinfo.bankAddress != "">
+							<label class="label label-info">${userinfo.bankAddress}</label>
+						<#else>
+							<input type="text"  class="form-control" name="bankAddress" value="<#if userinfo.bankAddress??>${userinfo.bankAddress}</#if>">					
+						</#if>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label">开户姓名<span style="color: red; margin-left: 10px">*</span></label>
+						<div class="col-sm-4">
+							
+							<#if userinfo.bankUserName?? && userinfo.bankUserName != "">
+							<label class="label label-info">${userinfo.bankUserName}</label>
+						<#else>
+							<input type="text"  class="form-control" name="bankUserName" value="<#if userinfo.bankUserName??>${userinfo.bankUserName}</#if>">				
+						</#if>
+						</div>
+						<div class="col-sm-4">
+							* 办理此银行卡的真实姓名请与身份证保持一致。
+							
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="control-label">银行账号<span style="color: red; margin-left: 10px">*</span></label>
+						<div class="col-sm-4">
+							
+							<#if userinfo.bankNo?? && userinfo.bankNo != "">
+							<label class="label label-info">${userinfo.bankNo}</label>
+						<#else>
+							<input type="text"  class="form-control" name="bankNo" value="<#if userinfo.bankNo??>${userinfo.bankNo}</#if>">			
+						</#if>
+						</div>
+						<div class="col-sm-5">
+							* 为确保结算安全,该项信息不能被修改,如需修改请联系客服
+							
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label">身份证号码<span style="color: red; margin-left: 10px">*</span></label>
+						<div class="col-sm-4">
+							
+							<#if userinfo.certificate?? && userinfo.certificate != "">
+							<label class="label label-info">${userinfo.certificate}</label>
+						<#else>
+							<input type="text"  class="form-control" name="certificate" value="<#if userinfo.certificate??>${userinfo.certificate}</#if>">		
+						</#if>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label">认证状态<span style="color: red; margin-left: 10px">*</span></label>
+						<div class="col-sm-4">
+							<label class="label label-info">
+							<#if userinfo.certification??>
+								<#if userinfo.certification = "0">
+									未上传
+								<#elseif  userinfo.certification = "1">
+									待审核
+								<#elseif  userinfo.certification = "2">
+									已认证
+								</#if>
+							</#if>
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label">身份证扫描件<span style="color: red; margin-left: 10px"></span></label>
+						<div class="col-sm-8">
+						<#if userinfo.certification ?? && userinfo.certification != "2">
+							<input type="file" id="idcard_img" name="file">
+						</#if>
+							
+							<span style="float: left;">*需要上传证件的正反面，并提交扫描件电子版原件，图片格式为jpg jpeg png,限4M以内。<input type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" value="查看示例"></span>
+							<div class="progress progress-striped active" style="width: 450px">
+								<div class="bar" id="bar1" style="width: 0%;height: 20px;"></div>
+							</div>
+						<!-- 	<div  id="idcard_img_show" style="width: 400px; height: 250px; line-height: 150px;" class="fileupload-preview thumbnail">
+								<img style="width: 400px;height: 240px;" src='${base}/download.html?moduleid=${user.userId}&filemodule=user' onerror="this.src='${base}/assets/biz-logic/images/onlinenone.jpg'"/>
+							</div> -->
+							
+							<div id="wrap" style="z-index:9999;position:relative;">
+								<div  id="idcard_img_show" style="width: 240px; height: 330px; line-height: 150px;" class="fileupload-preview thumbnail">
+									<a href="${base}/download.html?moduleid=${user.userId}&filemodule=user" class="cloud-zoom" id="zoom1" rel="adjustX:10, adjustY:-4" style="position: relative; display: block;">
+										<img src="${base}/download.html?moduleid=${user.userId}&filemodule=user" onerror="this.src='${base}/assets/biz-logic/images/onlinenone.jpg'" alt="" style="display: block;width: 240px; height: 320px;">
+									</a>
+								</div>
+								<div class="mousetrap" id="bimge" style="background-image: url(${base}/download.html?moduleid=${user.userId}&filemodule=user); z-index: 999; position: absolute; cursor: move;background-repeat:no-repeat;"></div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label"></label>
+						<div class="col-sm-4">
+							<input id="save_info_btn" type="submit" value="保存" class="btn btn-info">						
+						</div>
+					</div>
+			<!-- </div> -->
+     	</form> 
+     		</div></div></div>
+     		</div>
+		</div>
+	</div>
+<!-- 示例图 -->
+<div class="modal fade" id="myModal" tabindex="-1" style="z-index: 99999999" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 600px;height: 400px;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">示例图片</h4>
+      </div>
+      <div class="modal-body">
+        <img src="${base}/assets/biz-logic/images/idcard.jpg" style="width: 500px;height: 400px;"></img>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+</body>
+<script type="text/javascript" src="${base}/assets/biz-logic/js/user-account.js"></script>
+<script type="text/javascript" src="${base}/assets/biz-logic/js/bank.js"></script>
+<script type="text/javascript">
+findBank("${userinfo.bankName}");
+</script>
+</html>
+
+</@compress>

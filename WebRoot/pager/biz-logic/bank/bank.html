@@ -1,0 +1,6 @@
+<#if list ??>
+	<#list list as l>
+		<option <#if l.bankName = bankName>selected="selected"</#if>>${l.bankName}</option>
+		
+	</#list>
+</#if>

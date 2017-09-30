@@ -1,0 +1,70 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>重庆京莱米商贸公司|工厂目录</title> 
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<link rel="stylesheet" type="text/css" href="${base}/assets/biz-logic/css/apply.css"/>
+
+<body style="background-color: white;">
+	<#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+	<div class="container">
+		<div class="page-header alert alert-info">
+			<h5>代工厂管理&gt;&gt; <small>&nbsp;&nbsp;工厂目录</small></h5>
+		</div>
+		<div class="row">
+			<form action="${base}/apply_list.html" id="submitForm" method="post">
+				<div class="col-md-7" style="float: left;width:100%;">
+					<div class="col-md-1 text-right" style="line-height:30px;padding: 0;width: 98px;">名称</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control input-sm" name="name">
+					</div>
+					<div class="col-md-2 text-right">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-search" onclick="sumbitForm('search')">查询</button>
+							
+						</div>
+					</div>
+				</div>
+				<input type="hidden" name="currPage" value="1" id="currPage">
+				
+			</form>
+		</div>
+		<div class="alert" style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;">
+			<table class="table table-bordered table-hover alert-warning">
+				<thead>
+					<tr>
+						<th>代工厂名称</th>
+						<th>用户名</th>
+						<th>省份</th>
+						<th>市</th>
+						<th>县/区</th>
+						<th>乡镇</th>
+						<th>地址</th>
+						<th>联系人</th>
+						<th>联系电话</th>
+						<th>移动电话</th>
+						<th>角色</th>
+						<th>注册时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="d_body">
+				</tbody>
+			</table>
+			<div class="row">
+				<div class="col-md-9">
+					<span id="totalCount"></span>
+				</div>
+				<div class="col-md-9">
+					<ul id="pagination" style="margin: 0;float: right;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+</@compress>

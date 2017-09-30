@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.AppMapper" >
+
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.App" >
+		<result column="aid" property="aid" jdbcType="INTEGER" />
+		<result column="aname" property="appname" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="qid" property="qid" jdbcType="INTEGER" />
+		<result column="qname" property="qname" jdbcType="VARCHAR" />
+		<result column="dicount" property="icount" jdbcType="INTEGER" />
+		<result column="dearn" property="earn_money" jdbcType="DOUBLE" />
+		<result column="duid" property="duid" jdbcType="INTEGER" />
+		<result column="dappid" property="dappid" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="addate" property="addate" jdbcType="DATE" />
+		<result column="totalIcount" property="totalICount" jdbcType="INTEGER" />
+		<result column="totalEarn" property="totalEarn" jdbcType="INTEGER" />
+		<result column="acount" property="acount" jdbcType="INTEGER" />
+		<result column="green_yellow" property="greenYellow" jdbcType="INTEGER" />
+	</resultMap>
+  
+  <sql id="getAllApp_Common_Sql">
+  SELECT
+			IFNULL(u.username,"未知用户id:"+d.uid) username,
+			IFNULL(a.`name`,"未知用户app:"+d.appid) aname,
+			d.uid uid,
+			d.appid aid,
+			d.addate addate,
+			a.status status,
+			IFNULL(c.name,"未知渠道id："+a.qid) qname,
+			IFNULL(a.qid,"未知渠道id："+a.qid) qid,
+			<if test="roleName == 'dev'">
+				SUM(d.icountkou) icount,
+			</if>
+			<if test="roleName != 'dev'">
+				SUM(d.icount) icount,
+			</if>
+			SUM(d.earn) dearn,
+			a.green_yellow
+			
+	FROM
+  		developer_report d
+	LEFT JOIN sys_users u ON u.user_id = d.uid
+	LEFT JOIN app a ON d.appid = a.id
+	LEFT JOIN channel c on c.id = a.qid
+		<where>
+			<if test="nowtime != null">
+				AND addate = #{nowtime}
+			</if>
+			<if test="serviceId != null">
+				AND d.uid in(SELECT user_id FROM sys_users WHERE serviceId = #{serviceId})
+			</if>
+			<if test="appname!=null">
+				and a.name like  #{appname}
+			</if>
+			<if test="username!=null">
+				and u.username like #{username} 
+			</if>
+			<if test="uid!=null">
+				and d.uid=#{uid}
+			</if>
+			<if test="aid != null and uid!=null and qid!=null">
+				and d.appid=#{aid} and d.uid=#{uid} and a.qid=#{qid} 
+			</if>
+		</where>
+	GROUP BY
+	d.appid,
+	d.addate
+  </sql>
+  
+    <sql id="getAllAppForDev_Common_Sql">
+  SELECT
+			IFNULL(u.username,"未知用户id:"+d.uid) username,
+			IFNULL(a.`name`,"未知用户app:"+d.appid) aname,
+			d.uid uid,
+			d.appid aid,
+			d.addate addate,
+			a.status status,
+			IFNULL(c.name,"未知渠道id："+a.qid) qname,
+			IFNULL(a.qid,"未知渠道id："+a.qid) qid,
+			SUM(d.icountkou) icount,
+			SUM(d.acountkou) acount,
+			SUM(d.earn) dearn
+			
+	FROM
+  		developer_report d
+	LEFT JOIN sys_users u ON u.user_id = d.uid
+	LEFT JOIN app a ON d.appid = a.id
+	LEFT JOIN channel c on c.id = a.qid
+	where d.uid = #{uid}
+	<if test="nowtime != null">
+		AND addate = #{nowtime}
+	</if>
+	<if test="appname!=null">
+		and a.name like  #{appname}
+	</if>
+	<if test="uid!=null">
+		and d.uid=#{uid}
+	</if>
+	<if test="aid != null and uid!=null and qid!=null">
+		and d.appid=#{aid} and d.uid=#{uid} and a.qid=#{qid} 
+	</if>
+	GROUP BY
+	d.appid,
+	d.addate
+  </sql>
+  	<!--  -->
+	<select id="getAllApp" resultMap="BaseResultMap" parameterType="map">
+		<include refid="getAllApp_Common_Sql"/>
+		<if test="sortColum != null and sortType != null">
+			ORDER BY ${sortColum} ${sortType}
+		</if>
+		LIMIT #{currPage},#{pageSize}
+	</select>
+	
+	<select id="getAllAppForDev" resultMap="BaseResultMap" parameterType="map">
+		<include refid="getAllAppForDev_Common_Sql"/>
+		<if test="sortColum != null and sortType != null">
+			ORDER BY ${sortColum} ${sortType}
+		</if>
+		LIMIT #{currPage},#{pageSize}
+	</select>
+	
+	<select id="getTotalEarnAndIcount" parameterType="map" resultMap="BaseResultMap">
+		SELECT sum(t.dearn) totalEarn,sum(t.icount) totalIcount FROM   
+		(<include refid="getAllApp_Common_Sql"/>) t
+	</select>
+	<select id="getTotalEarnAndIcountForApp" parameterType="map" resultMap="BaseResultMap">
+		SELECT sum(t.dearn) totalEarn,sum(t.icount) totalIcount,sum(t.acount) acount FROM   
+		(<include refid="getAllAppForDev_Common_Sql"/>) t
+	</select>
+	<select id="getCountApp" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(1) FROM (
+		<include refid="getAllApp_Common_Sql"/>) t
+	</select>
+	<select id="getCountAppForDev" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(1) FROM (
+		<include refid="getAllAppForDev_Common_Sql"/>) t
+	</select>
+	
+	<update id="updateAppStatus" parameterType="map">
+		update app set status=#{status} where id=#{appid}
+	</update>
+	<sql id="app_where">
+		   WHERE 1=1
+			<if test="appname!=null">
+				and t.aname like  #{appname}
+			</if>
+			<if test="username!=null">
+				and t.username like #{username} 
+			</if>
+			<if test="aid != null and uid!=null and qid!=null">
+				and t.aid=#{aid} and t.uid=#{uid} and t.qid=#{qid} 
+			</if>
+	</sql>
+	
+	<sql id="queryFormApp_Common_Sql">
+		app a
+		LEFT JOIN sys_users u ON u.user_id = a.uid
+		LEFT JOIN channel c ON c.id = a.qid
+		<where>
+			<if test="uid != null">
+				AND a.uid = #{uid}
+			</if>
+			<if test="qid != null">
+				AND a.qid = #{qid}
+			</if>
+			<if test="appid != null">
+				AND a.id = #{appid}
+			</if>
+			<if test="appname != null">
+				AND a.`name` LIKE CONCAT("%",#{appname},"%")
+			</if>
+			<if test="username != null">
+				AND u.username LIKE CONCAT("%",#{username},"%")
+			</if>
+			<if test="serviceId != null">
+				AND a.uid in (select user_id from sys_users where serviceId = #{serviceId})
+			</if>
+		</where>
+	</sql>
+	
+	<select id="queryFormApp" parameterType="map" resultMap="BaseResultMap">
+		SELECT
+			a.id aid,
+			a.`name` aname,
+			a.`status`,
+			a.qid,
+			a.uid,
+			IFNULL(c.`name`,"未知渠道ID:"+a.qid) qname,
+			u.username,
+			a.green_yellow 
+		FROM
+			<include refid="queryFormApp_Common_Sql"/> order by
+			<if test="sortColum != null ">
+				a.id ${sortType}
+			</if>
+			 
+		limit ${pageNo*pageSize},${pageSize}
+	</select>
+	<select id="countFormApp" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from <include refid="queryFormApp_Common_Sql"/>
+	</select>
+	
+	<update id="updateGreenYellow" parameterType="map">
+		update app set green_yellow=#{greenYellow} where id=#{appid}
+	</update>
+</mapper>

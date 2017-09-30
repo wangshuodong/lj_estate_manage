@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.IadpushCpacountMapper" >
+  <resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.IadpushCpacount" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="icount" property="icount" jdbcType="INTEGER" />
+    <result column="acount" property="acount" jdbcType="INTEGER" />
+    <result column="adate" property="adate" jdbcType="DATE" />
+    <result column="appid" property="appid" jdbcType="INTEGER" />
+    <result column="qid" property="qid" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="appkey" property="appkey" jdbcType="VARCHAR" />
+    <result column="packagename" property="packagename" jdbcType="VARCHAR" />
+    <result column="hour" property="hour" jdbcType="SMALLINT" />
+    <result column="icountkou" property="icountkou" jdbcType="INTEGER" />
+    <result column="acountkou" property="acountkou" jdbcType="INTEGER" />
+    <result column="platFormType" property="platformtype" jdbcType="VARCHAR" />
+    <result column="compensationIcount" property="compensationicount" jdbcType="INTEGER" />
+    <result column="compensationAcount" property="compensationacount" jdbcType="INTEGER" />
+    <result column="icountkou_act" property="icountkouAct" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, icount, acount, adate, appid, qid, uid, appkey, packagename, hour, icountkou, 
+    acountkou, platFormType, compensationIcount, compensationAcount, icountkou_act
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from iadpush_cpacount
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from iadpush_cpacount
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ym.iadpush.manage.entity.IadpushCpacount" >
+    insert into iadpush_cpacount (id, icount, acount, 
+      adate, appid, qid, uid, 
+      appkey, packagename, hour, 
+      icountkou, acountkou, platFormType, 
+      compensationIcount, compensationAcount, 
+      icountkou_act)
+    values (#{id,jdbcType=INTEGER}, #{icount,jdbcType=INTEGER}, #{acount,jdbcType=INTEGER}, 
+      #{adate,jdbcType=DATE}, #{appid,jdbcType=INTEGER}, #{qid,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, 
+      #{appkey,jdbcType=VARCHAR}, #{packagename,jdbcType=VARCHAR}, #{hour,jdbcType=SMALLINT}, 
+      #{icountkou,jdbcType=INTEGER}, #{acountkou,jdbcType=INTEGER}, #{platformtype,jdbcType=VARCHAR}, 
+      #{compensationicount,jdbcType=INTEGER}, #{compensationacount,jdbcType=INTEGER}, 
+      #{icountkouAct,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ym.iadpush.manage.entity.IadpushCpacount" >
+    insert into iadpush_cpacount
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="icount != null" >
+        icount,
+      </if>
+      <if test="acount != null" >
+        acount,
+      </if>
+      <if test="adate != null" >
+        adate,
+      </if>
+      <if test="appid != null" >
+        appid,
+      </if>
+      <if test="qid != null" >
+        qid,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="appkey != null" >
+        appkey,
+      </if>
+      <if test="packagename != null" >
+        packagename,
+      </if>
+      <if test="hour != null" >
+        hour,
+      </if>
+      <if test="icountkou != null" >
+        icountkou,
+      </if>
+      <if test="acountkou != null" >
+        acountkou,
+      </if>
+      <if test="platformtype != null" >
+        platFormType,
+      </if>
+      <if test="compensationicount != null" >
+        compensationIcount,
+      </if>
+      <if test="compensationacount != null" >
+        compensationAcount,
+      </if>
+      <if test="icountkouAct != null" >
+        icountkou_act,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="icount != null" >
+        #{icount,jdbcType=INTEGER},
+      </if>
+      <if test="acount != null" >
+        #{acount,jdbcType=INTEGER},
+      </if>
+      <if test="adate != null" >
+        #{adate,jdbcType=DATE},
+      </if>
+      <if test="appid != null" >
+        #{appid,jdbcType=INTEGER},
+      </if>
+      <if test="qid != null" >
+        #{qid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="appkey != null" >
+        #{appkey,jdbcType=VARCHAR},
+      </if>
+      <if test="packagename != null" >
+        #{packagename,jdbcType=VARCHAR},
+      </if>
+      <if test="hour != null" >
+        #{hour,jdbcType=SMALLINT},
+      </if>
+      <if test="icountkou != null" >
+        #{icountkou,jdbcType=INTEGER},
+      </if>
+      <if test="acountkou != null" >
+        #{acountkou,jdbcType=INTEGER},
+      </if>
+      <if test="platformtype != null" >
+        #{platformtype,jdbcType=VARCHAR},
+      </if>
+      <if test="compensationicount != null" >
+        #{compensationicount,jdbcType=INTEGER},
+      </if>
+      <if test="compensationacount != null" >
+        #{compensationacount,jdbcType=INTEGER},
+      </if>
+      <if test="icountkouAct != null" >
+        #{icountkouAct,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ym.iadpush.manage.entity.IadpushCpacount" >
+    update iadpush_cpacount
+    <set >
+      <if test="icount != null" >
+        icount = #{icount,jdbcType=INTEGER},
+      </if>
+      <if test="acount != null" >
+        acount = #{acount,jdbcType=INTEGER},
+      </if>
+      <if test="adate != null" >
+        adate = #{adate,jdbcType=DATE},
+      </if>
+      <if test="appid != null" >
+        appid = #{appid,jdbcType=INTEGER},
+      </if>
+      <if test="qid != null" >
+        qid = #{qid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="appkey != null" >
+        appkey = #{appkey,jdbcType=VARCHAR},
+      </if>
+      <if test="packagename != null" >
+        packagename = #{packagename,jdbcType=VARCHAR},
+      </if>
+      <if test="hour != null" >
+        hour = #{hour,jdbcType=SMALLINT},
+      </if>
+      <if test="icountkou != null" >
+        icountkou = #{icountkou,jdbcType=INTEGER},
+      </if>
+      <if test="acountkou != null" >
+        acountkou = #{acountkou,jdbcType=INTEGER},
+      </if>
+      <if test="platformtype != null" >
+        platFormType = #{platformtype,jdbcType=VARCHAR},
+      </if>
+      <if test="compensationicount != null" >
+        compensationIcount = #{compensationicount,jdbcType=INTEGER},
+      </if>
+      <if test="compensationacount != null" >
+        compensationAcount = #{compensationacount,jdbcType=INTEGER},
+      </if>
+      <if test="icountkouAct != null" >
+        icountkou_act = #{icountkouAct,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ym.iadpush.manage.entity.IadpushCpacount" >
+    update iadpush_cpacount
+    set icount = #{icount,jdbcType=INTEGER},
+      acount = #{acount,jdbcType=INTEGER},
+      adate = #{adate,jdbcType=DATE},
+      appid = #{appid,jdbcType=INTEGER},
+      qid = #{qid,jdbcType=INTEGER},
+      uid = #{uid,jdbcType=INTEGER},
+      appkey = #{appkey,jdbcType=VARCHAR},
+      packagename = #{packagename,jdbcType=VARCHAR},
+      hour = #{hour,jdbcType=SMALLINT},
+      icountkou = #{icountkou,jdbcType=INTEGER},
+      acountkou = #{acountkou,jdbcType=INTEGER},
+      platFormType = #{platformtype,jdbcType=VARCHAR},
+      compensationIcount = #{compensationicount,jdbcType=INTEGER},
+      compensationAcount = #{compensationacount,jdbcType=INTEGER},
+      icountkou_act = #{icountkouAct,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

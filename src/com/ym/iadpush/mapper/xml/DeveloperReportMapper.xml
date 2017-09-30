@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.DeveloperReportMapper" >
+  <resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.DeveloperReport" >
+    <id column="addate" property="addate" jdbcType="DATE" />
+    <id column="uid" property="uid" jdbcType="INTEGER" />
+    <id column="appid" property="appid" jdbcType="INTEGER" />
+    <result column="oper_uid" property="operUid" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="icount" property="icount" jdbcType="INTEGER" />
+    <result column="acount" property="acount" jdbcType="INTEGER" />
+    <result column="earn" property="earn" jdbcType="DECIMAL" />
+    <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+    <result column="icountkou" property="icountkou" jdbcType="INTEGER" />
+    <result column="acountkou" property="acountkou" jdbcType="INTEGER" />
+    <result column="icountkou_act" property="icountkouAct" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    addate, uid, appid, oper_uid, username, icount, acount, earn, last_update, icountkou, 
+    acountkou, icountkou_act
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ym.iadpush.manage.entity.DeveloperReportExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from developer_report
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.ym.iadpush.manage.entity.DeveloperReportKey" >
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from developer_report
+    where addate = #{addate,jdbcType=DATE}
+      and uid = #{uid,jdbcType=INTEGER}
+      and appid = #{appid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.ym.iadpush.manage.entity.DeveloperReportKey" >
+    delete from developer_report
+    where addate = #{addate,jdbcType=DATE}
+      and uid = #{uid,jdbcType=INTEGER}
+      and appid = #{appid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ym.iadpush.manage.entity.DeveloperReportExample" >
+    delete from developer_report
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ym.iadpush.manage.entity.DeveloperReport" >
+    insert into developer_report (addate, uid, appid, 
+      oper_uid, username, icount, 
+      acount, earn, last_update, 
+      icountkou, acountkou, icountkou_act
+      )
+    values (#{addate,jdbcType=DATE}, #{uid,jdbcType=INTEGER}, #{appid,jdbcType=INTEGER}, 
+      #{operUid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{icount,jdbcType=INTEGER}, 
+      #{acount,jdbcType=INTEGER}, #{earn,jdbcType=DECIMAL}, #{lastUpdate,jdbcType=TIMESTAMP}, 
+      #{icountkou,jdbcType=INTEGER}, #{acountkou,jdbcType=INTEGER}, #{icountkouAct,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ym.iadpush.manage.entity.DeveloperReport" >
+    insert into developer_report
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="addate != null" >
+        addate,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="appid != null" >
+        appid,
+      </if>
+      <if test="operUid != null" >
+        oper_uid,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="icount != null" >
+        icount,
+      </if>
+      <if test="acount != null" >
+        acount,
+      </if>
+      <if test="earn != null" >
+        earn,
+      </if>
+      <if test="lastUpdate != null" >
+        last_update,
+      </if>
+      <if test="icountkou != null" >
+        icountkou,
+      </if>
+      <if test="acountkou != null" >
+        acountkou,
+      </if>
+      <if test="icountkouAct != null" >
+        icountkou_act,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="addate != null" >
+        #{addate,jdbcType=DATE},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="appid != null" >
+        #{appid,jdbcType=INTEGER},
+      </if>
+      <if test="operUid != null" >
+        #{operUid,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="icount != null" >
+        #{icount,jdbcType=INTEGER},
+      </if>
+      <if test="acount != null" >
+        #{acount,jdbcType=INTEGER},
+      </if>
+      <if test="earn != null" >
+        #{earn,jdbcType=DECIMAL},
+      </if>
+      <if test="lastUpdate != null" >
+        #{lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="icountkou != null" >
+        #{icountkou,jdbcType=INTEGER},
+      </if>
+      <if test="acountkou != null" >
+        #{acountkou,jdbcType=INTEGER},
+      </if>
+      <if test="icountkouAct != null" >
+        #{icountkouAct,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ym.iadpush.manage.entity.DeveloperReportExample" resultType="java.lang.Integer" >
+    select count(*) from developer_report
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update developer_report
+    <set >
+      <if test="record.addate != null" >
+        addate = #{record.addate,jdbcType=DATE},
+      </if>
+      <if test="record.uid != null" >
+        uid = #{record.uid,jdbcType=INTEGER},
+      </if>
+      <if test="record.appid != null" >
+        appid = #{record.appid,jdbcType=INTEGER},
+      </if>
+      <if test="record.operUid != null" >
+        oper_uid = #{record.operUid,jdbcType=INTEGER},
+      </if>
+      <if test="record.username != null" >
+        username = #{record.username,jdbcType=VARCHAR},
+      </if>
+      <if test="record.icount != null" >
+        icount = #{record.icount,jdbcType=INTEGER},
+      </if>
+      <if test="record.acount != null" >
+        acount = #{record.acount,jdbcType=INTEGER},
+      </if>
+      <if test="record.earn != null" >
+        earn = #{record.earn,jdbcType=DECIMAL},
+      </if>
+      <if test="record.lastUpdate != null" >
+        last_update = #{record.lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.icountkou != null" >
+        icountkou = #{record.icountkou,jdbcType=INTEGER},
+      </if>
+      <if test="record.acountkou != null" >
+        acountkou = #{record.acountkou,jdbcType=INTEGER},
+      </if>
+      <if test="record.icountkouAct != null" >
+        icountkou_act = #{record.icountkouAct,jdbcType=DECIMAL},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update developer_report
+    set addate = #{record.addate,jdbcType=DATE},
+      uid = #{record.uid,jdbcType=INTEGER},
+      appid = #{record.appid,jdbcType=INTEGER},
+      oper_uid = #{record.operUid,jdbcType=INTEGER},
+      username = #{record.username,jdbcType=VARCHAR},
+      icount = #{record.icount,jdbcType=INTEGER},
+      acount = #{record.acount,jdbcType=INTEGER},
+      earn = #{record.earn,jdbcType=DECIMAL},
+      last_update = #{record.lastUpdate,jdbcType=TIMESTAMP},
+      icountkou = #{record.icountkou,jdbcType=INTEGER},
+      acountkou = #{record.acountkou,jdbcType=INTEGER},
+      icountkou_act = #{record.icountkouAct,jdbcType=DECIMAL}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ym.iadpush.manage.entity.DeveloperReport" >
+    update developer_report
+    <set >
+      <if test="operUid != null" >
+        oper_uid = #{operUid,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="icount != null" >
+        icount = #{icount,jdbcType=INTEGER},
+      </if>
+      <if test="acount != null" >
+        acount = #{acount,jdbcType=INTEGER},
+      </if>
+      <if test="earn != null" >
+        earn = #{earn,jdbcType=DECIMAL},
+      </if>
+      <if test="lastUpdate != null" >
+        last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="icountkou != null" >
+        icountkou = #{icountkou,jdbcType=INTEGER},
+      </if>
+      <if test="acountkou != null" >
+        acountkou = #{acountkou,jdbcType=INTEGER},
+      </if>
+      <if test="icountkouAct != null" >
+        icountkou_act = #{icountkouAct,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where addate = #{addate,jdbcType=DATE}
+      and uid = #{uid,jdbcType=INTEGER}
+      and appid = #{appid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ym.iadpush.manage.entity.DeveloperReport" >
+    update developer_report
+    set oper_uid = #{operUid,jdbcType=INTEGER},
+      username = #{username,jdbcType=VARCHAR},
+      icount = #{icount,jdbcType=INTEGER},
+      acount = #{acount,jdbcType=INTEGER},
+      earn = #{earn,jdbcType=DECIMAL},
+      last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+      icountkou = #{icountkou,jdbcType=INTEGER},
+      acountkou = #{acountkou,jdbcType=INTEGER},
+      icountkou_act = #{icountkouAct,jdbcType=DECIMAL}
+    where addate = #{addate,jdbcType=DATE}
+      and uid = #{uid,jdbcType=INTEGER}
+      and appid = #{appid,jdbcType=INTEGER}
+  </update>
+</mapper>

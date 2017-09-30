@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.iadpush.manage.mapper.FaceToFacePayMapper">
+	<resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.FaceToFacePay">
+		<result column="id" jdbcType="INTEGER" property="id" />
+	</resultMap>
+	
+	<insert id="insertFaceToFacePay" parameterType="com.ym.iadpush.manage.entity.FaceToFacePay"
+		keyProperty="id">
+		insert into faceToFacePay
+		(out_trade_no,auth_code,subject,total_amount,time,housingId)
+		values(#{out_trade_no},#{auth_code},#{subject},#{total_amount},#{time},#{housingId})
+	</insert>
+</mapper>

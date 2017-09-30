@@ -1,0 +1,191 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>重庆京莱米商贸公司|产品收录</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+<script src="${base}/assets/highcharts/highcharts.js"></script>
+<script src="${base}/assets/highcharts/modules/exporting.js"></script>
+<link href="${base}/assets/biz-logic/css/cloud-zoom.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${base}/assets/biz-logic/js/cloud-zoom.1.0.2.min.js"></script>
+<script type="text/javascript" src="${base}/assets/common/ajaxfileupload.js"></script>
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+.progress-striped .bar {
+background-color: #149bdf;}
+</style>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+		<div class="page-header alert alert-info">
+			<h5>产品管理&gt;&gt; &nbsp;&nbsp;产品收录</h5>
+		</div>
+           	<div class="panel-body text-center">
+				<div class="tab-content">
+				  <div class="tab-pane active" id="daily" style="height:auto !important;">
+				  
+				 <form id="submitForm" action="${base}" class="form form-inline" method="post">
+					 <table class="table table-bordered" style="width:860px;">
+					 	<tr>
+					 		<td align="right">产品名称</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" name="productName" style="width:300px;">
+									<span style="color:red;">* </span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">产品代码</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" name="code" style="width:300px;">
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="18%" align="right">单价</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="price" name="price" style="width:300px;"/>
+					 			<span style="color:red;">* </span>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">计量单位</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="unit" name="unit" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">材质</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="material" name="material" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">生产厂家</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="manufacture" name="manufacture" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">生产日期</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="productDate" data-format="yyyy-MM-dd" name="productDate" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">保质期</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="endDate" data-format="yyyy-MM-dd" name="endDate" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">重量</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="weight" name="weight" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">执行标准</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="standard" name="standard" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">外观描述</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="facadeDesc" name="facadeDesc" style="width:300px;"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td align="right">备注</td>
+					 		<td align="left">
+					 			<textarea class="form-control" rows="10" cols="20" name="remark"></textarea>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td></td>
+					 		<td>
+					 			<button type="button" class="btn btn-info btn-lg" id="submitBTN_news">保&nbsp;&nbsp;存</button>
+					 		</td>
+					 	</tr>
+					 </table>
+					 
+		            <!-- 操作消息记录 -->
+		            <div class="row" id="messageDiv" align="left" style="color:red">
+		            </div>
+		            
+		            </form>
+				  </div>
+				</div>
+				</div>
+           	</div>
+	</div>
+	<!-- 缓冲 -->
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <!--   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+        <h4 class="modal-title" id="myModalLabel">数据提交中，请等待</h4>
+      </div>
+      <div class="modal-body" style="width: 600px;height: 520px;">
+      		<img alt="" src="${base}/assets/biz-logic/images/loading_circle.gif" style="margin-top: 220px;margin-left: 250px;">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<!-- 提示-->
+<div class="modal fade" id="infowindow" tabindex="-1" role="dialog" aria-labelledby="myModalApp" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      <button type="button" class="close closeTipModal" data-dismiss="modal"  aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">温馨提醒</h4>
+      </div>
+      <div class="modal-body" style="width: 200px;height: 100px;" id="modal-body">
+      		
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default closeTipModal" data-dismiss="modal" >关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<script type="text/javascript">
+$(function() {
+	$("input[name='productDate']").datetimepicker({
+		language:'zh-CN',
+        todayBtn:1,
+		autoclose:1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0,
+		format:'yyyy-mm-dd',
+		initialDate:new Date()
+	}).on('changeDate',function(ev){
+		var startdate = $("input[name='startDate']:visible").val();
+		$("input[name='endDate']:visible").datetimepicker('setStartDate', startdate);
+	});
+	
+	$("input[name='endDate']").datetimepicker({
+		language:'zh-CN',
+        todayBtn:1,
+		autoclose:1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0,
+		format:'yyyy-mm-dd',
+		initialDate:new Date()
+	});
+});
+</script>
+<#include "../footer.html">
+</body>
+</html>
+</@compress>

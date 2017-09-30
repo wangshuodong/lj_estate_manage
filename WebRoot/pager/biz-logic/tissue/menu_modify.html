@@ -1,0 +1,123 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>智通道和物业在线缴费系统|修改权限</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+</style>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="panel panel-default">
+		<div class="panel-heading">
+         	<h3 class="panel-title">修改权限</h3>
+        </div>
+        <div class="panel-body text-center">
+			<div class="tab-content">
+			  <div class="tab-pane active" id="daily" style="height:auto !important;">
+			  
+			    <form  class="form form-inline" id="updMenuForm" name="updMenuForm" method="post">
+			    	<input type="hidden" id="menuId" name="menuId" value="${menu.menuId!''}"/>
+			  		<table class="table table-bordered" style="width:760px;">
+					 	<tr>
+					 		<td width="16%" align="right">权限名称</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" id="menuName" name="menuName" style="width:300px;" value="${menu.menuName!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="16%" align="right">是否父级</td>
+					 		<td align="left">
+					 			<select id="isParent" name="isParent" class="form-control" style="width:300px;">
+			            			<option value="1" <#if menu.isParentInt == 1>selected="selected"</#if>>是</option>
+		            			    <option value="0" <#if menu.isParentInt == 0>selected="selected"</#if>>否</option>
+		            		    </select>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="16%" align="right">上级菜单</td>
+					 		<td align="left">
+					 			<select id="parentMenu" name="parentMenu" class="form-control" style="width:300px;">
+			            			<option value="">请选择</option>
+		            			    <#list list as l>
+		            			    <#if l.menuId == menu.parentId>
+		            			    	<option value="${l.menuId}" selected="selected">${l.menuName}</option>
+		            			    <#else>
+		            			    	<option value="${l.menuId}" >${l.menuName}</option>
+		            			    </#if>
+		            			    </#list>
+		            		    </select>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="16%" align="right">url</td>
+					 		<td align="left">
+					 			<input type="text" class="form-control input-sm" name="menuUrl" id="menuUrl" style="width:300px;" value="${menu.url!''}"/>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="16%" align="right">状态</td>
+					 		<td align="left">
+					 			<label class="radio-inline">
+			            	        <#if menu.status == 1>
+			            	        	<input type="radio" name="status" id="status" value="1" checked="checked">可用
+			            	        <#else>
+			            	        	<input type="radio" name="status" id="status" value="1">可用
+			            	        </#if>
+			            		</label>
+			            		<label class="radio-inline">
+			            			<#if menu.status == 0>
+			            				<input type="radio" name="status" id="status" value="0" checked="checked">禁用
+			            			<#else>
+			            				<input type="radio" name="status" id="status" value="0">禁用
+			            			</#if>
+			            		</label>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="16%" align="right">类型</td>
+					 		<td align="left">
+					 			<select id="type" name="type" class="form-control" style="width:300px;">
+			            		    <option value="dev" <#if menu.type == 'dev'>selected="selected"</#if>>开发者</option>
+				            		<option value="other" <#if menu.type == 'other'>selected="selected"</#if>>其他</option>
+			            		</select>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="16%" align="right">备注</td>
+					 		<td align="left">
+					 			<textarea class="form-control" id="remark" name="remark" rows="3" style="width:300px;resize: none;">
+					 				${menu.remark!''}
+					 			</textarea>
+					 		</td>
+					 	</tr>
+					 	<tr>
+					 		<td width="16%" align="right">保存</td>
+					 		<td align="left">
+					 			<button type="button" class="btn btn-info btn-sm col-md-1" name="menuSave" >保存</button>
+					 		</td>
+					 	</tr>
+					 </table>
+	            
+		            <!-- 操作消息记录 -->
+		            <div class="row" id="messageDiv" align="left" style="color:red">
+		            </div>
+	            </form>
+			  </div>
+			</div>
+		</div>
+        </div>
+	</div>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>

@@ -1,0 +1,60 @@
+<@compress single_line=isCompress>
+<!DOCTYPE html>
+<html>
+<head>
+<title>重庆京莱米商贸公司</title>
+<#include "/pager/common/quote.html" />
+<#include "/common/bootstrapBase.html" />
+
+<style>
+body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+a {
+	cursor: pointer
+}
+</style>
+</head>
+<body>
+    <#import "../nav-top.html" as nav> <@nav.navbar active="list"/>
+    <div class="container">
+    	<div class="page-header alert alert-info">
+			<h5>鐢ㄦ埛绠＄悊>> <small>鏉冮檺鍒楄〃</small></h5>
+		</div>
+		<button type="button" class="btn btn-default" id="addMenu">娣诲姞</button>
+		<div style="background-color: white;margin-top: 10px;border: #dddddd 1px solid;" class="alert" >
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover  alert-warning">
+					<thead>
+				  	  <tr>
+				  		<th scope="col" width="14%"  class="text-center" nowrap="nowrap">鑿滃崟鍚嶇О</th>
+				  		<th scope="col" width="14%"  class="text-center" nowrap="nowrap">鏄惁鐖剁骇鑿滃崟</th>
+				  		<th scope="col" width="14%"  class="text-center" nowrap="nowrap">涓婄骇鑿滃崟</th>
+				  		<th scope="col" width="14%"  class="text-center" nowrap="nowrap">URL</th>
+				  		<th scope="col" width="8%"  class="text-center" nowrap="nowrap">瑙掕壊</th>
+				  		<th scope="col" width="8%"  class="text-center" nowrap="nowrap">鐘舵�</th>
+				  		<th scope="col" width="20%"  class="text-center" nowrap="nowrap">澶囨敞</th>
+				  		<th scope="col" width="8%"  class="text-center" nowrap="nowrap">鎿嶄綔</th>
+				  	  </tr>
+				  	</thead>
+				  	
+				  	<tbody id="daily_tbody">
+				  	
+					</tbody>
+				</table>
+				<div class="row">
+		            <div class="col-md-12">
+		                <div class=" pull-left" style="margin-top: 26px;">鍏辨湁璁板綍<span id="d_totalRecord">0</span>鏉�褰撳墠绗�span id="d_pageNo">1</span>椤� 鎬�span id="d_totalPage">1</span>椤�/div>
+		                <div class=" pull-right">
+		                    <ul id='d_paginationId'></ul>
+		                </div>
+		            </div>
+		        </div>
+			</div>
+		</div>
+	</div>
+    <#include "../footer.html">
+</body>
+</html>
+</@compress>
