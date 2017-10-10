@@ -79,6 +79,7 @@
                 /config.js = anon
                 /login.html = anon
                 /query_bank.html = anon
+                /alipay_web_return.do = anon
                 /checkcode.do = anon
                 /user_active.html = anon
                 /news_index_list.do = anon

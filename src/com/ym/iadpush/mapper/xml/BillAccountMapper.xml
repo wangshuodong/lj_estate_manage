@@ -334,9 +334,36 @@
 				AND b.payDate &lt;= #{endPaymentDate}
 			</if>
 		</if>
+		
+		<if test="bill_entry_id != null and bill_entry_id != '' ">
+			AND b.bill_entry_id = #{bill_entry_id}
+		</if>
+		
 		order by b.id desc
 
 		limit #{currPage},#{pageSize}
+	</select>
+	
+	<select>
+		SELECT
+			d. NAME departmentName, sum(b.bill_entry_amount),count(b.bill_entry_amount),b.payType
+		FROM
+			billAccount b
+		LEFT JOIN department d ON d.id = b.departmentId
+		WHERE b.departmentId =129
+		AND b.payStatus ='1'
+		GROUP BY b.payType;
+	</select>
+	
+	<select>
+		SELECT
+			d. NAME departmentName,b.cost_type,sum(b.bill_entry_amount)
+		FROM
+			billAccount b
+		LEFT JOIN department d ON d.id = b.departmentId
+		WHERE b.departmentId =156
+		AND b.payStatus ='1'
+		GROUP BY b.cost_type
 	</select>
 
 </mapper>

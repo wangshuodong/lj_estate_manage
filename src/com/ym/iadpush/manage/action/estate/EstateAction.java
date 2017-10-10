@@ -43,14 +43,17 @@ import com.alipay.api.response.AlipayEcoCplifeRoominfoQueryResponse;
 import com.alipay.api.response.AlipayEcoCplifeRoominfoUploadResponse;
 import com.ym.common.base.BaseAction;
 import com.ym.common.utils.DateUtils;
+import com.ym.iadpush.common.utils.PrintMessage;
 import com.ym.iadpush.manage.entity.BillAccount;
 import com.ym.iadpush.manage.entity.Building;
 import com.ym.iadpush.manage.entity.Housing;
 import com.ym.iadpush.manage.entity.Location;
+import com.ym.iadpush.manage.entity.PrintInfo;
 import com.ym.iadpush.manage.entity.Proprietor;
 import com.ym.iadpush.manage.entity.RoomInfo;
 import com.ym.iadpush.manage.entity.SysUsers;
 import com.ym.iadpush.manage.entity.common.CommonParm;
+import com.ym.iadpush.manage.services.print.PrintInfoService;
 import com.ym.iadpush.manage.services.stock.IStockService;
 
 import net.sf.json.JSONArray;
@@ -63,6 +66,8 @@ public class EstateAction extends BaseAction {
 
     @Autowired
     private IStockService stockServiceImpl;
+    @Autowired
+    private PrintInfoService printInfoService;
 
     @RequestMapping(value = "/queryBillAccountTemp.html", method = RequestMethod.GET)
     public Object queryBillAccountTemp(HttpServletRequest request, ModelMap model) {
@@ -1717,9 +1722,34 @@ public class EstateAction extends BaseAction {
                 //交易状态
                 String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"),"UTF-8");
                 if(trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS")){
-                    
+                    //BillAccount billAccount = stockServiceImpl.getMaxBill_entry_id(out_trade_no);
+                    Map<String, Object> paramMap = new HashMap<String, Object>();
+                    paramMap.put("bill_entry_id", out_trade_no);
+                    List<BillAccount> billAccounts = this.stockServiceImpl.getBillAccounts(paramMap);
+                    BillAccount billAccount = billAccounts.get(0);
+                    if (total_amount.equals(billAccount.getBill_entry_amount())) {
+                        PrintInfo info = printInfoService.selectBydepartmentId(billAccount.getDepartmentId());
+                        PrintMessage obj = new PrintMessage(info.getMachineCode(), info.getMsign());
+                        StringBuffer sb = new StringBuffer("");
+                        sb.append("<center>支付宝智慧小区</center>\r");
+                        sb.append("小区名称："+billAccount.getDepartmentName()+"\r");
+                        sb.append(billAccount.getRoomAddress() + "\r");
+                        sb.append("业主姓名："+billAccount.getProprietorName()+"\r");
+                        sb.append("付款时间："+billAccount.getPayDate()+"\r");
+                        sb.append("订单编号："+out_trade_no+"\r");
+                        sb.append("支付方式："+billAccount.getPayType()+"\r");
+                        sb.append("缴费金额："+total_amount+"\r");
+                        sb.append("缴费明细：\r");
+                        sb.append("<table><tr><td>类别</td><td>账期</td><td>金额</td></tr><tr><td>"+billAccount.getCost_type()+"</td><td>"+billAccount.getAcct_period()+"</td><td>"+total_amount+"</td></tr></table>\r");
+                        sb.append("<center><FB><FS>浙江中都物业有限公司</FS></FB></center>\r");
+                        sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
+                        sb.append("----------------------\r");
+                        sb.append("<center>交易小票</center>\r");
+                        obj.sendContent("");
+                    }
                 }
                 bizContent = "{\"econotify\":\"success\"}";
+                log.info("--------------wangshuodong:物业缴费小票打印成功-----------------------");
             }else {//验证失败
                 log.info("--------------wangshuodong:物业缴费异步通知验签失败-----------------------");
             }

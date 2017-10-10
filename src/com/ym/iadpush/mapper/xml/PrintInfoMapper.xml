@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ym.iadpush.manage.mapper.PrintInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.ym.iadpush.manage.entity.PrintInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="departmentId" property="departmentid" jdbcType="INTEGER" />
+    <result column="machine_code" property="machineCode" jdbcType="VARCHAR" />
+    <result column="msign" property="msign" jdbcType="VARCHAR" />
+    <result column="mobilephone" property="mobilephone" jdbcType="VARCHAR" />
+    <result column="printname" property="printname" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, departmentId, machine_code, msign, mobilephone, printname, status, createtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from printinfo
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from printinfo
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ym.iadpush.manage.entity.PrintInfo" >
+    insert into printinfo (id, departmentId, machine_code, 
+      msign, mobilephone, printname, 
+      status, createtime)
+    values (#{id,jdbcType=INTEGER}, #{departmentid,jdbcType=INTEGER}, #{machineCode,jdbcType=VARCHAR}, 
+      #{msign,jdbcType=VARCHAR}, #{mobilephone,jdbcType=VARCHAR}, #{printname,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ym.iadpush.manage.entity.PrintInfo" >
+    insert into printinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="departmentid != null" >
+        departmentId,
+      </if>
+      <if test="machineCode != null" >
+        machine_code,
+      </if>
+      <if test="msign != null" >
+        msign,
+      </if>
+      <if test="mobilephone != null" >
+        mobilephone,
+      </if>
+      <if test="printname != null" >
+        printname,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createtime != null" >
+        createtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="departmentid != null" >
+        #{departmentid,jdbcType=INTEGER},
+      </if>
+      <if test="machineCode != null" >
+        #{machineCode,jdbcType=VARCHAR},
+      </if>
+      <if test="msign != null" >
+        #{msign,jdbcType=VARCHAR},
+      </if>
+      <if test="mobilephone != null" >
+        #{mobilephone,jdbcType=VARCHAR},
+      </if>
+      <if test="printname != null" >
+        #{printname,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ym.iadpush.manage.entity.PrintInfo" >
+    update printinfo
+    <set >
+      <if test="departmentid != null" >
+        departmentId = #{departmentid,jdbcType=INTEGER},
+      </if>
+      <if test="machineCode != null" >
+        machine_code = #{machineCode,jdbcType=VARCHAR},
+      </if>
+      <if test="msign != null" >
+        msign = #{msign,jdbcType=VARCHAR},
+      </if>
+      <if test="mobilephone != null" >
+        mobilephone = #{mobilephone,jdbcType=VARCHAR},
+      </if>
+      <if test="printname != null" >
+        printname = #{printname,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ym.iadpush.manage.entity.PrintInfo" >
+    update printinfo
+    set departmentId = #{departmentid,jdbcType=INTEGER},
+      machine_code = #{machineCode,jdbcType=VARCHAR},
+      msign = #{msign,jdbcType=VARCHAR},
+      mobilephone = #{mobilephone,jdbcType=VARCHAR},
+      printname = #{printname,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      createtime = #{createtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>    
+  
+  <select id="selectBydepartmentId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select * from printinfo where departmentId = #{departmentId}
+  </select>
+  
+  <select id="selectBystatus" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select * from printinfo where status = #{status}
+  </select>
+</mapper>
