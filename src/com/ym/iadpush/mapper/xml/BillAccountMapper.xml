@@ -372,5 +372,19 @@
 		AND b.payStatus ='1'
 		GROUP BY b.cost_type
 	</select>
+	
+	<select id="get">
+		SELECT
+			count(1),
+			sum(b.bill_entry_amount),
+			b.departmentId
+		FROM
+			billaccount b,
+			department d
+		WHERE
+			b.departmentId = d.id
+		AND d.parentId = 58
+		AND b.payDate =
+	</select>
 
 </mapper>

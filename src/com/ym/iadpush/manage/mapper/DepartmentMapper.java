@@ -28,4 +28,6 @@ public interface DepartmentMapper {
     int delById(@Param("id") int id);
 
     Department selectMaxByParentCode(@Param("code") String code);
+    
+    int selectCounthouse(Integer parentId);
 }

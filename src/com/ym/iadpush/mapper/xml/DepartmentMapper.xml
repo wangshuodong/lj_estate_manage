@@ -109,4 +109,9 @@
 		department where code like ""#{code}"%" and code!=#{code} order by
 		code desc limit 0,1
 	</select>
+	
+	<select id="selectCounthouse" parameterType="int" resultType="int">
+		select count(*) from department d where d.parentId = #{parentId};
+	</select>
+	
 </mapper>
