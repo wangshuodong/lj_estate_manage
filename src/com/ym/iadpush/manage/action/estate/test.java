@@ -113,7 +113,7 @@ public class test {
         return response.getRoomInfo();
     }
 
-    public void quyerBillAccount() throws AlipayApiException {
+    public JSONObject quyerBillAccount() throws AlipayApiException {
         test test = new test();
 
         CommonParm commonParm = new CommonParm();
@@ -121,13 +121,17 @@ public class test {
         String app_id = commonParm.getApp_id();
         String private_key = commonParm.getPrivate_key();
         String alipay_public_key = commonParm.getAlipay_public_key();
+        
+        System.out.println(app_id);
+        System.out.println(private_key);
+        System.out.println(alipay_public_key);
 
         String serverUrl = commonParm.getServerUrl();
         String format = commonParm.getFormat();
         String charset = commonParm.getCharset();
         String sign_type = commonParm.getSign_type();
-        String token = "201706BBb518ec56f22444fa9d0dacf960988D53";
-        String community_id = "ALBFPLEUB1304";
+        String token = "201709BBdb06c71a5bd0432193e9a992ac3f7X20";
+        String community_id = "A2UGDIPJI3301";
 
         DefaultAlipayClient alipayClient = new DefaultAlipayClient(serverUrl, app_id, private_key, format, charset,
                 alipay_public_key, sign_type);
@@ -135,14 +139,16 @@ public class test {
         JSONObject bizContent = new JSONObject();
         bizContent.put("community_id", community_id);
         bizContent.put("bill_status", "WAIT_PAYMENT");
+        bizContent.put("cost_type", "物业管理费");
 
         AlipayEcoCplifeBillBatchqueryRequest billBatchUploadRequest = new AlipayEcoCplifeBillBatchqueryRequest();
         billBatchUploadRequest.setBizContent(bizContent.toString());
         billBatchUploadRequest.putOtherTextParam("app_auth_token", token);
 
         AlipayEcoCplifeBillBatchqueryResponse response = alipayClient.execute(billBatchUploadRequest);
-
         System.out.println(response.getBody());
+        JSONObject obj = JSONObject.fromObject(response.getBody());
+        return obj;
 
     }
 
@@ -160,8 +166,8 @@ public class test {
         String charset = commonParm.getCharset();
         String sign_type = commonParm.getSign_type();
 
-        String token = "201706BBb518ec56f22444fa9d0dacf960988D53";
-        String community_id = "ALBFPLEUB1304";
+        String token = "201709BBdb06c71a5bd0432193e9a992ac3f7X20";
+        String community_id = "A2UGDIPJI3301";
 
         DefaultAlipayClient alipayClient = new DefaultAlipayClient(serverUrl, app_id, private_key, format, charset,
                 alipay_public_key, sign_type);
@@ -233,15 +239,17 @@ public class test {
 
     public static void main(String args[]) throws AlipayApiException {
 
-        test test = new test();
-        test.faceToFacePay("0.01", "287055853787821550"
-                + "");
+        //test test = new test();
+        //test.faceToFacePay("0.01", "287055853787821550" + "");
         // List<CplifeRoomDetail> list = test.quyerRoomInfo();
         // for(CplifeRoomDetail tmp:list){
         // test.deleteRoomInfo(tmp.getOutRoomId());
         //
         // }
-        // test.quyerBillAccount();
+        //JSONObject obj = test.quyerBillAccount();
+        //obj = obj.getJSONObject("alipay_eco_cplife_bill_batchquery_response");
+        //JSONArray array = obj.getJSONArray("bill_result_set");
+        System.out.println(new Date());
         // test.deleteBillAccountById("201707050000006");
 
     }

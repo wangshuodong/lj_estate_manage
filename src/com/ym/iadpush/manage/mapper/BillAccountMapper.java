@@ -43,5 +43,9 @@ public interface BillAccountMapper {
     int getBillAccountsCount(Map<String, Object> paramMap);
 
     BillAccountDataStatement getBillAccountCollect(Map<String, Object> paramMap);
+    
+    List<BillAccount> getPrintOne(Map<String, Object> paramMap);
+    
+    List<BillAccount> getPrintMore(Map<String, Object> paramMap);
 
 }

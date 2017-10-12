@@ -344,24 +344,31 @@
 		limit #{currPage},#{pageSize}
 	</select>
 	
-	<select>
+	<select id="getPrintOne" resultMap="BaseResultMap" parameterType="map">
 		SELECT
-			d. NAME departmentName, sum(b.bill_entry_amount),count(b.bill_entry_amount),b.payType
+			d.NAME departmentName, 
+			sum(b.bill_entry_amount) as sumAmount,
+			count(b.bill_entry_amount) as countNum,
+			b.payType
 		FROM
 			billAccount b
 		LEFT JOIN department d ON d.id = b.departmentId
-		WHERE b.departmentId =129
+		WHERE b.departmentId = #{departmentId}
+		AND b.payDate = #{payDate}
 		AND b.payStatus ='1'
 		GROUP BY b.payType;
 	</select>
 	
-	<select>
+	<select id="getPrintMore" resultMap="BaseResultMap" parameterType="map">
 		SELECT
-			d. NAME departmentName,b.cost_type,sum(b.bill_entry_amount)
+			d.NAME departmentName,
+			b.cost_type,
+			sum(b.bill_entry_amount) as sumAmount
 		FROM
 			billAccount b
 		LEFT JOIN department d ON d.id = b.departmentId
-		WHERE b.departmentId =156
+		WHERE b.departmentId = #{departmentId}
+		AND b.payDate = #{payDate}
 		AND b.payStatus ='1'
 		GROUP BY b.cost_type
 	</select>

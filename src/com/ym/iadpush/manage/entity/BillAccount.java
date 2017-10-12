@@ -37,6 +37,10 @@ public class BillAccount {
     private int deleteStatus = 0;
     private int housingId;
     private String accpetMoney;
+    
+    private double sumAmount;
+    private int countNum;
+    
     public String getAccpetMoney() {
         return accpetMoney;
     }
@@ -235,6 +239,22 @@ public class BillAccount {
 
     public void setCreateUid(int createUid) {
         this.createUid = createUid;
+    }
+
+    public double getSumAmount() {
+        return sumAmount;
+    }
+
+    public void setSumAmount(double sumAmount) {
+        this.sumAmount = sumAmount;
+    }
+
+    public int getCountNum() {
+        return countNum;
+    }
+
+    public void setCountNum(int countNum) {
+        this.countNum = countNum;
     }
 
 }
