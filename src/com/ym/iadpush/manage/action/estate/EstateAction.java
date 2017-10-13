@@ -1745,7 +1745,7 @@ public class EstateAction extends BaseAction {
                         sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
                         sb.append("----------------------\r");
                         sb.append("<center>交易小票</center>\r");
-                        obj.sendContent("");
+                        obj.sendContent(sb.toString());
                     }
                 }
                 bizContent = "{\"econotify\":\"success\"}";
