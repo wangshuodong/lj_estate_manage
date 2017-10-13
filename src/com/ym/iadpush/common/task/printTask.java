@@ -18,8 +18,10 @@ import org.springframework.stereotype.Component;
 
 import com.ym.iadpush.common.utils.PrintMessage;
 import com.ym.iadpush.manage.entity.BillAccount;
+import com.ym.iadpush.manage.entity.Department;
 import com.ym.iadpush.manage.entity.PrintInfo;
 import com.ym.iadpush.manage.mapper.BillAccountMapper;
+import com.ym.iadpush.manage.mapper.DepartmentMapper;
 import com.ym.iadpush.manage.services.print.PrintInfoService;
 
 /**
@@ -36,6 +38,8 @@ public class printTask {
     private BillAccountMapper billAccountMapper;
     @Autowired
     private PrintInfoService printInfoService;
+    @Autowired
+    private DepartmentMapper departmentMapper;
     
     //每天晚上11点50执行
     @Scheduled(cron = "0 50 23 * * ?")
@@ -91,28 +95,42 @@ public class printTask {
         List<PrintInfo> list = printInfoService.selectBystatus(1);
         for (PrintInfo info : list) {
             PrintMessage printMessage = new PrintMessage(info.getMachineCode(), info.getMsign());
+            List<Department> list1 = departmentMapper.selectCounthouse(info.getDepartmentid());
             Map<String, Object> paramMap = new HashMap<String, Object>();
             paramMap.put("departmentId", info.getDepartmentid());
             paramMap.put("payDate", sdf.parse(date));
-            List<BillAccount> list1 = billAccountMapper.getPrintOne(paramMap);
-            List<BillAccount> list2 = billAccountMapper.getPrintMore(paramMap);
-            if (list1 != null && list1.size() > 0) {
+            BillAccount bill1 = billAccountMapper.getPrintTotal1(paramMap);
+            List<BillAccount> list2 = billAccountMapper.getPrintTotal2(paramMap);
+            if (bill1 != null && bill1.getCountNum() > 0) {
                 StringBuffer sb = new StringBuffer("");
                 sb.append("<center>支付宝智慧小区</center>\r");
-                sb.append("小区名称："+list1.get(0).getDepartmentName()+"\r");
-                sb.append("结算时间："+date+"\r");
-                sb.append("缴费明细：\r");
-                sb.append("<table><tr><td>户数</td><td>支付方式</td><td>支付金额</td></tr>");
-                for (BillAccount billAccount : list1) {
-                    sb.append("<tr><td>"+billAccount.getCountNum()+"</td><td>"+billAccount.getPayType()+"</td><td>"+billAccount.getSumAmount()+"</td></tr>");
+                sb.append("汇总时间："+date+"\r");
+                sb.append("----------------------\r");
+                sb.append("小区数量："+list1.size()+"\r");
+                sb.append("交易户数："+bill1.getCountNum()+"\r");
+                sb.append("总额："+bill1.getSumAmount()+"\r");
+                for (BillAccount bill : list2) {
+                    sb.append(bill.getPayType() + "："+bill.getSumAmount()+"\r");
                 }
-                sb.append("</table>\r");
+                sb.append("----------------------\r");
+                for (Department department : list1) {
+                    int temp1 = 0;
+                    double temp2 = 0.0;
+                    Map<String, Object> paramMap1 = new HashMap<String, Object>();
+                    paramMap.put("departmentId", info.getDepartmentid());
+                    paramMap.put("payDate", sdf.parse(date));
+                    List<BillAccount> list3 = billAccountMapper.getPrintOne(paramMap1);
+                    sb.append("小区名称："+department.getName()+"\r");
+                    for (BillAccount bill : list3) {
+                        temp1 += bill.getCountNum();
+                        temp2 += bill.getSumAmount();
+                        sb.append(bill.getPayType() + "："+bill.getSumAmount()+"\r");
+                    }
+                    sb.append("交易户数："+temp1+"\r");
+                    sb.append("总额："+temp2+"\r");
+                    sb.append("----------------------\r");
+                }
                 
-                sb.append("<table><tr><td>费用类型</td><td>支付金额</td></tr>");
-                for (BillAccount billAccount : list2) {
-                    sb.append("<td>"+billAccount.getCost_type()+"</td><td>"+billAccount.getSumAmount()+"</td></tr>");
-                }
-                sb.append("</table>\r");
                 sb.append("<center><FB><FS>浙江中都物业有限公司</FS></FB></center>\r");
                 sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
                 sb.append("----------------------\r");

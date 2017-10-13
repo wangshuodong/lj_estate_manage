@@ -354,8 +354,8 @@
 			billAccount b
 		LEFT JOIN department d ON d.id = b.departmentId
 		WHERE b.departmentId = #{departmentId}
-		AND b.payDate = #{payDate}
-		AND b.payStatus ='1'
+			AND b.payDate = #{payDate}
+			AND b.payStatus ='1'
 		GROUP BY b.payType;
 	</select>
 	
@@ -368,23 +368,37 @@
 			billAccount b
 		LEFT JOIN department d ON d.id = b.departmentId
 		WHERE b.departmentId = #{departmentId}
-		AND b.payDate = #{payDate}
-		AND b.payStatus ='1'
+			AND b.payDate = #{payDate}
+			AND b.payStatus ='1'
 		GROUP BY b.cost_type
 	</select>
 	
-	<select id="get">
+	<select id="getPrintTotal1" resultMap="BaseResultMap" parameterType="map">
 		SELECT
-			count(1),
-			sum(b.bill_entry_amount),
+			count(1) as countNum,
+			sum(b.bill_entry_amount) as sumAmount,
 			b.departmentId
 		FROM
 			billaccount b,
 			department d
 		WHERE
 			b.departmentId = d.id
-		AND d.parentId = 58
-		AND b.payDate =
+			AND d.parentId = #{parentId}
+			AND b.payDate = #{payDate}
+	</select>
+	
+	<select id="getPrintTotal2" resultMap="BaseResultMap" parameterType="map">
+		SELECT
+			sum(b.bill_entry_amount) as sumAmount,
+			b.payType
+		FROM
+			billaccount b,
+			department d
+		WHERE
+			b.departmentId = d.id
+			AND d.parentId = #{parentId}
+			AND b.payDate = #{payDate}
+		GROUP BY b.payType;
 	</select>
 
 </mapper>

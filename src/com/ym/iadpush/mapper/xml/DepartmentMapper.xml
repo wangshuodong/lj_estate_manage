@@ -110,8 +110,8 @@
 		code desc limit 0,1
 	</select>
 	
-	<select id="selectCounthouse" parameterType="int" resultType="int">
-		select count(*) from department d where d.parentId = #{parentId};
+	<select id="selectCounthouse" parameterType="int" resultType="com.ym.iadpush.manage.entity.Department">
+		select * from department d where d.parentId = #{parentId};
 	</select>
 	
 </mapper>

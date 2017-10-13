@@ -29,5 +29,5 @@ public interface DepartmentMapper {
 
     Department selectMaxByParentCode(@Param("code") String code);
     
-    int selectCounthouse(Integer parentId);
+    List<Department> selectCounthouse(Integer parentId);
 }
