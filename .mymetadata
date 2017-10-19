@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="lj_estate_manage"
+  id="myeclipse.1406876079679"
+  context-root="/lj_estate_manage"
+  j2ee-spec="5.0"
+  archive="lj_estate_manage.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

@@ -52,7 +52,7 @@ public class CommonParm {
 
     private String format = "json";
     private String charset = "GBK";
-    private String sign_type = "RSA2";
+    private String sign_type = "RSA";
     private String token = "";
     public CommonParm(){
         InputStream in = null;
