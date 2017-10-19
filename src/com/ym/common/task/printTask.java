@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ym.iadpush.common.task;
+package com.ym.common.task;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,7 +42,7 @@ public class printTask {
     private DepartmentMapper departmentMapper;
     
     //每天晚上11点50执行
-    @Scheduled(cron = "0 50 23 * * ?")
+    @Scheduled(cron = "0 50 23 * * ?") 
     public void printxiaoqu() throws ParseException {
         log.info("-----------wangshuodong:执行每个小区汇总打印------------");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -66,17 +66,17 @@ public class printTask {
                 }
                 sb.append("交易总额："+totalAmount+"\r");
                 sb.append("缴费明细：\r");
-                sb.append("<table><tr><td>户数</td><td>支付方式</td><td>支付金额</td></tr>");
+                sb.append("<table><tr><td>户数</td><td>支付方式</td><td>金额</td></tr>");
                 for (BillAccount billAccount : list1) {
                     sb.append("<tr><td>"+billAccount.getCountNum()+"</td><td>"+billAccount.getPayType()+"</td><td>"+billAccount.getSumAmount()+"</td></tr>");
                 }
-                sb.append("</table>\r");
-                
-                sb.append("<table><tr><td>费用类型</td><td>支付金额</td></tr>");
+                sb.append("</table>");
+                sb.append("----------------------\r");
+                sb.append("<table><tr><td>费用类型</td><td>金额</td></tr>");
                 for (BillAccount billAccount : list2) {
                     sb.append("<td>"+billAccount.getCost_type()+"</td><td>"+billAccount.getSumAmount()+"</td></tr>");
                 }
-                sb.append("</table>\r");
+                sb.append("</table>");
                 sb.append("<center><FB><FS>浙江中都物业有限公司</FS></FB></center>\r");
                 sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
                 sb.append("----------------------\r");
@@ -97,7 +97,7 @@ public class printTask {
             PrintMessage printMessage = new PrintMessage(info.getMachineCode(), info.getMsign());
             List<Department> list1 = departmentMapper.selectCounthouse(info.getDepartmentid());
             Map<String, Object> paramMap = new HashMap<String, Object>();
-            paramMap.put("departmentId", info.getDepartmentid());
+            paramMap.put("parentId", info.getDepartmentid());
             paramMap.put("payDate", sdf.parse(date));
             BillAccount bill1 = billAccountMapper.getPrintTotal1(paramMap);
             List<BillAccount> list2 = billAccountMapper.getPrintTotal2(paramMap);
@@ -117,8 +117,8 @@ public class printTask {
                     int temp1 = 0;
                     double temp2 = 0.0;
                     Map<String, Object> paramMap1 = new HashMap<String, Object>();
-                    paramMap.put("departmentId", info.getDepartmentid());
-                    paramMap.put("payDate", sdf.parse(date));
+                    paramMap1.put("departmentId", department.getId());
+                    paramMap1.put("payDate", sdf.parse(date));
                     List<BillAccount> list3 = billAccountMapper.getPrintOne(paramMap1);
                     sb.append("小区名称："+department.getName()+"\r");
                     for (BillAccount bill : list3) {

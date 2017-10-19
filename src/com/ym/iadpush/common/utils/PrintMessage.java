@@ -219,7 +219,7 @@ public class PrintMessage {
         sb.append("支付方式：支付宝\r");
         sb.append("缴费金额：500.00\r");
         sb.append("缴费明细：\r");
-        sb.append("<table><tr><td>类别</td><td>账期</td><td>金额</td></tr><tr><td>物业费</td><td>201706</td><td>500.00</td></tr></table>\r");
+        sb.append("<center><table><tr><td>类别</td><td>账期</td><td>金额</td></tr><tr><td>物业费</td><td>201706</td><td>500.00</td></tr></table></center>");
         sb.append("<center><FB><FS>浙江中都物业有限公司</FS></FB></center>\r");
         sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
         sb.append("----------------------\r");
