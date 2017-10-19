@@ -1718,8 +1718,7 @@ public class EstateAction extends BaseAction {
             if(checkResult) {//验证成功
                 //商户订单号
                 String out_trade_no = new String(request.getParameter("det_list").getBytes("ISO-8859-1"),"UTF-8");
-                System.out.println("huidiaodingdanhao======" + out_trade_no);
-                log.info("huidiaodingdanhao======" + out_trade_no);
+                log.info("支付宝回调订单号======" + out_trade_no);
                 //本次交易支付的订单金额
                 String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"),"UTF-8");
                 //交易状态
