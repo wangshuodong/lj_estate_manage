@@ -7,6 +7,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.ui.ModelMap;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -14,19 +18,31 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.CplifeRoomDetail;
+import com.alipay.api.request.AlipayEcoCplifeBasicserviceInitializeRequest;
+import com.alipay.api.request.AlipayEcoCplifeBasicserviceModifyRequest;
 import com.alipay.api.request.AlipayEcoCplifeBillBatchqueryRequest;
 import com.alipay.api.request.AlipayEcoCplifeBillDeleteRequest;
+import com.alipay.api.request.AlipayEcoCplifeCommunityDetailsQueryRequest;
 import com.alipay.api.request.AlipayEcoCplifeRoominfoDeleteRequest;
 import com.alipay.api.request.AlipayEcoCplifeRoominfoQueryRequest;
 import com.alipay.api.request.AlipayTradePayRequest;
+import com.alipay.api.response.AlipayEcoCplifeBasicserviceInitializeResponse;
+import com.alipay.api.response.AlipayEcoCplifeBasicserviceModifyResponse;
 import com.alipay.api.response.AlipayEcoCplifeBillBatchqueryResponse;
 import com.alipay.api.response.AlipayEcoCplifeBillDeleteResponse;
+import com.alipay.api.response.AlipayEcoCplifeCommunityDetailsQueryResponse;
 import com.alipay.api.response.AlipayEcoCplifeRoominfoDeleteResponse;
 import com.alipay.api.response.AlipayEcoCplifeRoominfoQueryResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
+import com.ym.iadpush.manage.entity.Housing;
 import com.ym.iadpush.manage.entity.common.CommonParm;
 
 public class test {
+    /**
+     * 删除物业小区房屋信息
+     * @Author lixingbiao 2017年10月16日 上午9:57:24
+     * @param out_room_id
+     */
     public void deleteRoomInfo(String out_room_id) {
 
         CommonParm commonParm = new CommonParm();
@@ -236,10 +252,135 @@ public class test {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * 初始化小区物业基础服务
+     * @Author lixingbiao 2017年10月16日 上午10:23:47
+     * @param token
+     * @param community_id
+     */
+    public void BasicserviceInitialize(String token, String community_id) {
+
+        CommonParm commonParm = new CommonParm();
+
+        String app_id = commonParm.getApp_id();
+        String private_key = commonParm.getPrivate_key();
+        String alipay_public_key = commonParm.getAlipay_public_key();
+
+        String serverUrl = commonParm.getServerUrl();
+        String format = commonParm.getFormat();
+        String charset = commonParm.getCharset();
+        String sign_type = commonParm.getSign_type();
+
+        AlipayClient alipayClient = new DefaultAlipayClient(serverUrl, app_id, private_key, format, charset,
+                alipay_public_key, sign_type);
+
+        JSONObject bizContent = new JSONObject();
+        bizContent.put("community_id", community_id);
+        bizContent.put("service_type", "PROPERTY_PAY_BILL_MODE");
+        bizContent.put("external_invoke_address", "https://www.alipayjf.com/aaalipay_web_return.do");
+        bizContent.put("status", "ONLINE");
+
+        AlipayEcoCplifeBasicserviceInitializeRequest initializeRequest = new AlipayEcoCplifeBasicserviceInitializeRequest();
+        initializeRequest.putOtherTextParam("app_auth_token", token);
+        initializeRequest.setBizContent(bizContent.toString());
+
+        AlipayEcoCplifeBasicserviceInitializeResponse response = null;
+        try {
+            response = (AlipayEcoCplifeBasicserviceInitializeResponse) alipayClient.execute(initializeRequest);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(response.getBody());
+    }
+
+    public void BasicserviceModify(String token, String community_id) throws AlipayApiException {
+        CommonParm commonParm = new CommonParm();
+
+        String app_id = commonParm.getApp_id();
+        String private_key = commonParm.getPrivate_key();
+        String alipay_public_key = commonParm.getAlipay_public_key();
+
+        String serverUrl = commonParm.getServerUrl();
+        String format = commonParm.getFormat();
+        String charset = commonParm.getCharset();
+        String sign_type = commonParm.getSign_type();
+
+        AlipayClient alipayClient = new DefaultAlipayClient(serverUrl, app_id, private_key, format, charset,
+                alipay_public_key, sign_type);
+
+        JSONObject bizContent = new JSONObject();
+        bizContent.put("community_id", community_id);
+        bizContent.put("service_type", "PROPERTY_PAY_BILL_MODE");
+        bizContent.put("external_invoke_address", "https://www.alipayjf.com/alipay_web_return.do");
+        bizContent.put("status", "ONLINE");
+
+        AlipayEcoCplifeBasicserviceModifyRequest initializeRequest = new AlipayEcoCplifeBasicserviceModifyRequest();
+        initializeRequest.putOtherTextParam("app_auth_token", token);
+        initializeRequest.setBizContent(bizContent.toString());
+
+        AlipayEcoCplifeBasicserviceModifyResponse response = null;
+        try {
+            response = (AlipayEcoCplifeBasicserviceModifyResponse) alipayClient.execute(initializeRequest);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(response.getBody());
+    }
+    
+    /**
+     * 查询单个物业小区信息
+     * @Author lixingbiao 2017年10月16日 上午10:15:13
+     * @param request
+     * @param model
+     * @return
+     */
+    public void communityDetailsQuery(String token, String community_id) {
+        //String id = request.getParameter("id");
+        //Housing housing = this.stockServiceImpl.getHousingById(Integer.valueOf(Integer.parseInt(id)));
+
+        CommonParm commonParm = new CommonParm();
+
+        String app_id = commonParm.getApp_id();
+        String private_key = commonParm.getPrivate_key();
+        String alipay_public_key = commonParm.getAlipay_public_key();
+
+        String serverUrl = commonParm.getServerUrl();
+        String format = commonParm.getFormat();
+        String charset = commonParm.getCharset();
+        String sign_type = commonParm.getSign_type();
+
+        AlipayClient alipayClient = new DefaultAlipayClient(serverUrl, app_id, private_key, format, charset,
+                alipay_public_key, sign_type);
+
+        JSONObject bizContent = new JSONObject();
+        bizContent.put("community_id", community_id);
+
+        AlipayEcoCplifeCommunityDetailsQueryRequest requestAlipayEcoCplifeCommunityCreateRequest = new AlipayEcoCplifeCommunityDetailsQueryRequest();
+        requestAlipayEcoCplifeCommunityCreateRequest.putOtherTextParam("app_auth_token", token);
+        requestAlipayEcoCplifeCommunityCreateRequest.setBizContent(bizContent.toString());
+
+        AlipayEcoCplifeCommunityDetailsQueryResponse response = null;
+        try {
+            response = (AlipayEcoCplifeCommunityDetailsQueryResponse) alipayClient
+                    .execute(requestAlipayEcoCplifeCommunityCreateRequest);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(response.getBody());
+
+    }
 
     public static void main(String args[]) throws AlipayApiException {
 
-        //test test = new test();
+        test test = new test();
+        //test.BasicserviceModify("201708BB85188ec4dcbc4be69df6ef6b5fa2fX42", "ABZ1CMW4Q5001");
+        //test.BasicserviceInitialize("201708BB85188ec4dcbc4be69df6ef6b5fa2fX42", "ABZ1CMW4Q5001");
+        test.communityDetailsQuery("201709BBdb06c71a5bd0432193e9a992ac3f7X20", "AW09TS6823301");
+        
         //test.faceToFacePay("0.01", "287055853787821550" + "");
         // List<CplifeRoomDetail> list = test.quyerRoomInfo();
         // for(CplifeRoomDetail tmp:list){
@@ -249,7 +390,6 @@ public class test {
         //JSONObject obj = test.quyerBillAccount();
         //obj = obj.getJSONObject("alipay_eco_cplife_bill_batchquery_response");
         //JSONArray array = obj.getJSONArray("bill_result_set");
-        System.out.println(new Date());
         // test.deleteBillAccountById("201707050000006");
 
     }

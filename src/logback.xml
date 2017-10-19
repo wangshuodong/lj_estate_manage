@@ -1,36 +1,69 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration>
-    <!-- 控制台输出日志 -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{HH:mm:ss.SSS} |-%-5level &lt;%logger&gt; - %msg%n</pattern>
-        </encoder>
-    </appender>
-    <!-- 文件输出日志 (文件大小策略进行文件输出，超过指定大小对文件备份) -->
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>../logs/base-project.log</File>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>../logs/base-project.log.%i.bak</FileNamePattern>
-            <MinIndex>1</MinIndex>
-            <MaxIndex>12</MaxIndex>
+<!-- 日志组件启动时，打印调试信息，并监控此文件变化，周期300秒 -->
+<configuration scan="true" scanPeriod="300 seconds" debug="false">
+    <!--针对jul的性能优化 -->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+    <!-- 配置文件，包括此文件内的所有变量的配置 -->
+    <property name="LOG_PATH" value="../logs"/>
+    <property name="APP_NAME" value="cpe"/>
+    <!-- contextName主要是为了区分在一个web容器下部署多个应用启用jmx时，不会出现混乱 -->
+    <contextName>${APP_NAME}</contextName>
+    <!-- ***************************************************************** -->
+    <!-- 配置输出到控制台，仅在开发测试时启用输出到控制台 ，下面的语句在window环境下生效，使用mac或者ubuntu的同学，请自己构造下 -->
+    <!-- ***************************************************************** -->
+    <if condition='property("os.name").toUpperCase().contains("WINDOWS") || property("os.name").toUpperCase().contains("MAC")'>
+        <then>
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{0}:%L- %msg%n</pattern>
+                </encoder>
+            </appender>
+            <root>
+                <appender-ref ref="STDOUT"/>
+            </root>
+        </then>
+    </if>
+    <!-- ***************************************************************** -->
+    <!-- info级别的日志appender -->
+    <!-- ***************************************************************** -->
+    <appender name="cpe-info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}-info-30dt.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-info-30dt.log.%d{yyyy-MM-dd}.%i
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1024MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>100MB</MaxFileSize>
-        </triggeringPolicy>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{HH:mm:ss.SSS} |-%-5level &lt;%logger&gt; - %msg%n</pattern>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{0}:%L- %msg%n</pattern>
         </encoder>
     </appender>
-    <logger name="com.ibatis" level="DEBUG" />
-    <logger name="org.mybatis" level="INFO" />
-    <logger name="net.sf.ehcache" level="INFO" />
-    <logger name="freemarker.cache" level="INFO" />
-    <logger name="org.apache.shiro" level="INFO" />
-    <logger name="org.springframework" level="INFO" />
-    <logger name="org.quartz.core.JobRunShell" level="INFO" />
-    <logger name="com.ym.common.freemarker.MVCFreeMarckerView" level="INFO" />
-    <logger name="com.ym.common.exception.MySimpleMappingExceptionResolver" level="ERROR" />
-    <root level="DEBUG">
-        <appender-ref ref="STDOUT" />
+    <!-- ***************************************************************** -->
+    <!-- error级别日志appender -->
+    <!-- ***************************************************************** -->
+    <appender name="cpe-err" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}-error-30dt.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-error-30dt.%d{yyyy-MM-dd}.%i
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1024MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{0}:%L- %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 根日志logger -->
+    <root level="INFO">
+        <appender-ref ref="cpe-err"/>
+        <appender-ref ref="cpe-info"/>
     </root>
+
 </configuration>

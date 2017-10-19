@@ -9,10 +9,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.sf.json.JSONObject;
 
 public class PrintMessage {
 
@@ -161,7 +166,9 @@ public class PrintMessage {
 				}
 
 				String sub = result.toString();
-				if (sub.equals("1")) {// 数据已经发送到客户端
+				JSONObject json = JSONObject.fromObject(sub);
+				System.out.println(json.get("state"));
+				if ("1".equals(json.get("state"))) {// 数据已经发送到客户端
 					System.out.println("打印成功");
 					return true;
 				} else {
@@ -199,6 +206,7 @@ public class PrintMessage {
 	
 	public static void main(String[] args) {
         // pmRequest();//查询打印机状态
+	    
 
         StringBuffer sb = new StringBuffer("");
         
@@ -216,11 +224,11 @@ public class PrintMessage {
         sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
         sb.append("----------------------\r");
         sb.append("<center>交易小票</center>\r");
-
+        
         System.out.println(sb.toString());
 
         try {
-            PrintMessage obj = new PrintMessage();
+            PrintMessage obj = new PrintMessage("4004540276", "cfji72jqwtf8");
             obj.sendContent(sb.toString());// 打印消息
 //           sendRequest(sb.toString());//打印消息
         } catch (Exception e) {

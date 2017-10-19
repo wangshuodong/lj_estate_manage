@@ -1455,6 +1455,7 @@ public class EstateAction extends BaseAction {
         JSONObject bizContent = new JSONObject();
         bizContent.put("community_id", housing.getCommunity_id());
         bizContent.put("service_type", "PROPERTY_PAY_BILL_MODE");
+        bizContent.put("external_invoke_address", "https://www.alipayjf.com/alipay_web_return.do");
         bizContent.put("status", "ONLINE");
 
         AlipayEcoCplifeBasicserviceModifyRequest initializeRequest = new AlipayEcoCplifeBasicserviceModifyRequest();
@@ -1517,7 +1518,7 @@ public class EstateAction extends BaseAction {
         JSONObject bizContent = new JSONObject();
         bizContent.put("community_id", housing.getCommunity_id());
         bizContent.put("service_type", "PROPERTY_PAY_BILL_MODE");
-        bizContent.put("external_invoke_address", "https://example.com/gateway.do");
+        bizContent.put("external_invoke_address", "https://www.alipayjf.com/alipay_web_return.do");
         bizContent.put("status", "ONLINE");
 
         AlipayEcoCplifeBasicserviceInitializeRequest initializeRequest = new AlipayEcoCplifeBasicserviceInitializeRequest();
@@ -1683,6 +1684,7 @@ public class EstateAction extends BaseAction {
     @RequestMapping("/alipay_web_return.do")
     public void alipay_web_return(HttpServletRequest request,HttpServletResponse response) {
         log.info("--------------wangshuodong:调用支付宝回调接口-----------------------");
+        boolean isprint = false;
         String bizContent = "";
         //获取支付宝POST过来反馈信息
         Map<String,String> params = new HashMap<String,String>();
@@ -1704,6 +1706,7 @@ public class EstateAction extends BaseAction {
         String private_key = commonParm.getPrivate_key();
         String charset = commonParm.getCharset();
         String sign_type = commonParm.getSign_type();
+        log.info(alipay_public_key);
         try {
             boolean checkResult = AlipaySignature.rsaCheckV2(params, alipay_public_key, charset, sign_type); //调用SDK验证签名
             /* 实际验证过程建议商户务必添加以下校验：
@@ -1714,9 +1717,7 @@ public class EstateAction extends BaseAction {
             */
             if(checkResult) {//验证成功
                 //商户订单号
-                String out_trade_no = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"),"UTF-8");
-                //支付宝交易号
-                String trade_no = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"),"UTF-8");
+                String out_trade_no = new String(request.getParameter("det_list").getBytes("ISO-8859-1"),"UTF-8");
                 //本次交易支付的订单金额
                 String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"),"UTF-8");
                 //交易状态
@@ -1725,6 +1726,8 @@ public class EstateAction extends BaseAction {
                     //BillAccount billAccount = stockServiceImpl.getMaxBill_entry_id(out_trade_no);
                     Map<String, Object> paramMap = new HashMap<String, Object>();
                     paramMap.put("bill_entry_id", out_trade_no);
+                    paramMap.put("currPage", Integer.valueOf(0));
+                    paramMap.put("pageSize", Integer.valueOf(10));
                     List<BillAccount> billAccounts = this.stockServiceImpl.getBillAccounts(paramMap);
                     BillAccount billAccount = billAccounts.get(0);
                     if (total_amount.equals(billAccount.getBill_entry_amount())) {
@@ -1745,11 +1748,13 @@ public class EstateAction extends BaseAction {
                         sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
                         sb.append("----------------------\r");
                         sb.append("<center>交易小票</center>\r");
-                        obj.sendContent(sb.toString());
+                        isprint = obj.sendContent(sb.toString());
                     }
                 }
                 bizContent = "{\"econotify\":\"success\"}";
-                log.info("--------------wangshuodong:物业缴费小票打印成功-----------------------");
+                if (isprint) {
+                    log.info("--------------wangshuodong:物业缴费小票打印成功-----------------------");
+                }
             }else {//验证失败
                 log.info("--------------wangshuodong:物业缴费异步通知验签失败-----------------------");
             }
@@ -1757,6 +1762,7 @@ public class EstateAction extends BaseAction {
             String result = AlipaySignature.encryptAndSign(bizContent, alipay_public_key, private_key, charset, false, true, sign_type);
             response.getOutputStream().print(result);
         }catch(Exception e) {
+            log.info(e);
             e.printStackTrace();
         }
     }
