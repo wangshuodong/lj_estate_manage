@@ -46,6 +46,7 @@ import com.ym.common.utils.DateUtils;
 import com.ym.iadpush.common.utils.PrintMessage;
 import com.ym.iadpush.manage.entity.BillAccount;
 import com.ym.iadpush.manage.entity.Building;
+import com.ym.iadpush.manage.entity.Department;
 import com.ym.iadpush.manage.entity.Housing;
 import com.ym.iadpush.manage.entity.Location;
 import com.ym.iadpush.manage.entity.PrintInfo;
@@ -53,6 +54,7 @@ import com.ym.iadpush.manage.entity.Proprietor;
 import com.ym.iadpush.manage.entity.RoomInfo;
 import com.ym.iadpush.manage.entity.SysUsers;
 import com.ym.iadpush.manage.entity.common.CommonParm;
+import com.ym.iadpush.manage.services.department.IDepartmentService;
 import com.ym.iadpush.manage.services.print.PrintInfoService;
 import com.ym.iadpush.manage.services.stock.IStockService;
 
@@ -68,6 +70,8 @@ public class EstateAction extends BaseAction {
     private IStockService stockServiceImpl;
     @Autowired
     private PrintInfoService printInfoService;
+    @Autowired
+    private IDepartmentService departmentService;
 
     @RequestMapping(value = "/queryBillAccountTemp.html", method = RequestMethod.GET)
     public Object queryBillAccountTemp(HttpServletRequest request, ModelMap model) {
@@ -1734,6 +1738,11 @@ public class EstateAction extends BaseAction {
                         BillAccount billAccount = billAccounts.get(0);
                         if (Double.parseDouble(total_amount) == billAccount.getBill_entry_amount()) {
                             PrintInfo info = printInfoService.selectBydepartmentId(billAccount.getDepartmentId());
+                            Map<String, Object> param = new HashMap<String, Object>();
+                            param.put("departmentId", Integer.valueOf(billAccount.getDepartmentId()));
+                            Department department = departmentService.getDepartmentById(param);
+                            param.put("departmentId", Integer.valueOf(department.getId()));
+                            department = departmentService.getDepartmentById(param);
                             PrintMessage obj = new PrintMessage(info.getMachineCode(), info.getMsign());
                             StringBuffer sb = new StringBuffer("");
                             sb.append("<center>支付宝智慧小区</center>\r");
@@ -1746,7 +1755,7 @@ public class EstateAction extends BaseAction {
                             sb.append("缴费金额："+total_amount+"\r");
                             sb.append("缴费明细：\r");
                             sb.append("<table><tr><td>类别</td><td>账期</td><td>金额</td></tr><tr><td>"+billAccount.getCost_type()+"</td><td>"+billAccount.getAcct_period()+"</td><td>"+total_amount+"</td></tr></table>\r");
-                            sb.append("<center><FB><FS>浙江中都物业有限公司</FS></FB></center>\r");
+                            sb.append("<center><FB><FS>"+department.getName()+"</FS></FB></center>\r");
                             sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
                             sb.append("----------------------\r");
                             sb.append("<center>交易小票</center>\r");

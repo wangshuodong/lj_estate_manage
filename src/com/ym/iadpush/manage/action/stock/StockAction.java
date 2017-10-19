@@ -49,6 +49,7 @@ import com.ym.common.utils.JuheUtile;
 import com.ym.common.utils.QueryResult;
 import com.ym.iadpush.common.utils.ExcelRead;
 import com.ym.iadpush.common.utils.ExcelUtil;
+import com.ym.iadpush.common.utils.PrintMessage;
 import com.ym.iadpush.manage.entity.AdvancePaymentRecord;
 import com.ym.iadpush.manage.entity.BillAccount;
 import com.ym.iadpush.manage.entity.Building;
@@ -62,6 +63,7 @@ import com.ym.iadpush.manage.entity.FaceToFacePay;
 import com.ym.iadpush.manage.entity.Housing;
 import com.ym.iadpush.manage.entity.Location;
 import com.ym.iadpush.manage.entity.OutBill;
+import com.ym.iadpush.manage.entity.PrintInfo;
 import com.ym.iadpush.manage.entity.Product;
 import com.ym.iadpush.manage.entity.Proprietor;
 import com.ym.iadpush.manage.entity.RoomInfo;
@@ -74,6 +76,7 @@ import com.ym.iadpush.manage.services.balance.IBalanceService;
 import com.ym.iadpush.manage.services.companyinfo.ICompanyService;
 import com.ym.iadpush.manage.services.department.IDepartmentService;
 import com.ym.iadpush.manage.services.f2fPay.FaceToFacePayService;
+import com.ym.iadpush.manage.services.print.PrintInfoService;
 import com.ym.iadpush.manage.services.product.IProductService;
 import com.ym.iadpush.manage.services.stock.IStockService;
 import com.ym.iadpush.manage.services.warehouse.IWarehouseService;
@@ -100,9 +103,12 @@ public class StockAction extends BaseAction {
 
     private @Autowired
     FaceToFacePayService facePayService;
+    
+    @Autowired
+    private PrintInfoService printInfoService;
 
     private String packageName = "stock";
-
+    
     // 删除物业
     @ResponseBody
     @RequestMapping(value = "/deleteDepartment.html", method = RequestMethod.POST)
@@ -933,6 +939,30 @@ public class StockAction extends BaseAction {
 
         model.put("status", true);
         model.put("msg", "账单线下付款完成！");
+        
+        PrintInfo info = printInfoService.selectBydepartmentId(billAccount.getDepartmentId());
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("departmentId", Integer.valueOf(billAccount.getDepartmentId()));
+        Department department = departmentService.getDepartmentById(paramMap);
+        paramMap.put("departmentId", Integer.valueOf(department.getId()));
+        department = departmentService.getDepartmentById(paramMap);
+        PrintMessage obj = new PrintMessage(info.getMachineCode(), info.getMsign());
+        StringBuffer sb = new StringBuffer("");
+        sb.append("<center>支付宝智慧小区</center>\r");
+        sb.append("小区名称："+billAccount.getDepartmentName()+"\r");
+        sb.append(billAccount.getRoomAddress() + "\r");
+        sb.append("业主姓名："+billAccount.getProprietorName()+"\r");
+        sb.append("付款时间："+billAccount.getPayDate()+"\r");
+        sb.append("订单编号："+billAccount.getBill_entry_id()+"\r");
+        sb.append("支付方式："+billAccount.getPayType()+"\r");
+        sb.append("缴费金额："+billAccount.getBill_entry_amount()+"\r");
+        sb.append("缴费明细：\r");
+        sb.append("<table><tr><td>类别</td><td>账期</td><td>金额</td></tr><tr><td>"+billAccount.getCost_type()+"</td><td>"+billAccount.getAcct_period()+"</td><td>"+billAccount.getBill_entry_amount()+"</td></tr></table>\r");
+        sb.append("<center><FB><FS>"+department.getName()+"</FS></FB></center>\r");
+        sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
+        sb.append("----------------------\r");
+        sb.append("<center>交易小票</center>\r");
+        obj.sendContent(sb.toString());
 
         // 同步支付宝平台,下架此账单
         try {
