@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.ym.common.utils.DateUtils;
 import com.ym.iadpush.common.utils.PrintMessage;
 import com.ym.iadpush.manage.entity.BillAccount;
 import com.ym.iadpush.manage.entity.Department;
@@ -45,28 +46,34 @@ public class printTask {
     @Scheduled(cron = "0 50 23 * * ?") 
     public void printxiaoqu() throws ParseException {
         log.info("-----------wangshuodong:执行每个小区汇总打印------------");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String date = sdf.format(new Date());
+        String date = DateUtils.getDate();
         List<PrintInfo> list = printInfoService.selectBystatus(0);
         for (PrintInfo info : list) {
             PrintMessage printMessage = new PrintMessage(info.getMachineCode(), info.getMsign());
             Map<String, Object> paramMap = new HashMap<String, Object>();
             paramMap.put("departmentId", info.getDepartmentid());
-            paramMap.put("payDate", sdf.parse(date));
+            paramMap.put("payDate", date);
             List<BillAccount> list1 = billAccountMapper.getPrintOne(paramMap);
             List<BillAccount> list2 = billAccountMapper.getPrintMore(paramMap);
+            int userCount = billAccountMapper.getPrintOneCount(paramMap);
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("departmentId", Integer.valueOf(info.getDepartmentid()));
+            Department department = departmentMapper.getDepartmentById(param);
+            param.put("departmentId", Integer.valueOf(department.getId()));
+            department = departmentMapper.getDepartmentById(param);
             if (list1 != null && list1.size() > 0) {
                 StringBuffer sb = new StringBuffer("");
                 sb.append("<center>支付宝智慧小区</center>\r");
                 sb.append("小区名称："+list1.get(0).getDepartmentName()+"\r");
-                sb.append("结算时间："+date+"\r");
+                sb.append("汇总时间："+date+"\r");
                 double totalAmount = 0;
                 for (BillAccount billAccount : list1) {
                     totalAmount += billAccount.getSumAmount();
                 }
                 sb.append("交易总额："+totalAmount+"\r");
+                sb.append("户数："+userCount+"\r");
                 sb.append("缴费明细：\r");
-                sb.append("<table><tr><td>户数</td><td>支付方式</td><td>金额</td></tr>");
+                sb.append("<table><tr><td>交易笔数</td><td>支付方式</td><td>金额</td></tr>");
                 for (BillAccount billAccount : list1) {
                     sb.append("<tr><td>"+billAccount.getCountNum()+"</td><td>"+billAccount.getPayType()+"</td><td>"+billAccount.getSumAmount()+"</td></tr>");
                 }
@@ -77,8 +84,8 @@ public class printTask {
                     sb.append("<td>"+billAccount.getCost_type()+"</td><td>"+billAccount.getSumAmount()+"</td></tr>");
                 }
                 sb.append("</table>");
-                sb.append("<center><FB><FS>浙江中都物业有限公司</FS></FB></center>\r");
-                sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
+                sb.append("收款单位："+department.getName()+"\r");
+                sb.append("<center>技术支持：早早科技/0571-88683117/www.早早.com\r");
                 sb.append("----------------------\r");
                 sb.append("<center>交易小票</center>\r");
                 printMessage.sendContent(sb.toString());
@@ -95,6 +102,11 @@ public class printTask {
         List<PrintInfo> list = printInfoService.selectBystatus(1);
         for (PrintInfo info : list) {
             PrintMessage printMessage = new PrintMessage(info.getMachineCode(), info.getMsign());
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("departmentId", Integer.valueOf(info.getDepartmentid()));
+            Department departmentInfo = departmentMapper.getDepartmentById(param);
+            param.put("departmentId", Integer.valueOf(departmentInfo.getId()));
+            departmentInfo = departmentMapper.getDepartmentById(param);
             List<Department> list1 = departmentMapper.selectCounthouse(info.getDepartmentid());
             Map<String, Object> paramMap = new HashMap<String, Object>();
             paramMap.put("parentId", info.getDepartmentid());
@@ -131,8 +143,8 @@ public class printTask {
                     sb.append("----------------------\r");
                 }
                 
-                sb.append("<center><FB><FS>浙江中都物业有限公司</FS></FB></center>\r");
-                sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
+                sb.append("收款单位："+departmentInfo.getName()+"\r");
+                sb.append("<center>技术支持：早早科技/0571-88683117/www.早早.com</center>\r");
                 sb.append("----------------------\r");
                 sb.append("<center>交易小票</center>\r");
                 printMessage.sendContent(sb.toString());

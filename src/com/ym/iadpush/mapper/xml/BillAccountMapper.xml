@@ -118,7 +118,8 @@
 		payUid=#{billAccount.payUid,jdbcType=INTEGER},payType=#{billAccount.payType,jdbcType=VARCHAR},
 		payDate=#{billAccount.payDate,jdbcType=VARCHAR},bill_entry_amount=#{billAccount.bill_entry_amount,jdbcType=DOUBLE},
 		deleteStatus=#{billAccount.deleteStatus,jdbcType=INTEGER},release_day=#{billAccount.release_day,jdbcType=VARCHAR},
-		deadline=#{billAccount.deadline,jdbcType=VARCHAR},accpetMoney=#{billAccount.accpetMoney,jdbcType=VARCHAR}
+		deadline=#{billAccount.deadline,jdbcType=VARCHAR},accpetMoney=#{billAccount.accpetMoney,jdbcType=VARCHAR},
+		gmt_payment=#{billAccount.gmt_payment,jdbcType=VARCHAR},trade_no=#{billAccount.trade_no,jdbcType=VARCHAR}
 		where
 		bill_entry_id=#{bill_entry_id,jdbcType=VARCHAR}
 
@@ -358,6 +359,12 @@
 			AND b.payStatus ='1'
 		GROUP BY b.payType;
 	</select>
+	
+	<select id="getPrintOneCount" resultMap="int" parameterType="map">
+		select count(DISTINCT b.proprietorId) from billaccount b where b.departmentId=#{departmentId} and b.payDate = #{payDate} and b.payStatus =1;
+	</select>
+	
+	
 	
 	<select id="getPrintMore" resultMap="BaseResultMap" parameterType="map">
 		SELECT

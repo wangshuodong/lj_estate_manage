@@ -933,6 +933,7 @@ public class StockAction extends BaseAction {
         // billAccount.setPayDate(DateUtils.getDate());
         billAccount.setPayDate(payDate);
         billAccount.setPayStatus(1);
+        billAccount.setGmt_payment(DateUtils.getDatetime());
         billAccount.setAccpetMoney(StringUtils.isEmpty(accpetMoney) ? billAccount.getBill_entry_amount() + ""
                 : accpetMoney);
         stockServiceImpl.updateBillAccount(billAccount, billAccount.getBill_entry_id());
@@ -952,14 +953,14 @@ public class StockAction extends BaseAction {
         sb.append("小区名称："+billAccount.getDepartmentName()+"\r");
         sb.append(billAccount.getRoomAddress() + "\r");
         sb.append("业主姓名："+billAccount.getProprietorName()+"\r");
-        sb.append("付款时间："+billAccount.getPayDate()+"\r");
+        sb.append("付款时间："+billAccount.getGmt_payment()+"\r");
         sb.append("订单编号："+billAccount.getBill_entry_id()+"\r");
         sb.append("支付方式："+billAccount.getPayType()+"\r");
         sb.append("缴费金额："+billAccount.getBill_entry_amount()+"\r");
         sb.append("缴费明细：\r");
         sb.append("<table><tr><td>类别</td><td>账期</td><td>金额</td></tr><tr><td>"+billAccount.getCost_type()+"</td><td>"+billAccount.getAcct_period()+"</td><td>"+billAccount.getBill_entry_amount()+"</td></tr></table>\r");
-        sb.append("<center><FB><FS>"+department.getName()+"</FS></FB></center>\r");
-        sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
+        sb.append("收款单位："+department.getName()+"\r");
+        sb.append("<center>技术支持：早早科技/0571-88683117/www.早早.com</center>\r");
         sb.append("----------------------\r");
         sb.append("<center>交易小票</center>\r");
         obj.sendContent(sb.toString());

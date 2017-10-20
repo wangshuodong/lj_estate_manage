@@ -37,6 +37,8 @@ public class BillAccount {
     private int deleteStatus = 0;
     private int housingId;
     private String accpetMoney;
+    private String gmt_payment;
+    private String trade_no;
     
     private double sumAmount;
     private int countNum;
@@ -255,6 +257,22 @@ public class BillAccount {
 
     public void setCountNum(int countNum) {
         this.countNum = countNum;
+    }
+
+    public String getGmt_payment() {
+        return gmt_payment;
+    }
+
+    public void setGmt_payment(String gmt_payment) {
+        this.gmt_payment = gmt_payment;
+    }
+
+    public String getTrade_no() {
+        return trade_no;
+    }
+
+    public void setTrade_no(String trade_no) {
+        this.trade_no = trade_no;
     }
 
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1727,41 +1728,44 @@ public class EstateAction extends BaseAction {
                 String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"),"UTF-8");
                 //交易状态
                 String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"),"UTF-8");
+                
+                String trade_no = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"),"UTF-8");
+                String gmt_payment = new String(request.getParameter("gmt_payment").getBytes("ISO-8859-1"),"UTF-8");
+                
                 if(trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS")){
-                    //BillAccount billAccount = stockServiceImpl.getMaxBill_entry_id(out_trade_no);
-                    Map<String, Object> paramMap = new HashMap<String, Object>();
-                    paramMap.put("bill_entry_id", out_trade_no);
-                    paramMap.put("currPage", Integer.valueOf(0));
-                    paramMap.put("pageSize", Integer.valueOf(10));
-                    List<BillAccount> billAccounts = this.stockServiceImpl.getBillAccounts(paramMap);
-                    if (billAccounts != null && billAccounts.size() > 0) {
-                        BillAccount billAccount = billAccounts.get(0);
-                        if (Double.parseDouble(total_amount) == billAccount.getBill_entry_amount()) {
-                            PrintInfo info = printInfoService.selectBydepartmentId(billAccount.getDepartmentId());
-                            Map<String, Object> param = new HashMap<String, Object>();
-                            param.put("departmentId", Integer.valueOf(billAccount.getDepartmentId()));
-                            Department department = departmentService.getDepartmentById(param);
-                            param.put("departmentId", Integer.valueOf(department.getId()));
-                            department = departmentService.getDepartmentById(param);
-                            PrintMessage obj = new PrintMessage(info.getMachineCode(), info.getMsign());
-                            StringBuffer sb = new StringBuffer("");
-                            sb.append("<center>支付宝智慧小区</center>\r");
-                            sb.append("小区名称："+billAccount.getDepartmentName()+"\r");
-                            sb.append(billAccount.getRoomAddress() + "\r");
-                            sb.append("业主姓名："+billAccount.getProprietorName()+"\r");
-                            sb.append("付款时间："+billAccount.getPayDate()+"\r");
-                            sb.append("订单编号："+out_trade_no+"\r");
-                            sb.append("支付方式："+billAccount.getPayType()+"\r");
-                            sb.append("缴费金额："+total_amount+"\r");
-                            sb.append("缴费明细：\r");
-                            sb.append("<table><tr><td>类别</td><td>账期</td><td>金额</td></tr><tr><td>"+billAccount.getCost_type()+"</td><td>"+billAccount.getAcct_period()+"</td><td>"+total_amount+"</td></tr></table>\r");
-                            sb.append("<center><FB><FS>"+department.getName()+"</FS></FB></center>\r");
-                            sb.append("<center>技术支持：杭州早早科技 400-720-8888</center>\r");
-                            sb.append("----------------------\r");
-                            sb.append("<center>交易小票</center>\r");
-                            isprint = obj.sendContent(sb.toString());
-                        }
+                    BillAccount billAccount = this.stockServiceImpl.getBillAccountByBill_entry_id(out_trade_no);
+                    if (Double.parseDouble(total_amount) == billAccount.getBill_entry_amount()) {
+                        //保存支付宝返回数据
+                        billAccount.setGmt_payment(gmt_payment);
+                        billAccount.setTrade_no(trade_no);
+                        stockServiceImpl.updateBillAccount(billAccount, billAccount.getBill_entry_id());
+                        //开始打印
+                        PrintInfo info = printInfoService.selectBydepartmentId(billAccount.getDepartmentId());
+                        Map<String, Object> param = new HashMap<String, Object>();
+                        param.put("departmentId", Integer.valueOf(billAccount.getDepartmentId()));
+                        Department department = departmentService.getDepartmentById(param);
+                        param.put("departmentId", Integer.valueOf(department.getId()));
+                        department = departmentService.getDepartmentById(param);
+                        PrintMessage obj = new PrintMessage(info.getMachineCode(), info.getMsign());
+                        StringBuffer sb = new StringBuffer("");
+                        sb.append("<center>支付宝智慧小区</center>\r");
+                        sb.append("小区名称："+billAccount.getDepartmentName()+"\r");
+                        sb.append(billAccount.getRoomAddress() + "\r");
+                        sb.append("业主姓名："+billAccount.getProprietorName()+"\r");
+                        sb.append("付款时间："+billAccount.getGmt_payment()+"\r");
+                        sb.append("订单编号："+out_trade_no+"\r");
+                        sb.append("支付宝交易号："+billAccount.getTrade_no()+"\r");
+                        sb.append("支付方式："+billAccount.getPayType()+"\r");
+                        sb.append("缴费金额："+total_amount+"\r");
+                        sb.append("缴费明细：\r");
+                        sb.append("<table><tr><td>类别</td><td>账期</td><td>金额</td></tr><tr><td>"+billAccount.getCost_type()+"</td><td>"+billAccount.getAcct_period()+"</td><td>"+total_amount+"</td></tr></table>\r");
+                        sb.append("收款单位："+department.getName()+"\r");
+                        sb.append("<center>技术支持：早早科技/0571-88683117/www.早早.com</center>\r");
+                        sb.append("----------------------\r");
+                        sb.append("<center>交易小票</center>\r");
+                        isprint = obj.sendContent(sb.toString());
                     }
+                    
                     bizContent = "{\"econotify\":\"success\"}";
                     if (isprint) {
                         log.info("--------------wangshuodong:物业缴费小票打印成功-----------------------");
