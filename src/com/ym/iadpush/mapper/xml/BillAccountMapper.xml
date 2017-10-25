@@ -360,7 +360,7 @@
 		GROUP BY b.payType;
 	</select>
 	
-	<select id="getPrintOneCount" resultSetType="int" parameterType="map">
+	<select id="getPrintOneCount" parameterType="map" resultType="java.lang.Integer">
 		select count(DISTINCT b.proprietorId) from billaccount b where b.departmentId=#{departmentId} and b.payDate = #{payDate} and b.payStatus =1;
 	</select>
 	
