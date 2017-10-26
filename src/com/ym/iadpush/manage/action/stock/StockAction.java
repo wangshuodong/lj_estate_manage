@@ -996,7 +996,7 @@ public class StockAction extends BaseAction {
         sb.append("----------------------\r");
         sb.append("<center>交易小票</center>\r");
         obj.sendContent(sb.toString());
-
+        System.out.println(sb.toString());
         // 同步支付宝平台,下架此账单
         try {
             int status = undercarriageBillAccountFromAlipay(billAccount);

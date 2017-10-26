@@ -1734,7 +1734,7 @@ public class EstateAction extends BaseAction {
                 
                 if(trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS")){
                     BillAccount billAccount = this.stockServiceImpl.getBillAccountByBill_entry_id(out_trade_no);
-                    if (Double.parseDouble(total_amount) == billAccount.getBill_entry_amount()) {
+                    if (billAccount != null && Double.parseDouble(total_amount) == billAccount.getBill_entry_amount()) {
                         //保存支付宝返回数据
                         billAccount.setGmt_payment(gmt_payment);
                         billAccount.setTrade_no(trade_no);
