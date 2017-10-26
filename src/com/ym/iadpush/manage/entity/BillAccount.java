@@ -43,6 +43,8 @@ public class BillAccount {
     private double sumAmount;
     private int countNum;
     
+    private int households;
+    
     public String getAccpetMoney() {
         return accpetMoney;
     }
@@ -273,6 +275,14 @@ public class BillAccount {
 
     public void setTrade_no(String trade_no) {
         this.trade_no = trade_no;
+    }
+
+    public int getHouseholds() {
+        return households;
+    }
+
+    public void setHouseholds(int households) {
+        this.households = households;
     }
 
 }

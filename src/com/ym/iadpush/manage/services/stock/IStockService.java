@@ -22,6 +22,7 @@ import com.ym.iadpush.manage.entity.StockDetail;
 import com.ym.iadpush.manage.entity.StockMonth;
 
 public interface IStockService {
+    List<BillAccount> getBillAccountsBusiness(Map<String, Object> paramMap);
     //删除物业
     int deleteDepartment(int departmentId);
     //删除业主

@@ -783,4 +783,8 @@ public class StockServiceImpl implements IStockService {
         return 0;
     }
 
+    @Override
+    public List<BillAccount> getBillAccountsBusiness(Map<String, Object> paramMap) {
+        return billAccountMapper.getBillAccountsBusiness(paramMap);
+    }
 }

@@ -407,5 +407,34 @@
 			AND b.payDate = #{payDate}
 		GROUP BY b.payType;
 	</select>
+	
+	<select id="getBillAccountsBusiness" resultMap="BaseResultMap"
+		parameterType="map">
+		select 
+		count(DISTINCT proprietorId) households,
+		payType payType,
+		ROUND(sum(accpetMoney), 2) accpetMoney 
+		from
+		billAccount
+		WHERE 1=1
+		and payStatus = 1
+		and deleteStatus = 0 
+		
+		<if test="startPaymentDate!=null">
+			and payDate &gt;= #{startPaymentDate}
+		</if>
+		<if test="endPaymentDate!=null">
+			and payDate &lt;= #{endPaymentDate}
+		</if>
+	
+		<if test="housingId!=null and housingId!='' ">
+			and housingId =#{housingId}
+		</if>
+		<if test="departmentCode!=null and departmentCode!='' ">
+			and departmentCode like #{departmentCode}"%"
+		</if>
+		
+		group  by   payType
+	</select>
 
 </mapper>

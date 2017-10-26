@@ -18,6 +18,7 @@ import com.ym.iadpush.manage.entity.BillAccountDataStatement;
  * </p>
  */
 public interface BillAccountMapper {
+    List<BillAccount> getBillAccountsBusiness(Map<String, Object> paramMap);
     //删除账单根据参数
     Integer deleteBillAccountByParams(Map<String, Object> paramMap);
     //修改物业

@@ -109,6 +109,38 @@ public class StockAction extends BaseAction {
 
     private String packageName = "stock";
     
+    @ResponseBody
+    @RequestMapping(value = "/queryBillAccountsBusinessPost.html", method = RequestMethod.POST)
+    public ModelMap queryBillAccountsBusinessPost(HttpServletRequest request, ModelMap model) {
+
+        SysUsers user = getUser();
+
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+
+        String housingId = request.getParameter("housingId");
+        String startPaymentDate = request.getParameter("startPaymentDate");
+        String endPaymentDate = request.getParameter("endPaymentDate");
+
+        paramMap.put("housingId", housingId);
+        paramMap.put("departmentCode", user.getDepartmentCode());
+        paramMap.put("startPaymentDate", startPaymentDate);
+        paramMap.put("endPaymentDate", endPaymentDate);
+
+        System.out.println(paramMap);
+
+        List<BillAccount> billAccounts = stockServiceImpl.getBillAccountsBusiness(paramMap);
+
+        for (BillAccount billAccount : billAccounts) {
+            System.out.println("户数：" + billAccount.getHouseholds() + "<<付款方式:" + billAccount.getPayType() + "<<付款金额："
+                    + billAccount.getAccpetMoney());
+        }
+
+        model.put("list", billAccounts);
+
+        return model;
+
+    }
+    
     // 删除物业
     @ResponseBody
     @RequestMapping(value = "/deleteDepartment.html", method = RequestMethod.POST)
