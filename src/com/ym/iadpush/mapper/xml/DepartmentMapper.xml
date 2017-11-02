@@ -104,10 +104,8 @@
 		delete from department where id = #{id}
 	</delete>
 
-	<select id="selectMaxByParentCode" resultType="com.ym.iadpush.manage.entity.Department">
-		select * from
-		department where code like ""#{code}"%" and code!=#{code} order by
-		code desc limit 0,1
+	<select id="selectMaxByParentCode" parameterType="int" resultType="string">
+		select max(code) from department d where d.parentId = ${parentId}
 	</select>
 	
 	<select id="selectCounthouse" parameterType="int" resultType="com.ym.iadpush.manage.entity.Department">

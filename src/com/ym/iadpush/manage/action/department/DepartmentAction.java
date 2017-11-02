@@ -146,13 +146,13 @@ public class DepartmentAction extends BaseAction {
 
             String code = p.getCode();
 
-            Department max = departmentService.selectMaxByParentCode(code);
+            String max = departmentService.selectMaxByParentCode(Integer.valueOf(parentId));
 
             if (max != null) {
-                String orgCode = FormatUtil.getOrgCode(max == null ? null : max.getCode(), code);
+                String orgCode = FormatUtil.getOrgCode(max);
                 department.setCode(orgCode);
             } else {
-                String orgCode = FormatUtil.getOrgCode(null, code);
+                String orgCode = code + "0001";
                 department.setCode(orgCode);
             }
 

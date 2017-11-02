@@ -27,7 +27,7 @@ public interface DepartmentMapper {
 
     int delById(@Param("id") int id);
 
-    Department selectMaxByParentCode(@Param("code") String code);
+    String selectMaxByParentCode(Integer parentId);
     
     List<Department> selectCounthouse(Integer parentId);
 }

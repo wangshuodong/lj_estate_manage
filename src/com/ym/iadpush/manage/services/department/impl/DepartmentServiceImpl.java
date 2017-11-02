@@ -54,7 +54,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
     }
 
     @Override
-    public Department selectMaxByParentCode(String code) {
-        return departmentMapper.selectMaxByParentCode(code);
+    public String selectMaxByParentCode(Integer parentId) {
+        return departmentMapper.selectMaxByParentCode(parentId);
     }
 }

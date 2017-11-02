@@ -1,7 +1,5 @@
 package com.ym.iadpush.common.utils;
 
-import com.ym.iadpush.manage.entity.Department;
-
 public class FormatUtil {
     /**
      * 根据输入字符得到该字符的注记码，如果遇到重改为冲
@@ -35,25 +33,9 @@ public class FormatUtil {
     /**
      * 生成组织机构代码
      */
-    public static String getOrgCode(String maxCode, String pCode) {
-        String orgCode = "";
-        if (maxCode == null) {
-            orgCode = pCode + "0001";
-        } else {
-            String childCode = maxCode.substring(4, maxCode.length());
-            String four = maxCode.substring(0, 4);
-            int len = childCode.length();
-            Long c = Long.parseLong(childCode);
-            c++;
-            String r = String.valueOf(c);
-            int z = len - r.length();
-
-            String zstr = "";
-            for (int i = 0; i < z; i++) {
-                zstr += "0";
-            }
-            orgCode = four + zstr + r;
-        }
+    public static String getOrgCode(String maxCode) {
+        long code = Long.parseLong(maxCode);
+        String orgCode = DecimalFormatUtils.format(maxCode, code+1);
         return orgCode;
     }
 
