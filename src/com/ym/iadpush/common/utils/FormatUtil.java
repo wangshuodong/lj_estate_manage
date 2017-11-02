@@ -34,8 +34,9 @@ public class FormatUtil {
      * 生成组织机构代码
      */
     public static String getOrgCode(String maxCode) {
-        long code = Long.parseLong(maxCode);
-        String orgCode = DecimalFormatUtils.format(maxCode, code+1);
+        long code = Long.parseLong(maxCode) + 1;
+        //String orgCode = DecimalFormatUtils.format(maxCode, code+1);
+        String orgCode = "00" + code;
         return orgCode;
     }
 

@@ -29,14 +29,14 @@ public class AutoRebackBillAccountServiceImpl implements AutoRebackBillAccountSe
 
     public void run() {
 
-        System.out.println("date time >>:" + DateUtils.getDatetime());
+        //System.out.println("date time >>:" + DateUtils.getDatetime());
 
         try {
             List<Housing> housings = stockServiceImpl.getAllHousings();
 
             for (Housing housing : housings) {
                 if (!StringUtils.isBlank(housing.getCommunity_id())) {
-                    System.out.println("housename:" + housing.getName());
+                    //System.out.println("housename:" + housing.getName());
                     autoRebackBillAccountFromAliPay(housing.getId());
                 }
             }
@@ -86,12 +86,12 @@ public class AutoRebackBillAccountServiceImpl implements AutoRebackBillAccountSe
 
         JSONObject bill_batchquery = (JSONObject) jsonObject.get("alipay_eco_cplife_bill_batchquery_response");
 
-        System.out.println("code>>:" + response.getCode());
+        //System.out.println("code>>:" + response.getCode());
 
         if (response.getCode().equals("10000")) {
             int total_bill_count = bill_batchquery.getInt("total_bill_count");
 
-            System.out.println("total_bill_count>>>:" + total_bill_count);
+            //System.out.println("total_bill_count>>>:" + total_bill_count);
 
             Object bill_result_set = bill_batchquery.get("bill_result_set");
             if (bill_result_set != null) {
@@ -117,6 +117,6 @@ public class AutoRebackBillAccountServiceImpl implements AutoRebackBillAccountSe
                 }
             }
         }
-        System.out.println("last>>>>>>>>>");
+        //System.out.println("last>>>>>>>>>");
     }
 }
