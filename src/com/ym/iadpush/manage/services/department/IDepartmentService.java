@@ -29,5 +29,5 @@ public interface IDepartmentService {
 
     int delete(int id);
 
-    String selectMaxByParentCode(Integer id);
+    String selectMaxByParentCode(Integer parentId);
 }
