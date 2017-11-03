@@ -7,17 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.ui.ModelMap;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.CplifeRoomDetail;
+import com.alipay.api.request.AlipayEbppInvoiceTitleListGetRequest;
 import com.alipay.api.request.AlipayEcoCplifeBasicserviceInitializeRequest;
 import com.alipay.api.request.AlipayEcoCplifeBasicserviceModifyRequest;
 import com.alipay.api.request.AlipayEcoCplifeBillBatchqueryRequest;
@@ -26,6 +20,7 @@ import com.alipay.api.request.AlipayEcoCplifeCommunityDetailsQueryRequest;
 import com.alipay.api.request.AlipayEcoCplifeRoominfoDeleteRequest;
 import com.alipay.api.request.AlipayEcoCplifeRoominfoQueryRequest;
 import com.alipay.api.request.AlipayTradePayRequest;
+import com.alipay.api.response.AlipayEbppInvoiceTitleListGetResponse;
 import com.alipay.api.response.AlipayEcoCplifeBasicserviceInitializeResponse;
 import com.alipay.api.response.AlipayEcoCplifeBasicserviceModifyResponse;
 import com.alipay.api.response.AlipayEcoCplifeBillBatchqueryResponse;
@@ -34,8 +29,10 @@ import com.alipay.api.response.AlipayEcoCplifeCommunityDetailsQueryResponse;
 import com.alipay.api.response.AlipayEcoCplifeRoominfoDeleteResponse;
 import com.alipay.api.response.AlipayEcoCplifeRoominfoQueryResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
-import com.ym.iadpush.manage.entity.Housing;
 import com.ym.iadpush.manage.entity.common.CommonParm;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class test {
     /**
@@ -371,6 +368,39 @@ public class test {
         }
 
         System.out.println(response.getBody());
+
+    }
+    
+    /**
+     * 获取指定用户所有的有效抬头列表
+     * @throws AlipayApiException 
+     * @Author 2017年10月30日 下午1:23:53
+     */
+    public void alipayEbppInvoiceTitleListGetRequest() throws AlipayApiException {
+        String access_token = null;
+        //AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do","app_id","your private_key","json","GBK","alipay_public_key","RSA2");
+        CommonParm commonParm = new CommonParm();
+
+        String app_id = commonParm.getApp_id();
+        String private_key = commonParm.getPrivate_key();
+        String alipay_public_key = commonParm.getAlipay_public_key();
+
+        String serverUrl = commonParm.getServerUrl();
+        String format = commonParm.getFormat();
+        String charset = commonParm.getCharset();
+        String sign_type = commonParm.getSign_type();
+        AlipayClient alipayClient = new DefaultAlipayClient(serverUrl, app_id, private_key, format, charset,
+                alipay_public_key, sign_type);
+        AlipayEbppInvoiceTitleListGetRequest request = new AlipayEbppInvoiceTitleListGetRequest();
+        request.setBizContent("{" +
+        "\"user_id\":\"2088000000000000\"" +
+        "  }");//请开发者实际测试时，保证其值和发起授权用户的user_id一致，此处仅示例。
+        AlipayEbppInvoiceTitleListGetResponse response = alipayClient.execute(request,access_token);//access_token即用户信息授权时获取后授权码，注意用户信息授权时scope=auth_invoice_info
+        if(response.isSuccess()){
+        System.out.println("调用成功");
+        } else {
+        System.out.println("调用失败");
+        }
 
     }
 
