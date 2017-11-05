@@ -973,6 +973,18 @@ public class StockAction extends BaseAction {
         model.put("status", true);
         model.put("msg", "账单线下付款完成！");
         
+        // 同步支付宝平台,下架此账单
+        try {
+            int status = undercarriageBillAccountFromAlipay(billAccount);
+
+            if (status == 1) {
+                model.put("msg", "账单线下付款完成！并从支付宝下架了此账单。");
+            }
+
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+        
         PrintInfo info = printInfoService.selectBydepartmentId(billAccount.getDepartmentId());
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("departmentId", Integer.valueOf(billAccount.getDepartmentId()));
@@ -997,17 +1009,6 @@ public class StockAction extends BaseAction {
         sb.append("<center>交易小票</center>\r");
         obj.sendContent(sb.toString());
         System.out.println(sb.toString());
-        // 同步支付宝平台,下架此账单
-        try {
-            int status = undercarriageBillAccountFromAlipay(billAccount);
-
-            if (status == 1) {
-                model.put("msg", "账单线下付款完成！并从支付宝下架了此账单。");
-            }
-
-        } catch (AlipayApiException e) {
-            e.printStackTrace();
-        }
 
         return model;
     }
